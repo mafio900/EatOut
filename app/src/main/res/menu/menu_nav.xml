@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/nav_home"
+            android:title="@string/main_page"/>
+
+        <item android:title="@string/events">
+            <menu>
+                <group android:checkableBehavior="single">
+                    <item android:id="@+id/nav_search_events"
+                        android:icon="@drawable/ic_search"
+                        android:title="@string/search_event"/>
+
+                    <item android:id="@+id/nav_joined_events"
+                        android:icon="@drawable/ic_your_events"
+                        android:title="@string/joined_events"/>
+
+                    <item android:id="@+id/nav_create_event"
+                        android:icon="@drawable/ic_create_event"
+                        android:title="@string/create_own_event"/>
+
+                    <item android:id="@+id/nav_your_events"
+                        android:icon="@drawable/ic_your_events"
+                        android:title="@string/your_events"/>
+                </group>
+            </menu>
+        </item>
+
+        <item android:title="@string/profile" >
+            <menu>
+                <group android:checkableBehavior="single">
+                    <item
+                        android:id="@+id/nav_profile"
+                        android:icon="@drawable/ic_edit"
+                        android:title="@string/edit" />
+                    <item
+                        android:id="@+id/nav_change_password"
+                        android:icon="@drawable/ic_lock"
+                        android:title="@string/change_password" />
+                    <item
+                        android:id="@+id/nav_logout"
+                        android:icon="@drawable/ic_logout"
+                        android:title="@string/logout" />
+                </group>
+            </menu>
+        </item>
+    </group>
+</menu>

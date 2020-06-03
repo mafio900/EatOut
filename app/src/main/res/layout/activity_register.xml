@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Register">
+
+    <include
+        layout="@layout/toolbar_main"
+        android:id="@+id/toolbar"/>
+
+    <EditText
+        android:id="@+id/nameRgET"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:ems="10"
+        android:hint="@string/first_name"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+    <EditText
+        android:id="@+id/emailRgET"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="@string/email"
+        android:inputType="textEmailAddress"
+        app:layout_constraintEnd_toEndOf="@+id/nameRgET"
+        app:layout_constraintStart_toStartOf="@+id/nameRgET"
+        app:layout_constraintTop_toBottomOf="@+id/nameRgET" />
+
+    <EditText
+        android:id="@+id/passwordRgET"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="@string/password"
+        android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="@+id/emailRgET"
+        app:layout_constraintStart_toStartOf="@+id/emailRgET"
+        app:layout_constraintTop_toBottomOf="@+id/emailRgET" />
+
+    <EditText
+        android:id="@+id/cityRgET"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="@string/city"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="@+id/editText"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/editText"
+        app:layout_constraintTop_toBottomOf="@+id/editText" />
+
+    <EditText
+        android:id="@+id/birthDateRgET"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:enabled="false"
+        android:inputType="textPersonName"
+        android:text="@string/birth_date"
+        app:layout_constraintStart_toStartOf="@+id/cityRgET"
+        app:layout_constraintTop_toBottomOf="@+id/cityRgET" />
+
+    <Button
+        android:id="@+id/setBirthDateRgButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/set"
+        app:layout_constraintBaseline_toBaselineOf="@+id/birthDateRgET"
+        app:layout_constraintEnd_toEndOf="@+id/cityRgET"
+        app:layout_constraintStart_toEndOf="@+id/birthDateRgET" />
+
+    <Button
+        android:id="@+id/registerRgBT"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/register"
+        app:layout_constraintEnd_toEndOf="@+id/cityRgET"
+        app:layout_constraintStart_toStartOf="@+id/cityRgET"
+        app:layout_constraintTop_toBottomOf="@+id/birthDateRgET" />
+
+    <ProgressBar
+        android:id="@+id/progressBarRg"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/loginRgTV"
+        app:layout_constraintStart_toStartOf="@+id/loginRgTV"
+        app:layout_constraintTop_toBottomOf="@+id/loginRgTV" />
+
+    <TextView
+        android:id="@+id/loginRgTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Masz już konto? Zaloguj się tutaj"
+        app:layout_constraintEnd_toEndOf="@+id/registerRgBT"
+        app:layout_constraintStart_toStartOf="@+id/registerRgBT"
+        app:layout_constraintTop_toBottomOf="@+id/registerRgBT" />
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="Powtórz hasło"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="@+id/passwordRgET"
+        app:layout_constraintStart_toStartOf="@+id/passwordRgET"
+        app:layout_constraintTop_toBottomOf="@+id/passwordRgET" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
