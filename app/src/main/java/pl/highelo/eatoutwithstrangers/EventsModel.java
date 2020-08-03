@@ -1,15 +1,18 @@
 package pl.highelo.eatoutwithstrangers;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.firebase.firestore.GeoPoint;
 
-import java.io.Serializable;
-import java.util.HashMap;
+import org.imperiumlabs.geofirestore.core.GeoHash;
 
-public class EventsModel implements Serializable {
+public class EventsModel implements Parcelable {
     private String itemID;
     private String placeName;
     private String placeAddress;
-    private HashMap<String, Double> placeLatLng;
+    private GeoHash placeGeoHash;
+    private GeoPoint placeLatLng;
     private String date;
     private String time;
     private String theme;
@@ -19,7 +22,7 @@ public class EventsModel implements Serializable {
 
     private EventsModel(){}
 
-    public EventsModel(String itemID, String placeName, String placeAddress, HashMap<String, Double> placeLatLng, String date, String time, String theme, int maxPeople, String userID, boolean isEnded) {
+    public EventsModel(String itemID, String placeName, String placeAddress, GeoPoint placeLatLng, String date, String time, String theme, int maxPeople, String userID, boolean isEnded) {
         this.itemID = itemID;
         this.placeName = placeName;
         this.placeAddress = placeAddress;
@@ -31,6 +34,30 @@ public class EventsModel implements Serializable {
         this.userID = userID;
         this.isEnded = isEnded;
     }
+
+    protected EventsModel(Parcel in) {
+        itemID = in.readString();
+        placeName = in.readString();
+        placeAddress = in.readString();
+        date = in.readString();
+        time = in.readString();
+        theme = in.readString();
+        maxPeople = in.readInt();
+        userID = in.readString();
+        isEnded = in.readByte() != 0;
+    }
+
+    public static final Creator<EventsModel> CREATOR = new Creator<EventsModel>() {
+        @Override
+        public EventsModel createFromParcel(Parcel in) {
+            return new EventsModel(in);
+        }
+
+        @Override
+        public EventsModel[] newArray(int size) {
+            return new EventsModel[size];
+        }
+    };
 
     public String getItemID() {
         return itemID;
@@ -56,12 +83,20 @@ public class EventsModel implements Serializable {
         this.placeAddress = placeAddress;
     }
 
-    public HashMap<String, Double> getPlaceLatLng() {
+    public GeoPoint getPlaceLatLng() {
         return placeLatLng;
     }
 
-    public void setPlaceLatLng(HashMap<String,Double> placeLatLng) {
+    public void setPlaceLatLng(GeoPoint placeLatLng) {
         this.placeLatLng = placeLatLng;
+    }
+
+    public GeoHash getPlaceGeoHash() {
+        return placeGeoHash;
+    }
+
+    public void setPlaceGeoHash(GeoHash placeGeoHash) {
+        this.placeGeoHash = placeGeoHash;
     }
 
     public String getDate() {
@@ -110,5 +145,23 @@ public class EventsModel implements Serializable {
 
     public void setEnded(boolean ended) {
         isEnded = ended;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(itemID);
+        dest.writeString(placeName);
+        dest.writeString(placeAddress);
+        dest.writeString(date);
+        dest.writeString(time);
+        dest.writeString(theme);
+        dest.writeInt(maxPeople);
+        dest.writeString(userID);
+        dest.writeByte((byte) (isEnded ? 1 : 0));
     }
 }

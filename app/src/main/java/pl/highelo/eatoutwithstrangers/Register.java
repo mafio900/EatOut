@@ -133,7 +133,7 @@ public class Register extends AppCompatActivity implements DatePickerDialog.OnDa
                                 user.put("description", "");
                                 SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-M-d", Locale.US);
                                 SimpleDateFormat newFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
-                                String newDate = FirebaseMethods.parseDate(date, oldFormat, newFormat);
+                                String newDate = CommonMethods.parseDate(date, oldFormat, newFormat);
                                 user.put("birthDate", newDate);
                                 documentReference.set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
@@ -189,7 +189,7 @@ public class Register extends AppCompatActivity implements DatePickerDialog.OnDa
         date = year + "-" + (month+1) + "-" + dayOfMonth;
         SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-M-d", Locale.US);
         SimpleDateFormat newFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
-        String newDate = FirebaseMethods.parseDate(date, oldFormat, newFormat);
+        String newDate = CommonMethods.parseDate(date, oldFormat, newFormat);
         mBirthDate.setText(newDate);
     }
 }

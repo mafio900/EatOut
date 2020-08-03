@@ -1,10 +1,10 @@
 package pl.highelo.eatoutwithstrangers;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.app.DatePickerDialog;
@@ -26,12 +26,18 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.OnCanceledListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
+
+
+import org.imperiumlabs.geofirestore.GeoFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -67,8 +73,7 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        FirebaseMethods.validateUser(this);
-        FirebaseMethods.checkIfBanned(this);
+        CommonMethods.checkIfBanned(this);
 
         setContentView(R.layout.activity_create_event);
 
@@ -180,7 +185,7 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
         date += " " + hourOfDay + ":" + minute;
         SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-M-d H:m", Locale.US);
         SimpleDateFormat newFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.US);
-        String newDate = FirebaseMethods.parseDate(date, oldFormat, newFormat);
+        String newDate = CommonMethods.parseDate(date, oldFormat, newFormat);
         mEventDate.setText(newDate);
     }
 
@@ -238,38 +243,52 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
             mProgressBar.setVisibility(View.VISIBLE);
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
             FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
+            CollectionReference collectionReference = mFirestore.collection("events");
+            final GeoFirestore geoFirestore = new GeoFirestore(collectionReference);
 
             Map<String, Object> event = new HashMap<>();
             event.put("userID", mAuth.getUid());
             event.put("placeName", mPlace.getName());
             event.put("placeAddress", mPlace.getAddress());
-            event.put("placeLatLng", mPlace.getLatLng());
+            //event.put("placeLatLng", new GeoPoint(mPlace.getLatLng().latitude, mPlace.getLatLng().longitude));
             event.put("theme", mTheme.getText().toString());
             event.put("maxPeople", Integer.parseInt(mMaxPeopleTextView.getText().toString()));
             SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-M-d", Locale.US);
             SimpleDateFormat newFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
-            String newDate = FirebaseMethods.parseDate(mYear+"-"+(mMonth+1)+"-"+mDay, oldFormat, newFormat);
+            String newDate = CommonMethods.parseDate(mYear+"-"+(mMonth+1)+"-"+mDay, oldFormat, newFormat);
             event.put("date", newDate);
             oldFormat = new SimpleDateFormat("H:m", Locale.US);
             newFormat = new SimpleDateFormat("HH:mm", Locale.US);
-            String newTime = FirebaseMethods.parseDate(mHour+":"+mMinute, oldFormat, newFormat);
+            String newTime = CommonMethods.parseDate(mHour+":"+mMinute, oldFormat, newFormat);
             event.put("time", newTime);
             event.put("isEnded", false);
 
-            mFirestore.collection("events").document().set(event).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+            collectionReference.add(event).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                 @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if(task.isSuccessful()){
-                        Toast.makeText(CreateEventActivity.this, "Wydarzenie zostało pomyślnie utworzone!", Toast.LENGTH_LONG).show();
-                        mProgressBar.setVisibility(View.GONE);
-                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                        finish();
-                    } else{
-                        Toast.makeText(CreateEventActivity.this, "Coś poszło nie tak przy tworzeniu wydarzenia!", Toast.LENGTH_LONG).show();
-                        mProgressBar.setVisibility(View.GONE);
-                    }
+                public void onSuccess(DocumentReference documentReference) {
+                    geoFirestore.setLocation(documentReference.getId(), new GeoPoint(mPlace.getLatLng().latitude, mPlace.getLatLng().longitude));
+                    mProgressBar.setVisibility(View.GONE);
+                    Toast.makeText(CreateEventActivity.this, R.string.create_event_successful, Toast.LENGTH_LONG).show();
+                    startActivity(new Intent(getApplicationContext(), YourEventsActivity.class));
+                    finish();
+                }
+            }).addOnCanceledListener(new OnCanceledListener() {
+                @Override
+                public void onCanceled() {
+                    Toast.makeText(CreateEventActivity.this, "Błąd przy tworzeniu wydarzenia", Toast.LENGTH_LONG).show();
                 }
             });
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        }
+        else{
+            super.onBackPressed();
         }
     }
 }

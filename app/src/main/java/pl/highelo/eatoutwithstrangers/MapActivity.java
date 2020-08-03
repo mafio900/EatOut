@@ -107,6 +107,7 @@ public class MapActivity extends AppCompatActivity {
                     result.putExtra("placeAddress", mSelectedPlace.getAddress());
                     result.putExtra("placeLatLng", mSelectedPlace.getLatLng().latitude + "," + mSelectedPlace.getLatLng().longitude);
                     setResult(RESULT_OK, result);
+                    Places.deinitialize();
                     finish();
                 }
             }

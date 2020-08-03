@@ -52,11 +52,11 @@ public class EditEventActivity extends AppCompatActivity implements DatePickerDi
     private SeekBar mMaxPeopleSeekBar;
     private ProgressBar mProgressBar;
 
-    Place mPlace;
-    String date;
-    int mYear, mMonth, mDay, mHour, mMinute = -1;
-    int maxPeople = 10, peopleStep = 1;
-    int currentPeople;
+    private Place mPlace;
+    private String date;
+    private int mYear, mMonth, mDay, mHour, mMinute = -1;
+    private int maxPeople = 10, peopleStep = 1;
+    private int currentPeople;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +68,7 @@ public class EditEventActivity extends AppCompatActivity implements DatePickerDi
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        mEventsModel = (EventsModel) intent.getSerializableExtra("model");
+        mEventsModel = (EventsModel) intent.getParcelableExtra("model");
 
         mName = findViewById(R.id.placeName);
         mAddress = findViewById(R.id.placeAddress);
@@ -106,6 +106,7 @@ public class EditEventActivity extends AppCompatActivity implements DatePickerDi
         mEventDate.setText(mEventsModel.getDate() + " " + mEventsModel.getTime());
         currentPeople = mEventsModel.getMaxPeople();
         mMaxPeopleSeekBar.setProgress(currentPeople);
+        Log.d(TAG, "onCreate: "+mEventsModel.getPlaceLatLng());
 
         mEditEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -200,7 +201,7 @@ public class EditEventActivity extends AppCompatActivity implements DatePickerDi
         date += " " + hourOfDay + ":" + minute;
         SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-M-d H:m", Locale.US);
         SimpleDateFormat newFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.US);
-        String newDate = FirebaseMethods.parseDate(date, oldFormat, newFormat);
+        String newDate = CommonMethods.parseDate(date, oldFormat, newFormat);
         mEventDate.setText(newDate);
     }
 
@@ -222,16 +223,16 @@ public class EditEventActivity extends AppCompatActivity implements DatePickerDi
             if(mPlace != null){
                 event.put("placeName", mPlace.getName());
                 event.put("placeAddress", mPlace.getAddress());
-                event.put("placeLatLng", mPlace.getLatLng());
+                event.put("placeLatLng", new GeoPoint(mPlace.getLatLng().latitude, mPlace.getLatLng().longitude));
             }
             if(date != null){
                 SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-M-d", Locale.US);
                 SimpleDateFormat newFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
-                String newDate = FirebaseMethods.parseDate(mYear+"-"+(mMonth+1)+"-"+mDay, oldFormat, newFormat);
+                String newDate = CommonMethods.parseDate(mYear+"-"+(mMonth+1)+"-"+mDay, oldFormat, newFormat);
                 event.put("date", newDate);
                 oldFormat = new SimpleDateFormat("H:m", Locale.US);
                 newFormat = new SimpleDateFormat("HH:mm", Locale.US);
-                String newTime = FirebaseMethods.parseDate(mHour+":"+mMinute, oldFormat, newFormat);
+                String newTime = CommonMethods.parseDate(mHour+":"+mMinute, oldFormat, newFormat);
                 event.put("time", newTime);
             }
             event.put("theme", mTheme.getText().toString());

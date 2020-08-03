@@ -29,6 +29,7 @@
         <activity
             android:name=".MapActivity"
             android:parentActivityName=".CreateEventActivity" />
+        <activity android:name=".SearchEventActivity" />
         <activity android:name=".CreateEventActivity" />
         <activity android:name=".ChangePasswordActivity" />
         <activity android:name=".ProfileActivity" />

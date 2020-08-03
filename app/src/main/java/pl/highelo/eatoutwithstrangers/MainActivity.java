@@ -33,8 +33,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        FirebaseMethods.validateUser(this);
-        FirebaseMethods.checkIfBanned(this);
+        CommonMethods.checkIfBanned(this);
 
         setContentView(R.layout.activity_main);
 
@@ -77,11 +76,6 @@ public class MainActivity extends AppCompatActivity {
             });
         }
         mNavigationView.setCheckedItem(R.id.nav_home);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     @Override

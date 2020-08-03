@@ -59,4 +59,5 @@
     <string name="max_people">Maksymalna liczba osób</string>
     <string name="edit_event">Edytuj wydarzenie</string>
     <string name="edit_localization">Edytuj lokalizacje</string>
+    <string name="create_event_successful">Wydarzenie stworzone poprawnie</string>
 </resources>

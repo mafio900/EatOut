@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.app.DatePickerDialog;
@@ -14,7 +15,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -70,8 +70,7 @@ public class ProfileActivity extends AppCompatActivity implements DatePickerDial
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        FirebaseMethods.validateUser(this);
-        FirebaseMethods.checkIfBanned(this);
+        CommonMethods.checkIfBanned(this);
 
         setContentView(R.layout.activity_profile);
 
@@ -182,7 +181,7 @@ public class ProfileActivity extends AppCompatActivity implements DatePickerDial
         date = year + "-" + (month+1) + "-" + dayOfMonth;
         SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-M-d", Locale.US);
         SimpleDateFormat newFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
-        String newDate = FirebaseMethods.parseDate(date, oldFormat, newFormat);
+        String newDate = CommonMethods.parseDate(date, oldFormat, newFormat);
         mBirthDate.setText(newDate);
     }
 
@@ -248,6 +247,16 @@ public class ProfileActivity extends AppCompatActivity implements DatePickerDial
                     }
                 }
             });
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        }
+        else{
+            super.onBackPressed();
         }
     }
 }

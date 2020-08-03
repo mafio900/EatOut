@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,27 +12,28 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.firebase.ui.firestore.SnapshotParser;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import org.imperiumlabs.geofirestore.GeoFirestore;
+import org.imperiumlabs.geofirestore.GeoQuery;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -54,14 +56,14 @@ public class YourEventsActivity extends AppCompatActivity implements EventsAdapt
     private TextView textView;
     private TextView emptyTV;
     private int count = 0;
+    private List<DocumentSnapshot> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_your_events);
 
-        FirebaseMethods.validateUser(this);
-        FirebaseMethods.checkIfBanned(this);
+        CommonMethods.checkIfBanned(this);
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mNavigationView = findViewById(R.id.nav_view);
@@ -84,7 +86,9 @@ public class YourEventsActivity extends AppCompatActivity implements EventsAdapt
         mFirestore = FirebaseFirestore.getInstance();
         mUserID = mAuth.getCurrentUser().getUid();
 
-        mFirestore.collection("events").whereEqualTo("userID", mUserID).whereEqualTo("isEnded", false).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        CollectionReference collectionReference = mFirestore.collection("events");
+
+        collectionReference.whereEqualTo("userID", mUserID).whereEqualTo("isEnded", false).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
@@ -111,7 +115,9 @@ public class YourEventsActivity extends AppCompatActivity implements EventsAdapt
         });
 
         //Query
-        Query query = mFirestore.collection("events").whereEqualTo("userID", mUserID).whereEqualTo("isEnded", false);
+        GeoFirestore geoFirestore = new GeoFirestore(collectionReference);
+        GeoQuery geoQuery = geoFirestore.queryAtLocation(new GeoPoint(51.7211, 18.1021), 2.0);
+        Query query = geoQuery.getQueries().get(0).whereEqualTo("userID", mUserID).whereEqualTo("isEnded", false);
         //Recycler options
         FirestoreRecyclerOptions<EventsModel> options = new FirestoreRecyclerOptions.Builder<EventsModel>()
                 .setLifecycleOwner(this)
@@ -133,6 +139,7 @@ public class YourEventsActivity extends AppCompatActivity implements EventsAdapt
         textView = findViewById(R.id.yourEventsTV);
         emptyTV = findViewById(R.id.emptyEvents);
 
+        changeVisibility();
         adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
@@ -170,6 +177,16 @@ public class YourEventsActivity extends AppCompatActivity implements EventsAdapt
         Intent intent = new Intent(YourEventsActivity.this, EditEventActivity.class);
         intent.putExtra("model", model);
         startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        }
+        else{
+            super.onBackPressed();
+        }
     }
 }
 

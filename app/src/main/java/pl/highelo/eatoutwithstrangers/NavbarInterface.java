@@ -26,6 +26,12 @@ public class NavbarInterface implements NavigationView.OnNavigationItemSelectedL
                     t.finish();
                 }
                 break;
+            case R.id.nav_search_events:
+                if(!(t instanceof SearchEventActivity)){
+                    t.startActivity(new Intent(t.getApplicationContext(), SearchEventActivity.class));
+                    t.finish();
+                }
+                break;
             case R.id.nav_create_event:
                 if(!(t instanceof CreateEventActivity)){
                     t.startActivity(new Intent(t.getApplicationContext(), CreateEventActivity.class));

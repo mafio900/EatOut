@@ -71,7 +71,7 @@ public class Login extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                            Toast.makeText(Login.this, R.string.login_correct, Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(Login.this, R.string.login_correct, Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                             finish();
                         }else{
