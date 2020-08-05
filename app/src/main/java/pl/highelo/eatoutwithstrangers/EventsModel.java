@@ -20,7 +20,7 @@ public class EventsModel implements Parcelable {
     private String userID;
     private boolean isEnded;
 
-    private EventsModel(){}
+    public EventsModel(){}
 
     public EventsModel(String itemID, String placeName, String placeAddress, GeoPoint placeLatLng, String date, String time, String theme, int maxPeople, String userID, boolean isEnded) {
         this.itemID = itemID;

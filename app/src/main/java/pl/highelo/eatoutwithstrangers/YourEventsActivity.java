@@ -115,9 +115,7 @@ public class YourEventsActivity extends AppCompatActivity implements EventsAdapt
         });
 
         //Query
-        GeoFirestore geoFirestore = new GeoFirestore(collectionReference);
-        GeoQuery geoQuery = geoFirestore.queryAtLocation(new GeoPoint(51.7211, 18.1021), 2.0);
-        Query query = geoQuery.getQueries().get(0).whereEqualTo("userID", mUserID).whereEqualTo("isEnded", false);
+        Query query = collectionReference.whereEqualTo("userID", mUserID).whereEqualTo("isEnded", false);
         //Recycler options
         FirestoreRecyclerOptions<EventsModel> options = new FirestoreRecyclerOptions.Builder<EventsModel>()
                 .setLifecycleOwner(this)

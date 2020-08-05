@@ -1,6 +1,5 @@
 package pl.highelo.eatoutwithstrangers;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +10,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.firebase.firestore.DocumentSnapshot;
+
 
 public class EventsAdapter extends FirestoreRecyclerAdapter<EventsModel, EventsAdapter.EventsViewHolder> {
-
-    private static final String TAG = "EventsAdapter";
 
     private OnEventItemClick mOnEventItemClick;
 
@@ -26,9 +23,10 @@ public class EventsAdapter extends FirestoreRecyclerAdapter<EventsModel, EventsA
 
     @Override
     protected void onBindViewHolder(@NonNull EventsViewHolder holder, int position, @NonNull EventsModel model) {
-        holder.eventName.setText(model.getPlaceName());
+        holder.eventTheme.setText("Temat: " + model.getTheme());
+        holder.eventName.setText("Miejsce: " + model.getPlaceName());
         holder.eventAddress.setText(model.getPlaceAddress());
-        holder.eventDate.setText(model.getDate() + " " + model.getTime());
+        holder.eventDate.setText("Data rozpoczęcia: " + model.getDate() + " " + model.getTime());
     }
 
     @NonNull
@@ -43,23 +41,23 @@ public class EventsAdapter extends FirestoreRecyclerAdapter<EventsModel, EventsA
         return super.getItemCount();
     }
 
-    public class EventsViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
+    public class EventsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private TextView eventName, eventAddress, eventDate;
+        private TextView eventTheme, eventName, eventAddress, eventDate;
 
         public EventsViewHolder(@NonNull View itemView) {
             super(itemView);
+            eventTheme = itemView.findViewById(R.id.eventTheme);
             eventName = itemView.findViewById(R.id.eventName);
             eventAddress = itemView.findViewById(R.id.eventAddress);
             eventDate = itemView.findViewById(R.id.eventDate);
 
-            itemView.setOnLongClickListener(this);
+            itemView.setOnClickListener(this);
         }
 
         @Override
-        public boolean onLongClick(View v) {
+        public void onClick(View v) {
             mOnEventItemClick.OnItemClick(getItem(getAdapterPosition()));
-            return true;
         }
     }
 
