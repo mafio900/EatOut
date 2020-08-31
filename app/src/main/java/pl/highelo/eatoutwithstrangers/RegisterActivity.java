@@ -9,7 +9,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -20,6 +22,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthEmailException;
@@ -32,15 +36,14 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class Register extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
-    private static final String TAG = "Register";
+public class RegisterActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
+    private static final String TAG = "RegisterActivity";
     private Toolbar mToolbar;
 
-    private EditText mFirstName, mEmail, mPassword, mCity, mBirthDate;
-    private Button mRegisterBtn, mBirthDateButton;
+    private TextInputLayout mFirstName, mEmail, mPassword, mCity, mBirthDate;
+    private Button mRegisterBtn;
     private FirebaseAuth mAuth;
     private ProgressBar mProgressBar;
-    private TextView mLogin;
     private FirebaseFirestore mFirestore;
     String userID;
     String date = "";
@@ -50,8 +53,11 @@ public class Register extends AppCompatActivity implements DatePickerDialog.OnDa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+        setupUI(findViewById(R.id.parent));
+
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mAuth = FirebaseAuth.getInstance();
         mAuth.useAppLanguage();
@@ -62,19 +68,17 @@ public class Register extends AppCompatActivity implements DatePickerDialog.OnDa
             finish();
         }
 
-        mFirstName = (EditText) findViewById(R.id.nameRgET);
-        mEmail = (EditText) findViewById(R.id.emailRgET);
-        mPassword = (EditText) findViewById(R.id.passwordRgET);
-        mCity = (EditText) findViewById(R.id.cityRgET);
+        mFirstName = (TextInputLayout) findViewById(R.id.nameRgET);
+        mEmail = (TextInputLayout) findViewById(R.id.emailRgET);
+        mPassword = (TextInputLayout) findViewById(R.id.passwordRgET);
+        mCity = (TextInputLayout) findViewById(R.id.cityRgET);
         mRegisterBtn = (Button) findViewById(R.id.registerRgBT);
-        mBirthDate = (EditText) findViewById(R.id.birthDateRgET);
-        mBirthDateButton = (Button) findViewById(R.id.setBirthDateRgButton);
+        mBirthDate = (TextInputLayout) findViewById(R.id.birthDateRgET);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBarRg);
-        mLogin = (TextView) findViewById(R.id.loginRgTV);
 
-        mBirthDateButton.setOnClickListener(new View.OnClickListener() {
+        mBirthDate.getEditText().setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 showDatePickerDialog();
             }
         });
@@ -82,10 +86,10 @@ public class Register extends AppCompatActivity implements DatePickerDialog.OnDa
         mRegisterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String email = mEmail.getText().toString().trim();
-                String password = mPassword.getText().toString().trim();
-                final String firstName = mFirstName.getText().toString().trim();
-                final String city = mCity.getText().toString().trim();
+                final String email = mEmail.getEditText().getText().toString().trim();
+                String password = mPassword.getEditText().getText().toString().trim();
+                final String firstName = mFirstName.getEditText().getText().toString().trim();
+                final String city = mCity.getEditText().getText().toString().trim();
                 boolean flag = true;
 
                 if(TextUtils.isEmpty(firstName) || firstName.length() < 3){
@@ -139,35 +143,27 @@ public class Register extends AppCompatActivity implements DatePickerDialog.OnDa
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if(task.isSuccessful()){
-                                            Toast.makeText(Register.this, R.string.account_created, Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(RegisterActivity.this, R.string.account_created, Toast.LENGTH_SHORT).show();
                                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                             finish();
                                         } else{
                                             mAuth.getCurrentUser().delete();
                                             mAuth.signOut();
-                                            Toast.makeText(Register.this, R.string.account_failure, Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(RegisterActivity.this, R.string.account_failure, Toast.LENGTH_SHORT).show();
                                             mProgressBar.setVisibility(View.INVISIBLE);
                                         }
                                     }
                                 });
                             }else{
                                 if(task.getException() instanceof FirebaseAuthEmailException)
-                                    Toast.makeText(Register.this, R.string.incorrect_email, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(RegisterActivity.this, R.string.incorrect_email, Toast.LENGTH_SHORT).show();
                                 else
-                                    Toast.makeText(Register.this, "Error! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(RegisterActivity.this, "Error! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                     mProgressBar.setVisibility(View.INVISIBLE);
                             }
                         }
                     });
                 }
-            }
-        });
-
-        mLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), Login.class));
-                finish();
             }
         });
     }
@@ -190,6 +186,26 @@ public class Register extends AppCompatActivity implements DatePickerDialog.OnDa
         SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-M-d", Locale.US);
         SimpleDateFormat newFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
         String newDate = CommonMethods.parseDate(date, oldFormat, newFormat);
-        mBirthDate.setText(newDate);
+        mBirthDate.getEditText().setText(newDate);
+    }
+
+    private void setupUI(View view) {
+        // Set up touch listener for non-text box views to hide keyboard.
+        if (!(view instanceof TextInputEditText)) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    CommonMethods.hideKeyboard(RegisterActivity.this);
+                    return false;
+                }
+            });
+        }
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View innerView = ((ViewGroup) view).getChildAt(i);
+                setupUI(innerView);
+            }
+        }
     }
 }

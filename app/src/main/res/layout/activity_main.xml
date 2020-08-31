@@ -6,16 +6,7 @@
     android:layout_height="match_parent"
     android:id="@+id/drawer_layout">
 
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        app:headerLayout="@layout/nav_header"
-        app:menu="@menu/menu_nav"
-        android:theme="@style/AppTheme">
-
-    </com.google.android.material.navigation.NavigationView>
+    <include layout="@layout/navigation_view" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -35,6 +26,7 @@
             android:layout_marginEnd="16dp"
             android:text="Witaj w aplikacji gdzie możesz tworzyć lub dołączać do spotkań na jedzenie z innymi ludźmi!"
             android:textSize="30sp"
+            android:textColor="@color/primary_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar" />

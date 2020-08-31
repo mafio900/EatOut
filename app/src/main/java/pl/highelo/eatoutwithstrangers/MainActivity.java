@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         toggle.syncState();
 
         mNavigationView.setNavigationItemSelectedListener(new NavbarInterface(this));
+
 
         mAuth = FirebaseAuth.getInstance();
         mAuth.useAppLanguage();

@@ -2,20 +2,14 @@ package pl.highelo.eatoutwithstrangers;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -38,7 +32,7 @@ public class CommonMethods {
 //                    if (e instanceof FirebaseAuthInvalidUserException) {
 //                        Toast.makeText(t, R.string.acc_deleted_or_failed, Toast.LENGTH_LONG).show();
 //                        FirebaseAuth.getInstance().signOut();
-//                        t.startActivity(new Intent(t.getApplicationContext(), Login.class));
+//                        t.startActivity(new Intent(t.getApplicationContext(), LoginActivity.class));
 //                        t.finish();
 //                    }
 //                }
@@ -59,20 +53,21 @@ public class CommonMethods {
     public static void checkIfBanned(final AppCompatActivity t){
         FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
         FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
-        String userID = mUser.getUid();
-
-        DocumentReference documentReference = mFirestore.collection("users").document(userID);
-        documentReference.addSnapshotListener(t, new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+        if(mUser != null){
+            String userID = mUser.getUid();
+            DocumentReference documentReference = mFirestore.collection("users").document(userID);
+            documentReference.addSnapshotListener(t, new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                     if(documentSnapshot.get("isBanned") == null || documentSnapshot.get("isBanned").toString().equals("true")){
-                    Toast.makeText(t, R.string.acc_banned, Toast.LENGTH_LONG).show();
-                    FirebaseAuth.getInstance().signOut();
-                    t.startActivity(new Intent(t.getApplicationContext(), Login.class));
-                    t.finish();
+                        Toast.makeText(t, R.string.acc_banned, Toast.LENGTH_LONG).show();
+                        FirebaseAuth.getInstance().signOut();
+                        t.startActivity(new Intent(t.getApplicationContext(), StartActivity.class));
+                        t.finish();
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     public static String parseDate(String inputDateString, SimpleDateFormat inputDateFormat, SimpleDateFormat outputDateFormat) {

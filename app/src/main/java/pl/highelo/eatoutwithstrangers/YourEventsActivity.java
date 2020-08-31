@@ -1,6 +1,7 @@
 package pl.highelo.eatoutwithstrangers;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -15,48 +16,44 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.firebase.ui.firestore.SnapshotParser;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
-import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import org.imperiumlabs.geofirestore.GeoFirestore;
-import org.imperiumlabs.geofirestore.GeoQuery;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
-public class YourEventsActivity extends AppCompatActivity implements EventsAdapter.OnEventItemClick {
+public class YourEventsActivity extends AppCompatActivity {
 
     private static final String TAG = "YourEventsActivity";
 
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private Toolbar mToolbar;
+    private FloatingActionButton mFloatingActionButton;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore mFirestore;
     private String mUserID;
 
     private RecyclerView mEventsList;
-    private EventsAdapter adapter;
+    private EventsAdapter mAdapter2;
+    private ArrayList<EventsModel> mEventsModelArrayList = new ArrayList<>();
 
     private TextView textView;
     private TextView emptyTV;
-    private int count = 0;
-    private List<DocumentSnapshot> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,12 +76,13 @@ public class YourEventsActivity extends AppCompatActivity implements EventsAdapt
         mNavigationView.setNavigationItemSelectedListener(new NavbarInterface(this));
         mNavigationView.setCheckedItem(R.id.nav_your_events);
 
-        mEventsList = findViewById(R.id.events_list);
-
         mAuth = FirebaseAuth.getInstance();
         mAuth.useAppLanguage();
         mFirestore = FirebaseFirestore.getInstance();
         mUserID = mAuth.getCurrentUser().getUid();
+
+        textView = findViewById(R.id.yourEventsTV);
+        emptyTV = findViewById(R.id.emptyEvents);
 
         CollectionReference collectionReference = mFirestore.collection("events");
 
@@ -104,61 +102,50 @@ public class YourEventsActivity extends AppCompatActivity implements EventsAdapt
                             if(diff <= 0){
                                 mFirestore.collection("events").document(document.getId()).update("isEnded", true);
                             }
+                            else{
+                                EventsModel ci = new EventsModel();
+                                ci.setPlaceName((String) document.get("placeName"));
+                                ci.setTheme((String) document.get("theme"));
+                                ci.setPlaceAddress((String) document.get("placeAddress"));
+                                ci.setDate((String) document.get("date"));
+                                ci.setTime((String) document.get("time"));
+                                mEventsModelArrayList.add(ci);
+                            }
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
                     }
+                    mAdapter2 = new EventsAdapter(mEventsModelArrayList);
+                    mAdapter2.setOnEventItemClick(new EventsAdapter.OnEventItemClick() {
+                        @Override
+                        public void OnItemClick(int position) {
+                            Intent intent = new Intent(YourEventsActivity.this, EditEventActivity.class);
+                            intent.putExtra("model", mEventsModelArrayList.get(position));
+                            startActivity(intent);
+                        }
+                    });
+                    mEventsList = findViewById(R.id.events_list);
+                    mEventsList.setLayoutManager(new LinearLayoutManager(YourEventsActivity.this));
+                    mEventsList.setAdapter(mAdapter2);
+                    changeVisibility();
                 } else {
                     Log.e(TAG, "Error getting documents: ", task.getException());
                 }
             }
         });
 
-        //Query
-        Query query = collectionReference.whereEqualTo("userID", mUserID).whereEqualTo("isEnded", false);
-        //Recycler options
-        FirestoreRecyclerOptions<EventsModel> options = new FirestoreRecyclerOptions.Builder<EventsModel>()
-                .setLifecycleOwner(this)
-                .setQuery(query, new SnapshotParser<EventsModel>() {
-                    @NonNull
-                    @Override
-                    public EventsModel parseSnapshot(@NonNull DocumentSnapshot snapshot) {
-                        EventsModel eventsModel = snapshot.toObject(EventsModel.class);
-                        eventsModel.setItemID(snapshot.getId());
-                        return eventsModel;
-                    }
-                })
-                .build();
-
-        adapter = new EventsAdapter(options, this);
-        Log.d(TAG, "onCreate: " + adapter.getItemCount());
-        mEventsList.setLayoutManager(new LinearLayoutManager(this));
-        mEventsList.setAdapter(adapter);
-        textView = findViewById(R.id.yourEventsTV);
-        emptyTV = findViewById(R.id.emptyEvents);
-
-        changeVisibility();
-        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+        mFloatingActionButton = (FloatingActionButton) findViewById(R.id.floatingActionButton);
+        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemRangeInserted(int positionStart, int itemCount) {
-                super.onItemRangeInserted(positionStart, itemCount);
-                count++;
-                if(count <= 1)
-                    changeVisibility();
-            }
-
-            @Override
-            public void onItemRangeRemoved(int positionStart, int itemCount) {
-                super.onItemRangeRemoved(positionStart, itemCount);
-                count--;
-                if(count == 0)
-                    changeVisibility();
+            public void onClick(View v) {
+                Intent intent = new Intent(YourEventsActivity.this, CreateEventActivity.class);
+                startActivity(intent);
             }
         });
     }
 
     private void changeVisibility(){
-        if(count == 0){
+        if(mEventsModelArrayList.size() == 0){
             textView.setVisibility(View.GONE);
             mEventsList.setVisibility(View.GONE);
             emptyTV.setVisibility(View.VISIBLE);
@@ -167,14 +154,6 @@ public class YourEventsActivity extends AppCompatActivity implements EventsAdapt
             mEventsList.setVisibility(View.VISIBLE);
             emptyTV.setVisibility(View.GONE);
         }
-    }
-
-    @Override
-    public void OnItemClick(EventsModel model) {
-        Log.d(TAG, "OnItemClick: item clicked " + model.getItemID());
-        Intent intent = new Intent(YourEventsActivity.this, EditEventActivity.class);
-        intent.putExtra("model", model);
-        startActivity(intent);
     }
 
     @Override

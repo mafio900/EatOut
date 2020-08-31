@@ -4,67 +4,63 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Login">
+    tools:context=".LoginActivity"
+    android:id="@+id/parent">
 
     <include
         layout="@layout/toolbar_main"
         android:id="@+id/toolbar"/>
 
-    <EditText
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/emailLgET"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:ems="10"
-        android:hint="@string/email"
-        android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/email"
+            android:inputType="textEmailAddress"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <EditText
+    <com.google.android.material.textfield.TextInputLayout
+        app:layout_constraintEnd_toEndOf="@+id/emailLgET"
+        app:layout_constraintStart_toStartOf="@+id/emailLgET"
+        app:layout_constraintTop_toBottomOf="@+id/emailLgET"
         android:id="@+id/passwordLgET"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:ems="10"
-        android:hint="@string/password"
-        android:inputType="textPassword"
-        app:layout_constraintEnd_toEndOf="@+id/emailLgET"
-        app:layout_constraintStart_toStartOf="@+id/emailLgET"
-        app:layout_constraintTop_toBottomOf="@+id/emailLgET" />
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/loginLgBT"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@color/primary"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
         android:text="@string/login"
+        android:textColor="@color/secondary_text"
         app:layout_constraintEnd_toEndOf="@+id/passwordLgET"
-        app:layout_constraintStart_toStartOf="@+id/passwordLgET"
         app:layout_constraintTop_toBottomOf="@+id/passwordLgET" />
-
-    <TextView
-        android:id="@+id/registerLgTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Jesteś tutaj poraz pierwszy? Zarejestruj się!"
-        app:layout_constraintEnd_toEndOf="@+id/loginLgBT"
-        app:layout_constraintStart_toStartOf="@+id/loginLgBT"
-        app:layout_constraintTop_toBottomOf="@+id/loginLgBT" />
-
-    <TextView
-        android:id="@+id/forgotPassLgTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Zapomniałeś hasła?"
-        app:layout_constraintEnd_toEndOf="@+id/registerLgTV"
-        app:layout_constraintStart_toStartOf="@+id/registerLgTV"
-        app:layout_constraintTop_toBottomOf="@+id/registerLgTV" />
 
     <ProgressBar
         android:id="@+id/progressBarLg"
@@ -73,8 +69,20 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="@+id/forgotPassLgTV"
-        app:layout_constraintStart_toStartOf="@+id/forgotPassLgTV"
-        app:layout_constraintTop_toBottomOf="@+id/forgotPassLgTV" />
+        app:layout_constraintEnd_toEndOf="@+id/loginLgBT"
+        app:layout_constraintStart_toStartOf="@+id/forgotPasswdLgBtn"
+        app:layout_constraintTop_toBottomOf="@+id/forgotPasswdLgBtn" />
+
+    <Button
+        android:id="@+id/forgotPasswdLgBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/accent"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:text="@string/forgot_password"
+        android:textColor="@color/secondary_text"
+        app:layout_constraintStart_toStartOf="@+id/passwordLgET"
+        app:layout_constraintTop_toTopOf="@+id/loginLgBT" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

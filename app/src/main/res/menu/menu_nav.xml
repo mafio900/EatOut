@@ -3,6 +3,7 @@
 
     <group android:checkableBehavior="single">
         <item android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home"
             android:title="@string/main_page"/>
 
         <item android:title="@string/events">
@@ -16,12 +17,8 @@
                         android:icon="@drawable/ic_your_events"
                         android:title="@string/joined_events"/>
 
-                    <item android:id="@+id/nav_create_event"
-                        android:icon="@drawable/ic_create_event"
-                        android:title="@string/create_own_event"/>
-
                     <item android:id="@+id/nav_your_events"
-                        android:icon="@drawable/ic_your_events"
+                        android:icon="@drawable/ic_create_event"
                         android:title="@string/your_events"/>
                 </group>
             </menu>

@@ -1,16 +1,15 @@
 package pl.highelo.eatoutwithstrangers;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -29,7 +28,6 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -52,8 +50,6 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
     public static final int ERROR_DIALOG_REQUEST = 9001;
     public static final int LOCATION_REQUEST_CODE = 1000;
 
-    private DrawerLayout mDrawerLayout;
-    private NavigationView mNavigationView;
     private Toolbar mToolbar;
 
     private TextView mName, mAddress, mEventDate, mMaxPeopleTextView;
@@ -69,6 +65,7 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
     int maxPeople = 10, peopleStep = 1;
     int currentPeople;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,19 +74,9 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
 
         setContentView(R.layout.activity_create_event);
 
-        mDrawerLayout = findViewById(R.id.drawer_layout);
-        mNavigationView = findViewById(R.id.nav_view);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        mNavigationView.bringToFront();
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                mToolbar,
-                R.string.nav_open_drawer,
-                R.string.nav_close_drawer);
-        mDrawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-        mNavigationView.setNavigationItemSelectedListener(new NavbarInterface(this));
-        mNavigationView.setCheckedItem(R.id.nav_create_event);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mName = findViewById(R.id.placeName);
         mAddress = findViewById(R.id.placeAddress);
@@ -101,6 +88,7 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
         mMaxPeopleTextView = (TextView) findViewById(R.id.maxPopleTextView);
         mMaxPeopleSeekBar.setProgress(1);
         mMaxPeopleSeekBar.setMax(maxPeople / peopleStep);
+        mMaxPeopleSeekBar.setMin(1);
         mMaxPeopleSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -279,16 +267,6 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
                     Toast.makeText(CreateEventActivity.this, "Błąd przy tworzeniu wydarzenia", Toast.LENGTH_LONG).show();
                 }
             });
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-        }
-        else{
-            super.onBackPressed();
         }
     }
 }

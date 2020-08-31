@@ -6,15 +6,18 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class ForgotPassword extends AppCompatActivity {
@@ -22,29 +25,36 @@ public class ForgotPassword extends AppCompatActivity {
     private Toolbar mToolbar;
 
     private FirebaseAuth mAuth;
-    private EditText mEmail;
+    private TextInputLayout mEmail;
     private Button mResetBtn;
     private ProgressBar mProgressBar;
-    private TextView mBackToLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
 
+        setupUI(findViewById(R.id.parent));
+
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mAuth = FirebaseAuth.getInstance();
-        mEmail = (EditText) findViewById(R.id.emailFpET);
+        mEmail = (TextInputLayout) findViewById(R.id.emailFpET);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBarFp);
         mResetBtn = (Button) findViewById(R.id.resetButton);
-        mBackToLogin = (TextView) findViewById(R.id.backToLoginFpTV);
 
         mResetBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = mEmail.getText().toString().trim();
+                //CommonMethods.hideKeyboard(ForgotPassword.this);
+                String email = mEmail.getEditText().getText().toString().trim();
+
+                if(TextUtils.isEmpty(email)){
+                    mEmail.setError("Email jest wymagany");
+                    return;
+                }
 
                 mProgressBar.setVisibility(View.VISIBLE);
 
@@ -52,25 +62,37 @@ public class ForgotPassword extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()){
-                            Toast.makeText(ForgotPassword.this, "Wysłano wiadomość pod podany e-mail", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(getApplicationContext(), Login.class));
+                            Toast.makeText(ForgotPassword.this, "Wysłano wiadomość pod podany e-mail", Toast.LENGTH_LONG).show();
+                            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                             finish();
                         }else{
-                            Toast.makeText(ForgotPassword.this, R.string.error_email, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ForgotPassword.this, R.string.error_email, Toast.LENGTH_LONG).show();
                             mProgressBar.setVisibility(View.INVISIBLE);
                         }
                     }
                 });
             }
         });
+    }
 
-        mBackToLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), Login.class));
-                finish();
+    private void setupUI(View view) {
+
+        // Set up touch listener for non-text box views to hide keyboard.
+        if (!(view instanceof TextInputEditText)) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    CommonMethods.hideKeyboard(ForgotPassword.this);
+                    return false;
+                }
+            });
+        }
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View innerView = ((ViewGroup) view).getChildAt(i);
+                setupUI(innerView);
             }
-        });
-
+        }
     }
 }

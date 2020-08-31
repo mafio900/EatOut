@@ -32,12 +32,6 @@ public class NavbarInterface implements NavigationView.OnNavigationItemSelectedL
                     t.finish();
                 }
                 break;
-            case R.id.nav_create_event:
-                if(!(t instanceof CreateEventActivity)){
-                    t.startActivity(new Intent(t.getApplicationContext(), CreateEventActivity.class));
-                    t.finish();
-                }
-                break;
             case R.id.nav_your_events:
                 if(!(t instanceof YourEventsActivity)){
                     t.startActivity(new Intent(t.getApplicationContext(), YourEventsActivity.class));
@@ -58,7 +52,7 @@ public class NavbarInterface implements NavigationView.OnNavigationItemSelectedL
                 break;
             case R.id.nav_logout:
                 FirebaseAuth.getInstance().signOut();
-                t.startActivity(new Intent(t.getApplicationContext(), Login.class));
+                t.startActivity(new Intent(t.getApplicationContext(), StartActivity.class));
                 t.finish();
                 break;
         }
