@@ -27,6 +27,9 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthEmailException;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -58,6 +61,7 @@ public class RegisterActivity extends AppCompatActivity implements DatePickerDia
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.signing_in);
 
         mAuth = FirebaseAuth.getInstance();
         mAuth.useAppLanguage();
@@ -150,17 +154,28 @@ public class RegisterActivity extends AppCompatActivity implements DatePickerDia
                                             mAuth.getCurrentUser().delete();
                                             mAuth.signOut();
                                             Toast.makeText(RegisterActivity.this, R.string.account_failure, Toast.LENGTH_SHORT).show();
-                                            mProgressBar.setVisibility(View.INVISIBLE);
                                         }
                                     }
                                 });
                             }else{
-                                if(task.getException() instanceof FirebaseAuthEmailException)
-                                    Toast.makeText(RegisterActivity.this, R.string.incorrect_email, Toast.LENGTH_SHORT).show();
-                                else
-                                    Toast.makeText(RegisterActivity.this, "Error! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                    mProgressBar.setVisibility(View.INVISIBLE);
+                                if(!task.isSuccessful()) {
+                                    try {
+                                        throw task.getException();
+                                    } catch(FirebaseAuthWeakPasswordException e) {
+                                        mPassword.setError("Podane hasło jest za słabe");
+                                        mPassword.requestFocus();
+                                    } catch(FirebaseAuthInvalidCredentialsException e) {
+                                        mEmail.setError("Niepoprawny e-mail");
+                                        mEmail.requestFocus();
+                                    } catch(FirebaseAuthUserCollisionException e) {
+                                        mEmail.setError("Podany e-mail już istnieje");
+                                        mEmail.requestFocus();
+                                    } catch(Exception e) {
+                                        Log.e(TAG, e.getMessage());
+                                    }
+                                }
                             }
+                            mProgressBar.setVisibility(View.INVISIBLE);
                         }
                     });
                 }

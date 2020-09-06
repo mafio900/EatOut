@@ -9,19 +9,22 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AbsListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -37,10 +40,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class SearchEventActivity extends AppCompatActivity {
     private static final String TAG = "SearchEventActivity";
+
+    private static final String SHARED_PREFS = "sharedPrefs";
+    private static final String DISTANCE = "distance";
 
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
@@ -51,8 +58,12 @@ public class SearchEventActivity extends AppCompatActivity {
     private String mUserID;
 
     private RecyclerView mEventsList;
-    private EventsAdapter mAdapter2;
-
+    private LinearLayoutManager mLinearLayoutManager;
+    private EventsAdapter mAdapter;
+    private DocumentSnapshot mLastVisible;
+    private boolean mIsScrolling;
+    private boolean mIsLastItemReached = false;
+    private static final int PAGINATION_LIMIT = 6;
     private ArrayList<EventsModel> mEventsModelArrayList = new ArrayList<>();
 
     @Override
@@ -84,52 +95,105 @@ public class SearchEventActivity extends AppCompatActivity {
         mFirestore = FirebaseFirestore.getInstance();
         mUserID = mAuth.getCurrentUser().getUid();
 
+        mEventsList = findViewById(R.id.events_list);
+        mLinearLayoutManager = new LinearLayoutManager(this);
+        mEventsList.setLayoutManager(mLinearLayoutManager);
+
         //Query
         CollectionReference collectionReference = mFirestore.collection("events");
         GeoFirestore geoFirestore = new GeoFirestore(collectionReference);
-        GeoQuery geoQuery = geoFirestore.queryAtLocation(new GeoPoint(51.7211, 18.1021), 10.0);
-        Query query = geoQuery.getQueries().get(0).whereEqualTo("isEnded", false);
-        //Recycler options
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+
+        GeoQuery geoQuery = geoFirestore.queryAtLocation(new GeoPoint(51.7211, 18.1021), sharedPreferences.getInt(DISTANCE, 10));
+        final Query mainQuery = geoQuery.getQueries().get(0);
+        Query query = mainQuery.limit(PAGINATION_LIMIT);
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
+                if(task.isSuccessful() && task.getResult().size() > 0){
                     for(DocumentSnapshot document : task.getResult()){
-                        String d = document.getString("date");
-                        String t = document.getString("time");
-                        String dt = d + " " + t;
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.US);
-                        try {
-                            Date ed = simpleDateFormat.parse(dt);
-                            Date cd = new Date();
-                            long diff = ed.getTime() - cd.getTime();
+                        if(!mUserID.equals(document.get("userID"))){
+                            Timestamp currentTime = Timestamp.now();
+                            Timestamp documentTime = document.getTimestamp("timeStamp");
+                            long diff = documentTime.getSeconds() - currentTime.getSeconds();
                             if(diff <= 0){
-                                mFirestore.collection("events").document(document.getId()).update("isEnded", true);
+                                mFirestore.collection("events").document(document.getId()).delete();
                             }
                             else{
-                                EventsModel ci = new EventsModel();
-                                ci.setPlaceName((String) document.get("placeName"));
-                                ci.setTheme((String) document.get("theme"));
-                                ci.setPlaceAddress((String) document.get("placeAddress"));
-                                ci.setDate((String) document.get("date"));
-                                ci.setTime((String) document.get("time"));
+                                EventsModel ci = document.toObject(EventsModel.class);
+                                ci.setItemID(document.getId());
                                 mEventsModelArrayList.add(ci);
                             }
-                        } catch (ParseException e) {
-                            e.printStackTrace();
                         }
                     }
-                    mEventsList = findViewById(R.id.events_list);
-                    mAdapter2 = new EventsAdapter(mEventsModelArrayList);
-                    mAdapter2.setOnEventItemClick(new EventsAdapter.OnEventItemClick() {
+                    mAdapter = new EventsAdapter(mEventsModelArrayList);
+                    mAdapter.setOnEventItemClick(new EventsAdapter.OnEventItemClick() {
                         @Override
                         public void OnItemClick(int position) {
-                            //todo
-                            //Napisać Activity gdzie będzie podgląd eventu
+                            Intent preview = new Intent(SearchEventActivity.this, EventPreviewActivity.class);
+                            preview.putExtra("itemID", mEventsModelArrayList.get(position).getItemID());
+                            startActivity(preview);
                         }
                     });
-                    mEventsList.setLayoutManager(new LinearLayoutManager(SearchEventActivity.this));
-                    mEventsList.setAdapter(mAdapter2);
+                    mEventsList.setAdapter(mAdapter);
+
+                    mLastVisible = task.getResult().getDocuments()
+                            .get(task.getResult().size() -1);
+
+                    RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
+                        @Override
+                        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                            super.onScrollStateChanged(recyclerView, newState);
+                            if(newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+                                mIsScrolling = true;
+                            }
+                        }
+
+                        @Override
+                        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                            super.onScrolled(recyclerView, dx, dy);
+
+                            int firstVisibleItem = mLinearLayoutManager.findFirstVisibleItemPosition();
+                            int visibleItemCount = mLinearLayoutManager.getChildCount();
+                            int totalItemCount = mLinearLayoutManager.getItemCount();
+
+                            if(mIsScrolling && (firstVisibleItem + visibleItemCount == totalItemCount) && !mIsLastItemReached){
+                                mIsScrolling = false;
+
+                                Query nextQuery = mainQuery.startAfter(mLastVisible).limit(PAGINATION_LIMIT);
+                                nextQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if(task.isSuccessful() && task.getResult().size() > 0){
+                                            for(DocumentSnapshot document : task.getResult()){
+                                                if(!mUserID.equals(document.get("userID"))){
+                                                    Timestamp currentTime = Timestamp.now();
+                                                    Timestamp documentTime = document.getTimestamp("timeStamp");
+                                                    long diff = documentTime.getSeconds() - currentTime.getSeconds();
+                                                    if(diff <= 0){
+                                                        mFirestore.collection("events").document(document.getId()).delete();
+                                                    }
+                                                    else{
+                                                        EventsModel ci = document.toObject(EventsModel.class);
+                                                        ci.setItemID(document.getId());
+                                                        mEventsModelArrayList.add(ci);
+                                                    }
+                                                }
+                                            }
+                                            mAdapter.notifyDataSetChanged();
+                                            mAdapter.setEventsListFull(mEventsModelArrayList);
+                                            mLastVisible = task.getResult().getDocuments()
+                                                    .get(task.getResult().size() -1);
+                                            if(task.getResult().size() < PAGINATION_LIMIT){
+                                                mIsLastItemReached = true;
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    };
+                    mEventsList.setOnScrollListener(onScrollListener);
                 }
             }
         });
@@ -152,7 +216,7 @@ public class SearchEventActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 CommonMethods.hideKeyboard(SearchEventActivity.this);
-                mAdapter2.getFilter().filter(query);
+                mAdapter.getFilter().filter(query);
                 return true;
             }
 
@@ -166,7 +230,7 @@ public class SearchEventActivity extends AppCompatActivity {
             public boolean onClose() {
                 CommonMethods.hideKeyboard(SearchEventActivity.this);
                 menu.findItem(R.id.app_bar_search).collapseActionView();
-                mAdapter2.getFilter().filter("");
+                mAdapter.getFilter().filter("");
                 return true;
             }
         });
@@ -176,7 +240,7 @@ public class SearchEventActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.app_bar_settings) {
-            Toast.makeText(this, "Ustawienia", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, SearchEventSettingsActivity.class));
         }
         return true;
     }

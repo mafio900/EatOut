@@ -28,7 +28,7 @@
     <string name="description">Opis</string>
     <string name="set">Ustaw</string>
     <string name="save_changes">Zapisz zmiany</string>
-    <string name="edit_profile">Edycja profilu</string>
+    <string name="editing_profile">Edycja profilu</string>
     <string name="set_old_password">Podaj stare hasło</string>
     <string name="set_new_password">Podaj nowe hasło</string>
     <string name="profile_picture">Zdjęcie profilowe</string>
@@ -62,4 +62,21 @@
     <string name="create_event_successful">Wydarzenie stworzone poprawnie</string>
     <string name="confirm_password">Powtórz hasło</string>
     <string name="forgot_password">Zapomniałeś hasła?</string>
+    <string name="loging_in">Logowanie</string>
+    <string name="signing_in">Rejestracja</string>
+    <string name="edit_profile">Edytuj profil</string>
+    <string name="name_must_have_three_letters">Musisz podać imię o długości co najmniej 3 znaków</string>
+    <string name="city_must_have_three_letters">Musisz podać swoją miejscowość o długości co najmniej 3 znaków</string>
+    <string name="need_set_birthdate">Musisz podać swoją datę urodzenia!</string>
+    <string name="profile_preview">Podgląd profilu</string>
+    <string name="info_about_event">Informacje o wydarzeniu</string>
+    <string name="event_created_by">Spotkanie stworzone przez:</string>
+    <string name="theme_preview">Temat</string>
+    <string name="place_preview">Miejsce</string>
+    <string name="date_of_begining_preview">Data rozpoczęcia</string>
+    <string name="max_people_preview">Maksymalna liczba ludzi</string>
+    <string name="already_joined_preview">Obecnie dołączyło</string>
+    <string name="join_event">Dołącz do spotkania</string>
+    <string name="leave_event">Opuść spotkanie</string>
+    <string name="cancel_request">Anuluj prośbę</string>
 </resources>

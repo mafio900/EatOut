@@ -70,6 +70,12 @@ public class MapActivity extends AppCompatActivity {
         getLocationPermissions();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Places.deinitialize();
+    }
+
     private void init(){
         mMyLocationIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,7 +87,7 @@ public class MapActivity extends AppCompatActivity {
             Places.initialize(getApplicationContext(), getString(R.string.google_maps_key));
             AutocompleteSupportFragment autocompleteSupportFragment = (AutocompleteSupportFragment) getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
             autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG));
-            autocompleteSupportFragment.setCountries("PL");
+            autocompleteSupportFragment.setCountry("PL");
             autocompleteSupportFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
                 @Override
                 public void onPlaceSelected(@NonNull Place place) {
@@ -107,7 +113,6 @@ public class MapActivity extends AppCompatActivity {
                     result.putExtra("placeAddress", mSelectedPlace.getAddress());
                     result.putExtra("placeLatLng", mSelectedPlace.getLatLng().latitude + "," + mSelectedPlace.getLatLng().longitude);
                     setResult(RESULT_OK, result);
-                    Places.deinitialize();
                     finish();
                 }
             }

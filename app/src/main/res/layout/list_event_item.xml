@@ -6,6 +6,16 @@
     android:layout_height="wrap_content">
 
     <TextView
+        android:id="@+id/eventTheme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Temat wydarzenia"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
         android:id="@+id/eventName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -22,16 +32,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/eventName"
         tools:text="Adres wydarzenia" />
-
-    <TextView
-        android:id="@+id/eventTheme"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Temat wydarzenia"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/eventDate"

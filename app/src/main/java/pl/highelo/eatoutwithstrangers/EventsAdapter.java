@@ -10,10 +10,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
-public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventsViewHolder2> implements Filterable {
+public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventsViewHolder> implements Filterable {
 
     private ArrayList<EventsModel> mEventsList;
     private ArrayList<EventsModel> mEventsListFull;
@@ -24,21 +29,35 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventsView
         mEventsListFull = new ArrayList<>(eventsList);
     }
 
+    public void setEventsListFull(ArrayList<EventsModel> arrayList){
+        mEventsListFull = new ArrayList<>(arrayList);
+    }
+
     @NonNull
     @Override
-    public EventsViewHolder2 onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public EventsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_event_item, parent, false);
-        return new EventsAdapter.EventsViewHolder2(view, mOnEventItemClick);
+        return new EventsViewHolder(view, mOnEventItemClick);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull EventsViewHolder2 holder, int position) {
+    public void onBindViewHolder(@NonNull EventsViewHolder holder, int position) {
         EventsModel currentItem = mEventsList.get(position);
 
         holder.eventTheme.setText("Temat: " + currentItem.getTheme());
         holder.eventName.setText("Miejsce: " + currentItem.getPlaceName());
         holder.eventAddress.setText(currentItem.getPlaceAddress());
-        holder.eventDate.setText("Data rozpoczęcia: " + currentItem.getDate() + " " + currentItem.getTime());
+        GregorianCalendar d = new GregorianCalendar(TimeZone.getTimeZone("Europe/Warsaw"));
+        d.setTime(currentItem.getTimeStamp().toDate());
+        String date = d.get(Calendar.DAY_OF_MONTH)+"."
+                +(d.get(Calendar.MONTH)+1)+"."
+                +d.get(Calendar.YEAR)+" "
+                +d.get(Calendar.HOUR_OF_DAY)+":"
+                +d.get(Calendar.MINUTE);
+        SimpleDateFormat oldFormat = new SimpleDateFormat("d.M.yyyy H:m", Locale.US);
+        SimpleDateFormat newFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.US);
+        String newDate = CommonMethods.parseDate(date, oldFormat, newFormat);
+        holder.eventDate.setText("Data rozpoczęcia: " + newDate);
     }
 
     @Override
@@ -79,11 +98,11 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventsView
         }
     };
 
-    public class EventsViewHolder2 extends RecyclerView.ViewHolder {
+    public static class EventsViewHolder extends RecyclerView.ViewHolder {
 
         private TextView eventTheme, eventName, eventAddress, eventDate;
 
-        public EventsViewHolder2(@NonNull View itemView, final OnEventItemClick listener) {
+        public EventsViewHolder(@NonNull View itemView, final OnEventItemClick listener) {
             super(itemView);
             eventTheme = itemView.findViewById(R.id.eventTheme);
             eventName = itemView.findViewById(R.id.eventName);

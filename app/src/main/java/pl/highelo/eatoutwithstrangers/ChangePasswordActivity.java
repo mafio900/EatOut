@@ -9,7 +9,9 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -17,6 +19,8 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,7 +33,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
     private NavigationView mNavigationView;
     private Toolbar mToolbar;
 
-    private EditText mOldPassword, mNewPassword;
+    private TextInputLayout mOldPassword, mNewPassword;
     private Button mSaveButton;
 
     FirebaseAuth mAuth;
@@ -42,6 +46,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
         CommonMethods.checkIfBanned(this);
 
         setContentView(R.layout.activity_change_password);
+
+        //setupUI(findViewById(R.id.parent));
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mNavigationView = findViewById(R.id.nav_view);
@@ -60,8 +66,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
         mAuth.useAppLanguage();
         mUser = mAuth.getCurrentUser();
 
-        mOldPassword = (EditText) findViewById(R.id.oldPasswordET);
-        mNewPassword = (EditText) findViewById(R.id.newPasswordET);
+        mOldPassword = (TextInputLayout) findViewById(R.id.change_old_password);
+        mNewPassword = (TextInputLayout) findViewById(R.id.change_new_password);
         mSaveButton = (Button) findViewById(R.id.saveButton);
 
         mSaveButton.setOnClickListener(new View.OnClickListener() {
@@ -69,14 +75,14 @@ public class ChangePasswordActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(mUser != null){
                     AuthCredential credential = EmailAuthProvider
-                            .getCredential(mUser.getEmail(), mOldPassword.getText().toString());
+                            .getCredential(mUser.getEmail(), mOldPassword.getEditText().getText().toString());
 
                     mUser.reauthenticate(credential)
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-                                        mUser.updatePassword(mNewPassword.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        mUser.updatePassword(mNewPassword.getEditText().getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if (task.isSuccessful()) {
@@ -107,6 +113,26 @@ public class ChangePasswordActivity extends AppCompatActivity {
         }
         else{
             super.onBackPressed();
+        }
+    }
+
+    private void setupUI(View view) {
+        // Set up touch listener for non-text box views to hide keyboard.
+        if (!(view instanceof TextInputEditText)) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    CommonMethods.hideKeyboard(ChangePasswordActivity.this);
+                    return false;
+                }
+            });
+        }
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View innerView = ((ViewGroup) view).getChildAt(i);
+                setupUI(innerView);
+            }
         }
     }
 }

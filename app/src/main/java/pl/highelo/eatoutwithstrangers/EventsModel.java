@@ -3,48 +3,38 @@ package pl.highelo.eatoutwithstrangers;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.firebase.firestore.GeoPoint;
-
-import org.imperiumlabs.geofirestore.core.GeoHash;
+import com.google.firebase.Timestamp;
 
 public class EventsModel implements Parcelable {
     private String itemID;
     private String placeName;
     private String placeAddress;
-    private GeoHash placeGeoHash;
-    private GeoPoint placeLatLng;
-    private String date;
-    private String time;
     private String theme;
     private int maxPeople;
+    private int joinedPeople;
     private String userID;
-    private boolean isEnded;
+    private Timestamp timeStamp;
 
     public EventsModel(){}
 
-    public EventsModel(String itemID, String placeName, String placeAddress, GeoPoint placeLatLng, String date, String time, String theme, int maxPeople, String userID, boolean isEnded) {
+    public EventsModel(String itemID, String placeName, String placeAddress, String theme, int maxPeople, String userID, Timestamp timeStamp) {
         this.itemID = itemID;
         this.placeName = placeName;
         this.placeAddress = placeAddress;
-        this.placeLatLng = placeLatLng;
-        this.date = date;
-        this.time = time;
         this.theme = theme;
         this.maxPeople = maxPeople;
         this.userID = userID;
-        this.isEnded = isEnded;
+        this.timeStamp = timeStamp;
     }
 
     protected EventsModel(Parcel in) {
         itemID = in.readString();
         placeName = in.readString();
         placeAddress = in.readString();
-        date = in.readString();
-        time = in.readString();
         theme = in.readString();
         maxPeople = in.readInt();
         userID = in.readString();
-        isEnded = in.readByte() != 0;
+        timeStamp = new Timestamp(in.readLong(), 0);
     }
 
     public static final Creator<EventsModel> CREATOR = new Creator<EventsModel>() {
@@ -83,38 +73,6 @@ public class EventsModel implements Parcelable {
         this.placeAddress = placeAddress;
     }
 
-    public GeoPoint getPlaceLatLng() {
-        return placeLatLng;
-    }
-
-    public void setPlaceLatLng(GeoPoint placeLatLng) {
-        this.placeLatLng = placeLatLng;
-    }
-
-    public GeoHash getPlaceGeoHash() {
-        return placeGeoHash;
-    }
-
-    public void setPlaceGeoHash(GeoHash placeGeoHash) {
-        this.placeGeoHash = placeGeoHash;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
     public String getTheme() {
         return theme;
     }
@@ -139,12 +97,20 @@ public class EventsModel implements Parcelable {
         this.userID = userID;
     }
 
-    public boolean isEnded() {
-        return isEnded;
+    public Timestamp getTimeStamp() {
+        return timeStamp;
     }
 
-    public void setEnded(boolean ended) {
-        isEnded = ended;
+    public void setTimeStamp(Timestamp timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    public int getJoinedPeople() {
+        return joinedPeople;
+    }
+
+    public void setJoinedPeople(int joinedPeople) {
+        this.joinedPeople = joinedPeople;
     }
 
     @Override
@@ -157,11 +123,9 @@ public class EventsModel implements Parcelable {
         dest.writeString(itemID);
         dest.writeString(placeName);
         dest.writeString(placeAddress);
-        dest.writeString(date);
-        dest.writeString(time);
         dest.writeString(theme);
         dest.writeInt(maxPeople);
         dest.writeString(userID);
-        dest.writeByte((byte) (isEnded ? 1 : 0));
+        dest.writeLong(timeStamp.getSeconds());
     }
 }

@@ -10,15 +10,20 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,64 +41,51 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class ProfileActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
+import id.zelory.compressor.Compressor;
+
+public class ProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "ProfileActivity";
 
-    private static final int TAKE_IMAGE_CODE = 1001;
-    public static final String FIRSTNAME = "FIRSTNAME";
-    public static final String FETCH_DATA = "FETCH_DATA";
-    public static final String EMAIL = "EMAIL";
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private Toolbar mToolbar;
-    private ImageView mProfileImageView, mEditButton;
-    private EditText mFirstName, mDescription, mBirthDate, mCity;
-    private TextView mEmail;
-    private Button mBirthDateBtn;
+
+    private TextView mProfileName, mProfileAge, mProfileCity, mProfileDescription;
+    private ImageView mProfileImageView;
     private Uri mSelectedImage;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore mFirestore;
     private FirebaseStorage mStorage;
     private StorageReference mStorageReference;
-    private String date;
     private String mUserID;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         CommonMethods.checkIfBanned(this);
-
         setContentView(R.layout.activity_profile);
-
-        mProfileImageView = (ImageView) findViewById(R.id.profileImageView);
-        mFirstName = (EditText) findViewById(R.id.nameProfilET);
-        mDescription = (EditText) findViewById(R.id.descriptionMT);
-        mBirthDate = (EditText) findViewById(R.id.birthDateET);
-        mBirthDateBtn = (Button) findViewById(R.id.setBirthDateBtn);
-        mEmail = (TextView) findViewById(R.id.emailTV);
-        mCity = (EditText) findViewById(R.id.cityET);
-        mEditButton = (ImageView) findViewById(R.id.editButton);
-
-        mAuth = FirebaseAuth.getInstance();
-        mAuth.useAppLanguage();
-        mFirestore = FirebaseFirestore.getInstance();
-        mStorage = FirebaseStorage.getInstance();
-        mStorageReference = mStorage.getReference();
-        mUserID = mAuth.getCurrentUser().getUid();
-
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mNavigationView = findViewById(R.id.nav_view);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mToolbar.setTitle(R.string.edit_profile);
+        mToolbar.setTitle(R.string.your_profile);
         setSupportActionBar(mToolbar);
         mNavigationView.bringToFront();
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout,
@@ -103,153 +95,121 @@ public class ProfileActivity extends AppCompatActivity implements DatePickerDial
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         mNavigationView.setNavigationItemSelectedListener(new NavbarInterface(this));
-
-        mBirthDateBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePickerDialog();
-            }
-        });
         mNavigationView.setCheckedItem(R.id.nav_profile);
 
-        if(savedInstanceState == null || savedInstanceState.getBoolean(FETCH_DATA)){
-            DocumentReference documentReference = mFirestore.collection("users").document(mUserID);
-            documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
-                @Override
-                public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                    mFirstName.setText(documentSnapshot.get("fName").toString());
-                    mEmail.setText(documentSnapshot.get("email").toString());
-                    mCity.setText(documentSnapshot.get("city").toString());
-                    mBirthDate.setText(documentSnapshot.get("birthDate").toString());
-                    mDescription.setText(documentSnapshot.get("description").toString());
-                }
-            });
+        mProfileImageView = (ImageView) findViewById(R.id.profile_image);
+        mProfileName = (TextView) findViewById(R.id.profile_name);
+        mProfileAge = (TextView) findViewById(R.id.profile_age);
+        mProfileCity = (TextView) findViewById(R.id.profile_city);
+        mProfileDescription = (TextView) findViewById(R.id.profile_description);
 
-            StorageReference imageRef = mStorageReference.child("profile_images/" + mUserID + "/profile_image");
-            imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-                    Glide.with(ProfileActivity.this)
-                            .load(uri)
-                            .placeholder(R.drawable.ic_image)
-                            .into(mProfileImageView);
-                }
-            });
-        }
+        mAuth = FirebaseAuth.getInstance();
+        mFirestore = FirebaseFirestore.getInstance();
+        mStorage = FirebaseStorage.getInstance();
+        mStorageReference = mStorage.getReference();
+        mUserID = mAuth.getCurrentUser().getUid();
 
-        mEditButton.setOnClickListener(new View.OnClickListener() {
+        mProfileImageView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                handleUpdate();
+            public void onClick(View view) {
+                imageClick();
+            }
+        });
+
+        StorageReference imageRef = mStorageReference.child("profile_images/" + mUserID + "/profile_image");
+        imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+            Glide.with(ProfileActivity.this)
+                    .load(uri)
+                    .placeholder(R.drawable.ic_person)
+                    .into(mProfileImageView);
+            }
+        });
+        DocumentReference documentReference = mFirestore.collection("users").document(mUserID);
+        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                mProfileName.setText(documentSnapshot.get("fName").toString() + ",");
+                mProfileAge.setText(String.valueOf(CommonMethods.getAge(documentSnapshot.get("birthDate").toString())));
+                mProfileCity.setText("Mieszka w " + documentSnapshot.get("city").toString());
+                mProfileDescription.setText(documentSnapshot.get("description").toString());
             }
         });
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_profile, menu);
+        return true;
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putBoolean(FETCH_DATA, false);
-        outState.putString(EMAIL, mEmail.getText().toString());
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        mEmail.setText(savedInstanceState.getString(EMAIL));
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.app_bar_edit) {
+            startActivity(new Intent(ProfileActivity.this, EditProfileActivity.class));
+        }
+        return true;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == TAKE_IMAGE_CODE){
-            switch (resultCode){
-                case RESULT_OK:
-                    mSelectedImage = data.getData();
-                    mProfileImageView.setImageURI(mSelectedImage);
-                    break;
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                mSelectedImage = result.getUri();
+                mProfileImageView.setImageURI(mSelectedImage);
+                handleUpdate();
             }
         }
     }
 
-    @Override
-    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        date = year + "-" + (month+1) + "-" + dayOfMonth;
-        SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-M-d", Locale.US);
-        SimpleDateFormat newFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
-        String newDate = CommonMethods.parseDate(date, oldFormat, newFormat);
-        mBirthDate.setText(newDate);
-    }
-
-    private void showDatePickerDialog(){
-        String[] date = mBirthDate.getText().toString().split("\\.");
-        Log.d(TAG, "showDatePickerDialog: " + date.length);
-        DatePickerDialog datePickerDialog = new DatePickerDialog(
-                this,
-                this,
-                Integer.parseInt(date[2]),
-                Integer.parseInt(date[1])-1,
-                Integer.parseInt(date[0])
-        );
-        datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis() - 568025136000L);
-        datePickerDialog.show();
-    }
-
-    public void imageClick(View view) {
-        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        if(intent.resolveActivity(getPackageManager()) != null){
-            startActivityForResult(intent, TAKE_IMAGE_CODE);
-        }
+    public void imageClick() {
+        CropImage.activity()
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .setAspectRatio(1,1)
+                .setMinCropResultSize(500,500)
+                .start(this);
     }
 
     public void handleUpdate(){
-        boolean flag = true;
-        if(TextUtils.isEmpty(mFirstName.getText().toString()) || mFirstName.getText().toString().length() < 3){
-            flag = false;
-            mFirstName.setError("Musisz podać imię o długości co najmniej 3 znaków");
-        }
-        if(TextUtils.isEmpty(mCity.getText().toString()) || mCity.getText().toString().length() < 3){
-            flag = false;
-            mCity.setError("Musisz podać swoją miejscowość o długości co najmniej 3 znaków");
-        }
-        if(TextUtils.isEmpty(mBirthDate.getText().toString())){
-            flag = false;
-            mBirthDate.setError("Musisz podać swoją datę urodzenia!");
-        }
-        if(flag){
-            if(mSelectedImage != null){
-                mStorageReference.child("profile_images/" + mUserID + "/profile_image").putFile(mSelectedImage).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                        if(task.isCanceled()){
-                            Toast.makeText(ProfileActivity.this, "Coś poszło nie tak przy wysyłaniu zdjęcia!", Toast.LENGTH_LONG).show();
+        if(mSelectedImage != null){
+            final File thumbFile = new File(mSelectedImage.getPath());
+            mStorageReference.child("profile_images/" + mUserID + "/profile_image").putFile(mSelectedImage).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    if(task.isSuccessful()) {
+                        try {
+                            Bitmap thumb_bitmap = new Compressor(ProfileActivity.this)
+                                    .setMaxHeight(200)
+                                    .setMaxWidth(200)
+                                    .setQuality(75)
+                                    .compressToBitmap(thumbFile);
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            thumb_bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                            byte[] thumb_byte = baos.toByteArray();
+                            mStorageReference.child("profile_images/" + mUserID + "/profile_image_thumbnail").putBytes(thumb_byte).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                                    if(task.isCanceled()){
+                                        Toast.makeText(ProfileActivity.this, "Coś poszło nie tak przy wysyłaniu zdjęcia!", Toast.LENGTH_LONG).show();
+                                    }else{
+                                        Toast.makeText(ProfileActivity.this, "Zapisano zdjęcie", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
                     }
-                });
-            }
-            Map<String, Object> user = new HashMap<>();
-            user.put("fName", mFirstName.getText().toString());
-            user.put("city", mCity.getText().toString());
-            user.put("birthDate", mBirthDate.getText().toString());
-            user.put("description", mDescription.getText().toString());
-
-            mFirestore.collection("users").document(mUserID).update(user).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if(task.isSuccessful()){
-                        Toast.makeText(ProfileActivity.this, "Pomyślnie zaktualizowano dane!", Toast.LENGTH_LONG).show();
-                    }else{
-                        Toast.makeText(ProfileActivity.this, "Coś poszło nie tak przy aktualizacji danych!", Toast.LENGTH_LONG).show();
+                    else{
+                        Toast.makeText(ProfileActivity.this, "Coś poszło nie tak przy wysyłaniu zdjęcia!", Toast.LENGTH_LONG).show();
                     }
                 }
             });
         }
     }
-
     @Override
     public void onBackPressed() {
         if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){

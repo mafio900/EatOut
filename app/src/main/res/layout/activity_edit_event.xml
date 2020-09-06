@@ -135,6 +135,7 @@
             android:layout_marginTop="4dp"
             android:background="@null"
             android:text="@string/edit_event"
+            android:textColor="@color/secondary_text"
             app:layout_constraintEnd_toEndOf="@+id/toolbar"
             app:layout_constraintHorizontal_bias="0.96"
             app:layout_constraintStart_toStartOf="@+id/toolbar"

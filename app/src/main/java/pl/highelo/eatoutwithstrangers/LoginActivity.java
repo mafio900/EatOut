@@ -41,6 +41,7 @@ public class LoginActivity extends AppCompatActivity {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.loging_in);
 
         mAuth = FirebaseAuth.getInstance();
         mAuth.useAppLanguage();

@@ -6,26 +6,17 @@
     android:layout_height="match_parent"
     android:id="@+id/drawer_layout">
 
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        app:headerLayout="@layout/nav_header"
-        app:menu="@menu/menu_nav"
-        android:theme="@style/AppTheme">
-
-    </com.google.android.material.navigation.NavigationView>
+    <include layout="@layout/navigation_view" />
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ProfileActivity">
+        android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:animateLayoutChanges="true">
+            android:animateLayoutChanges="true"
+            tools:context=".ProfileActivity">
 
             <include
                 android:id="@+id/toolbar"
@@ -34,156 +25,71 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <ImageView
+                android:id="@+id/profile_image"
+                android:layout_width="0dp"
+                android:layout_height="400dp"
+                android:minWidth="300dp"
+                android:scaleType="fitXY"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                app:srcCompat="@drawable/ic_person" />
+
             <TextView
-                android:id="@+id/textView"
-                android:layout_width="113dp"
+                android:id="@+id/profile_name"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:text="@string/your_profile"
+                android:text="Imie,"
                 android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profile_image" />
+
+            <TextView
+                android:id="@+id/profile_age"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="wiek"
+                android:textSize="24sp"
+                app:layout_constraintBaseline_toBaselineOf="@+id/profile_name"
+                app:layout_constraintStart_toEndOf="@+id/profile_name" />
+
+            <TextView
+                android:id="@+id/profile_city"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Mieszka w"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="@+id/profile_name"
+                app:layout_constraintTop_toBottomOf="@+id/profile_name" />
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginTop="24dp"
+                android:background="?android:attr/listDivider"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+                app:layout_constraintTop_toBottomOf="@+id/profile_city" />
 
             <TextView
-                android:id="@+id/emailTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textSize="18sp"
-                app:layout_constraintEnd_toEndOf="@+id/textView"
-                app:layout_constraintStart_toStartOf="@+id/textView"
-                app:layout_constraintTop_toBottomOf="@+id/textView"
-                tools:text="@string/email" />
-
-            <ImageView
-                android:id="@+id/profileImageView"
-                android:layout_width="130dp"
-                android:layout_height="200dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="32dp"
-                android:contentDescription="@string/profile_picture"
-                android:onClick="imageClick"
-                android:scaleType="fitStart"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/emailTV"
-                app:srcCompat="@drawable/ic_image" />
-
-            <TextView
-                android:id="@+id/nameProfilTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:labelFor="@id/nameProfilET"
-                android:text="@string/first_name"
-                android:textSize="18sp"
-                app:layout_constraintStart_toEndOf="@+id/profileImageView"
-                app:layout_constraintTop_toTopOf="@+id/profileImageView" />
-
-            <EditText
-                android:id="@+id/nameProfilET"
+                android:id="@+id/profile_description"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:ems="10"
-                android:importantForAutofill="no"
-                android:inputType="textPersonName"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="16dp"
+                android:paddingBottom="16dp"
+                android:text="Opis"
+                android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/nameProfilTV"
-                app:layout_constraintTop_toBottomOf="@+id/nameProfilTV" />
-
-            <TextView
-                android:id="@+id/cityTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:labelFor="@id/cityET"
-                android:text="@string/city"
-                android:textSize="18sp"
-                app:layout_constraintStart_toStartOf="@+id/nameProfilET"
-                app:layout_constraintTop_toBottomOf="@+id/nameProfilET" />
-
-            <EditText
-                android:id="@+id/cityET"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:ems="10"
-                android:importantForAutofill="no"
-                android:inputType="textPersonName"
-                app:layout_constraintEnd_toEndOf="@+id/nameProfilET"
-                app:layout_constraintStart_toStartOf="@+id/cityTV"
-                app:layout_constraintTop_toBottomOf="@+id/cityTV" />
-
-            <TextView
-                android:id="@+id/birthDateTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:labelFor="@id/birthDateET"
-                android:text="@string/birth_date"
-                android:textSize="18sp"
-                app:layout_constraintStart_toStartOf="@+id/cityET"
-                app:layout_constraintTop_toBottomOf="@+id/cityET" />
-
-            <EditText
-                android:id="@+id/birthDateET"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:ems="10"
-                android:enabled="false"
-                android:importantForAutofill="no"
-                android:inputType="datetime"
-                app:layout_constraintEnd_toEndOf="@+id/setBirthDateBtn"
-                app:layout_constraintStart_toStartOf="@+id/birthDateTV"
-                app:layout_constraintTop_toBottomOf="@+id/birthDateTV" />
-
-            <Button
-                android:id="@+id/setBirthDateBtn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="@string/set"
-                app:layout_constraintBaseline_toBaselineOf="@+id/birthDateTV"
-                app:layout_constraintEnd_toEndOf="@+id/cityET"
-                app:layout_constraintStart_toEndOf="@+id/birthDateTV" />
-
-            <TextView
-                android:id="@+id/descriptioLabelTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:labelFor="@id/descriptionMT"
-                android:text="@string/description"
-                android:textSize="18sp"
-                app:layout_constraintStart_toStartOf="@+id/birthDateET"
-                app:layout_constraintTop_toBottomOf="@+id/birthDateET" />
-
-            <EditText
-                android:id="@+id/descriptionMT"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:ems="10"
-                android:gravity="start|top"
-                android:importantForAutofill="no"
-                android:inputType="textMultiLine"
-                app:layout_constraintEnd_toEndOf="@+id/birthDateET"
-                app:layout_constraintStart_toStartOf="@+id/descriptioLabelTV"
-                app:layout_constraintTop_toBottomOf="@+id/descriptioLabelTV" />
-
-            <ImageView
-                android:id="@+id/editButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/toolbar"
-                app:srcCompat="@drawable/ic_save_black"
-                android:background="?android:selectableItemBackground"/>
+                app:layout_constraintStart_toStartOf="@+id/profile_city"
+                app:layout_constraintTop_toBottomOf="@+id/view" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -29,8 +29,8 @@
                 <group android:checkableBehavior="single">
                     <item
                         android:id="@+id/nav_profile"
-                        android:icon="@drawable/ic_edit"
-                        android:title="@string/edit" />
+                        android:icon="@drawable/ic_person"
+                        android:title="@string/profile_preview" />
                     <item
                         android:id="@+id/nav_change_password"
                         android:icon="@drawable/ic_lock"

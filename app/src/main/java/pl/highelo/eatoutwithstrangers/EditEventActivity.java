@@ -33,9 +33,11 @@ import com.google.firebase.firestore.GeoPoint;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class EditEventActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
     private static final String TAG = "EditEventActivity";
@@ -103,10 +105,20 @@ public class EditEventActivity extends AppCompatActivity implements DatePickerDi
         mName.setText(mEventsModel.getPlaceName());
         mAddress.setText(mEventsModel.getPlaceAddress());
         mTheme.setText(mEventsModel.getTheme());
-        mEventDate.setText(mEventsModel.getDate() + " " + mEventsModel.getTime());
+        GregorianCalendar d = new GregorianCalendar(TimeZone.getTimeZone("Europe/Warsaw"));
+        d.setTime(mEventsModel.getTimeStamp().toDate());
+        mYear = d.get(Calendar.YEAR);
+        mMonth = d.get(Calendar.MONTH);
+        mDay = d.get(Calendar.DAY_OF_MONTH);
+        mHour = d.get(Calendar.HOUR_OF_DAY);
+        mMinute = d.get(Calendar.MINUTE);
+        String date = mDay+"."+(mMonth+1)+"."+mYear+" "+mHour+":"+mMinute;
+        SimpleDateFormat oldFormat = new SimpleDateFormat("d.M.yyyy H:m", Locale.US);
+        SimpleDateFormat newFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.US);
+        String newDate = CommonMethods.parseDate(date, oldFormat, newFormat);
+        mEventDate.setText(newDate);
         currentPeople = mEventsModel.getMaxPeople();
         mMaxPeopleSeekBar.setProgress(currentPeople);
-        Log.d(TAG, "onCreate: "+mEventsModel.getPlaceLatLng());
 
         mEditEventButton.setOnClickListener(new View.OnClickListener() {
             @Override

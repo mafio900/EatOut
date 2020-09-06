@@ -20,6 +20,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -49,7 +50,7 @@ public class YourEventsActivity extends AppCompatActivity {
     private String mUserID;
 
     private RecyclerView mEventsList;
-    private EventsAdapter mAdapter2;
+    private EventsAdapter mAdapter;
     private ArrayList<EventsModel> mEventsModelArrayList = new ArrayList<>();
 
     private TextView textView;
@@ -86,37 +87,25 @@ public class YourEventsActivity extends AppCompatActivity {
 
         CollectionReference collectionReference = mFirestore.collection("events");
 
-        collectionReference.whereEqualTo("userID", mUserID).whereEqualTo("isEnded", false).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        collectionReference.whereEqualTo("userID", mUserID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        String d = document.getString("date");
-                        String t = document.getString("time");
-                        String dt = d + " " + t;
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.US);
-                        try {
-                            Date ed = simpleDateFormat.parse(dt);
-                            Date cd = new Date();
-                            long diff = ed.getTime() - cd.getTime();
-                            if(diff <= 0){
-                                mFirestore.collection("events").document(document.getId()).update("isEnded", true);
-                            }
-                            else{
-                                EventsModel ci = new EventsModel();
-                                ci.setPlaceName((String) document.get("placeName"));
-                                ci.setTheme((String) document.get("theme"));
-                                ci.setPlaceAddress((String) document.get("placeAddress"));
-                                ci.setDate((String) document.get("date"));
-                                ci.setTime((String) document.get("time"));
-                                mEventsModelArrayList.add(ci);
-                            }
-                        } catch (ParseException e) {
-                            e.printStackTrace();
+                        Timestamp currentTime = Timestamp.now();
+                        Timestamp documentTime = document.getTimestamp("timeStamp");
+                        long diff = documentTime.getSeconds() - currentTime.getSeconds();
+                        if(diff <= 0){
+                            mFirestore.collection("events").document(document.getId()).delete();
+                        }
+                        else{
+                            EventsModel ci = document.toObject(EventsModel.class);
+                            ci.setItemID(document.getId());
+                            mEventsModelArrayList.add(ci);
                         }
                     }
-                    mAdapter2 = new EventsAdapter(mEventsModelArrayList);
-                    mAdapter2.setOnEventItemClick(new EventsAdapter.OnEventItemClick() {
+                    mAdapter = new EventsAdapter(mEventsModelArrayList);
+                    mAdapter.setOnEventItemClick(new EventsAdapter.OnEventItemClick() {
                         @Override
                         public void OnItemClick(int position) {
                             Intent intent = new Intent(YourEventsActivity.this, EditEventActivity.class);
@@ -126,7 +115,7 @@ public class YourEventsActivity extends AppCompatActivity {
                     });
                     mEventsList = findViewById(R.id.events_list);
                     mEventsList.setLayoutManager(new LinearLayoutManager(YourEventsActivity.this));
-                    mEventsList.setAdapter(mAdapter2);
+                    mEventsList.setAdapter(mAdapter);
                     changeVisibility();
                 } else {
                     Log.e(TAG, "Error getting documents: ", task.getException());

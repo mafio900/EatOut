@@ -28,6 +28,7 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -39,9 +40,12 @@ import org.imperiumlabs.geofirestore.GeoFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class CreateEventActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
@@ -241,16 +245,10 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
             //event.put("placeLatLng", new GeoPoint(mPlace.getLatLng().latitude, mPlace.getLatLng().longitude));
             event.put("theme", mTheme.getText().toString());
             event.put("maxPeople", Integer.parseInt(mMaxPeopleTextView.getText().toString()));
-            SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-M-d", Locale.US);
-            SimpleDateFormat newFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
-            String newDate = CommonMethods.parseDate(mYear+"-"+(mMonth+1)+"-"+mDay, oldFormat, newFormat);
-            event.put("date", newDate);
-            oldFormat = new SimpleDateFormat("H:m", Locale.US);
-            newFormat = new SimpleDateFormat("HH:mm", Locale.US);
-            String newTime = CommonMethods.parseDate(mHour+":"+mMinute, oldFormat, newFormat);
-            event.put("time", newTime);
-            event.put("isEnded", false);
-
+            event.put("joinedPeople", 0);
+            GregorianCalendar dd = new GregorianCalendar(mYear, mMonth, mDay, mHour, mMinute);
+            dd.setTimeZone(TimeZone.getTimeZone("Europe/Warsaw"));
+            event.put("timeStamp", new Timestamp(dd.getTime()));
 
             collectionReference.add(event).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                 @Override
