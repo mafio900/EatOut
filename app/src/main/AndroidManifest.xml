@@ -39,7 +39,7 @@
             android:parentActivityName=".StartActivity" />
         <activity android:name=".MainActivity" />
         <activity
-            android:name=".EditEventActivity"
+            android:name=".ManageEventActivity"
             android:parentActivityName=".YourEventsActivity" />
         <activity android:name=".YourEventsActivity" />
         <activity

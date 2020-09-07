@@ -1,7 +1,6 @@
 package pl.highelo.eatoutwithstrangers;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -23,18 +22,11 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 
 public class YourEventsActivity extends AppCompatActivity {
 
@@ -108,7 +100,7 @@ public class YourEventsActivity extends AppCompatActivity {
                     mAdapter.setOnEventItemClick(new EventsAdapter.OnEventItemClick() {
                         @Override
                         public void OnItemClick(int position) {
-                            Intent intent = new Intent(YourEventsActivity.this, EditEventActivity.class);
+                            Intent intent = new Intent(YourEventsActivity.this, ManageEventActivity.class);
                             intent.putExtra("model", mEventsModelArrayList.get(position));
                             startActivity(intent);
                         }

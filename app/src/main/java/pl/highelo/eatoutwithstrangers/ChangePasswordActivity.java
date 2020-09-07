@@ -73,7 +73,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mUser != null){
+                if(mUser != null && !mOldPassword.getEditText().getText().toString().equals("")){
                     AuthCredential credential = EmailAuthProvider
                             .getCredential(mUser.getEmail(), mOldPassword.getEditText().getText().toString());
 

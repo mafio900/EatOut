@@ -22,7 +22,8 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        >
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxBackgroundMode="outline">
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,7 +39,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        >
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxBackgroundMode="outline">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -54,11 +56,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:background="@color/primary"
         android:paddingLeft="24dp"
+        android:paddingTop="16dp"
         android:paddingRight="24dp"
+        android:paddingBottom="16dp"
         android:text="@string/login"
-        android:textColor="@color/secondary_text"
         app:layout_constraintStart_toStartOf="@+id/passwordLgET"
         app:layout_constraintTop_toBottomOf="@+id/passwordLgET" />
 
@@ -66,12 +68,15 @@
         android:id="@+id/forgotPasswdLgBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/accent"
+        android:backgroundTint="@color/accent"
         android:paddingLeft="24dp"
+        android:paddingTop="16dp"
         android:paddingRight="24dp"
+        android:paddingBottom="16dp"
         android:text="@string/forgot_password"
-        android:textColor="@color/secondary_text"
         app:layout_constraintEnd_toEndOf="@+id/passwordLgET"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/loginLgBT"
         app:layout_constraintTop_toTopOf="@+id/loginLgBT" />
 
     <ProgressBar

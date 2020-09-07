@@ -79,4 +79,8 @@
     <string name="join_event">Dołącz do spotkania</string>
     <string name="leave_event">Opuść spotkanie</string>
     <string name="cancel_request">Anuluj prośbę</string>
+    <string name="informations">Informacje</string>
+    <string name="chat">Czat</string>
+    <string name="people">Ludzie</string>
+    <string name="request_to_join">Prośby o dołączenie</string>
 </resources>

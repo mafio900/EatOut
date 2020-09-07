@@ -21,7 +21,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxBackgroundMode="outline">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -37,7 +39,9 @@
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="@+id/nameRgET"
         app:layout_constraintStart_toStartOf="@+id/nameRgET"
-        app:layout_constraintTop_toBottomOf="@+id/nameRgET">
+        app:layout_constraintTop_toBottomOf="@+id/nameRgET"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxBackgroundMode="outline">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -54,7 +58,9 @@
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="@+id/emailRgET"
         app:layout_constraintStart_toStartOf="@+id/emailRgET"
-        app:layout_constraintTop_toBottomOf="@+id/emailRgET">
+        app:layout_constraintTop_toBottomOf="@+id/emailRgET"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxBackgroundMode="outline">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -70,7 +76,9 @@
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="@+id/passwordRgET"
         app:layout_constraintStart_toStartOf="@+id/passwordRgET"
-        app:layout_constraintTop_toBottomOf="@+id/passwordRgET">
+        app:layout_constraintTop_toBottomOf="@+id/passwordRgET"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxBackgroundMode="outline">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -87,7 +95,9 @@
         app:layout_constraintEnd_toEndOf="@+id/passwordConfirmRgET"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/passwordConfirmRgET"
-        app:layout_constraintTop_toBottomOf="@+id/passwordConfirmRgET">
+        app:layout_constraintTop_toBottomOf="@+id/passwordConfirmRgET"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxBackgroundMode="outline">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -103,7 +113,9 @@
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="@+id/cityRgET"
         app:layout_constraintStart_toStartOf="@+id/cityRgET"
-        app:layout_constraintTop_toBottomOf="@+id/cityRgET">
+        app:layout_constraintTop_toBottomOf="@+id/cityRgET"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxBackgroundMode="outline">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -120,11 +132,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:background="@color/accent"
+        android:backgroundTint="@color/accent"
         android:paddingLeft="24dp"
+        android:paddingTop="16dp"
         android:paddingRight="24dp"
+        android:paddingBottom="16dp"
         android:text="@string/register"
-        android:textColor="@color/secondary_text"
         app:layout_constraintEnd_toEndOf="@+id/cityRgET"
         app:layout_constraintTop_toBottomOf="@+id/birthDateRgET" />
 
