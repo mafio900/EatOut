@@ -1,4 +1,4 @@
-package pl.highelo.eatoutwithstrangers;
+package pl.highelo.eatoutwithstrangers.SearchEvent;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+
+import pl.highelo.eatoutwithstrangers.R;
 
 public class SearchEventSettingsActivity extends AppCompatActivity {
 

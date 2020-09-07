@@ -1,4 +1,4 @@
-package pl.highelo.eatoutwithstrangers;
+package pl.highelo.eatoutwithstrangers.ProfileActivities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,6 +30,9 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
+import pl.highelo.eatoutwithstrangers.R;
 
 public class EditProfileActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 

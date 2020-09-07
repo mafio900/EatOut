@@ -1,9 +1,12 @@
-package pl.highelo.eatoutwithstrangers;
+package pl.highelo.eatoutwithstrangers.ModelsAndUtilities;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.firebase.Timestamp;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EventsModel implements Parcelable {
     private String itemID;
@@ -14,10 +17,12 @@ public class EventsModel implements Parcelable {
     private int joinedPeople;
     private String userID;
     private Timestamp timeStamp;
+    private List<String> members = new ArrayList<>();
+    private List<String> requests = new ArrayList<>();
 
     public EventsModel(){}
 
-    public EventsModel(String itemID, String placeName, String placeAddress, String theme, int maxPeople, String userID, Timestamp timeStamp) {
+    public EventsModel(String itemID, String placeName, String placeAddress, String theme, int maxPeople, String userID, Timestamp timeStamp, List<String> members, List<String> requests) {
         this.itemID = itemID;
         this.placeName = placeName;
         this.placeAddress = placeAddress;
@@ -25,6 +30,8 @@ public class EventsModel implements Parcelable {
         this.maxPeople = maxPeople;
         this.userID = userID;
         this.timeStamp = timeStamp;
+        this.members = members;
+        this.requests = requests;
     }
 
     protected EventsModel(Parcel in) {
@@ -35,6 +42,8 @@ public class EventsModel implements Parcelable {
         maxPeople = in.readInt();
         userID = in.readString();
         timeStamp = new Timestamp(in.readLong(), 0);
+        in.readStringList(members);
+        in.readStringList(requests);
     }
 
     public static final Creator<EventsModel> CREATOR = new Creator<EventsModel>() {
@@ -113,6 +122,22 @@ public class EventsModel implements Parcelable {
         this.joinedPeople = joinedPeople;
     }
 
+    public List<String> getMembers() {
+        return members;
+    }
+
+    public void setMembers(List<String> members) {
+        this.members = members;
+    }
+
+    public List<String> getRequests() {
+        return requests;
+    }
+
+    public void setRequests(List<String> requests) {
+        this.requests = requests;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -127,5 +152,7 @@ public class EventsModel implements Parcelable {
         dest.writeInt(maxPeople);
         dest.writeString(userID);
         dest.writeLong(timeStamp.getSeconds());
+        dest.writeStringList(members);
+        dest.writeStringList(requests);
     }
 }

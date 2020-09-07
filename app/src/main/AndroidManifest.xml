@@ -21,7 +21,7 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".StartActivity">
+        <activity android:name=".StartActivities.StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,38 +29,38 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
-            android:parentActivityName=".StartActivity" />
+            android:name=".StartActivities.LoginActivity"
+            android:parentActivityName=".StartActivities.StartActivity" />
         <activity
-            android:name=".ForgotPassword"
-            android:parentActivityName=".LoginActivity" />
+            android:name=".StartActivities.ForgotPasswordActivity"
+            android:parentActivityName=".StartActivities.LoginActivity" />
         <activity
-            android:name=".RegisterActivity"
-            android:parentActivityName=".StartActivity" />
+            android:name=".StartActivities.RegisterActivity"
+            android:parentActivityName=".StartActivities.StartActivity" />
         <activity android:name=".MainActivity" />
         <activity
-            android:name=".ManageEventActivity"
-            android:parentActivityName=".YourEventsActivity" />
-        <activity android:name=".YourEventsActivity" />
+            android:name=".ManageEvent.ManageEventActivity"
+            android:parentActivityName=".ManageEvent.YourEventsActivity" />
+        <activity android:name=".ManageEvent.YourEventsActivity" />
         <activity
-            android:name=".MapActivity"
-            android:parentActivityName=".CreateEventActivity" />
-        <activity android:name=".SearchEventActivity" />
-        <activity android:name=".SearchEventSettingsActivity"
-            android:parentActivityName=".SearchEventActivity"/>
+            android:name=".ManageEvent.MapActivity"
+            android:parentActivityName=".ManageEvent.CreateEventActivity" />
+        <activity android:name=".SearchEvent.SearchEventActivity" />
+        <activity android:name=".SearchEvent.SearchEventSettingsActivity"
+            android:parentActivityName=".SearchEvent.SearchEventActivity"/>
         <activity
-            android:name=".EventPreviewActivity"
-            android:parentActivityName=".SearchEventActivity" />
+            android:name=".SearchEvent.EventPreviewActivity"
+            android:parentActivityName=".SearchEvent.SearchEventActivity" />
         <activity
-            android:name=".CreateEventActivity"
-            android:parentActivityName=".YourEventsActivity" />
-        <activity android:name=".ChangePasswordActivity" />
+            android:name=".ManageEvent.CreateEventActivity"
+            android:parentActivityName=".ManageEvent.YourEventsActivity" />
+        <activity android:name=".ProfileActivities.ChangePasswordActivity" />
         <activity
-            android:name=".ProfileActivity"
+            android:name=".ProfileActivities.ProfileActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".EditProfileActivity"
-            android:parentActivityName=".ProfileActivity" />
+            android:name=".ProfileActivities.EditProfileActivity"
+            android:parentActivityName=".ProfileActivities.ProfileActivity" />
 
         <meta-data
             android:name="preloaded_fonts"

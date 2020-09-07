@@ -1,6 +1,6 @@
-package pl.highelo.eatoutwithstrangers;
+package pl.highelo.eatoutwithstrangers.ManageEvent;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -11,22 +11,27 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsAdapter;
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.NavbarInterface;
+import pl.highelo.eatoutwithstrangers.R;
 
 public class YourEventsActivity extends AppCompatActivity {
 
@@ -58,6 +63,7 @@ public class YourEventsActivity extends AppCompatActivity {
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mNavigationView = findViewById(R.id.nav_view);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setTitle(R.string.your_events);
         setSupportActionBar(mToolbar);
         mNavigationView.bringToFront();
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout,
@@ -79,39 +85,36 @@ public class YourEventsActivity extends AppCompatActivity {
 
         CollectionReference collectionReference = mFirestore.collection("events");
 
-        collectionReference.whereEqualTo("userID", mUserID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        collectionReference.whereEqualTo("userID", mUserID).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Timestamp currentTime = Timestamp.now();
-                        Timestamp documentTime = document.getTimestamp("timeStamp");
-                        long diff = documentTime.getSeconds() - currentTime.getSeconds();
-                        if(diff <= 0){
-                            mFirestore.collection("events").document(document.getId()).delete();
-                        }
-                        else{
-                            EventsModel ci = document.toObject(EventsModel.class);
-                            ci.setItemID(document.getId());
-                            mEventsModelArrayList.add(ci);
-                        }
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                mEventsModelArrayList.clear();
+                for (QueryDocumentSnapshot document : queryDocumentSnapshots){
+                    Timestamp currentTime = Timestamp.now();
+                    Timestamp documentTime = document.getTimestamp("timeStamp");
+                    long diff = documentTime.getSeconds() - currentTime.getSeconds();
+                    if(diff <= 0){
+                        mFirestore.collection("events").document(document.getId()).delete();
                     }
-                    mAdapter = new EventsAdapter(mEventsModelArrayList);
-                    mAdapter.setOnEventItemClick(new EventsAdapter.OnEventItemClick() {
-                        @Override
-                        public void OnItemClick(int position) {
-                            Intent intent = new Intent(YourEventsActivity.this, ManageEventActivity.class);
-                            intent.putExtra("model", mEventsModelArrayList.get(position));
-                            startActivity(intent);
-                        }
-                    });
-                    mEventsList = findViewById(R.id.events_list);
-                    mEventsList.setLayoutManager(new LinearLayoutManager(YourEventsActivity.this));
-                    mEventsList.setAdapter(mAdapter);
-                    changeVisibility();
-                } else {
-                    Log.e(TAG, "Error getting documents: ", task.getException());
+                    else{
+                        EventsModel ci = document.toObject(EventsModel.class);
+                        ci.setItemID(document.getId());
+                        mEventsModelArrayList.add(ci);
+                    }
                 }
+                mAdapter = new EventsAdapter(mEventsModelArrayList);
+                mAdapter.setOnEventItemClick(new EventsAdapter.OnEventItemClick() {
+                    @Override
+                    public void OnItemClick(int position) {
+                        Intent intent = new Intent(YourEventsActivity.this, ManageEventActivity.class);
+                        intent.putExtra("model", mEventsModelArrayList.get(position));
+                        startActivity(intent);
+                    }
+                });
+                mEventsList = findViewById(R.id.events_list);
+                mEventsList.setLayoutManager(new LinearLayoutManager(YourEventsActivity.this));
+                mEventsList.setAdapter(mAdapter);
+                changeVisibility();
             }
         });
 

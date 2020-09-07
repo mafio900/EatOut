@@ -1,16 +1,18 @@
-package pl.highelo.eatoutwithstrangers;
+package pl.highelo.eatoutwithstrangers.ManageEvent;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
+import pl.highelo.eatoutwithstrangers.R;
 
 public class ManageEventActivity extends AppCompatActivity {
 
@@ -18,19 +20,24 @@ public class ManageEventActivity extends AppCompatActivity {
     private TabLayout mManageTabLayout;
     private ViewPager2 mManageViewPager;
 
+    private EventsModel mEventsModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_event);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mToolbar.setTitle("Zarządzanie spotkaniem");
+        mToolbar.setTitle(R.string.manage_event);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        Intent intent = getIntent();
+        mEventsModel = intent.getParcelableExtra("model");
+
         mManageTabLayout = (TabLayout) findViewById(R.id.manage_tab_layout);
+        mManageTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         mManageViewPager = (ViewPager2) findViewById(R.id.manage_view_pager);
-        mManageViewPager.setAdapter(new ManagePagerAdapter(this, mManageTabLayout.getTabCount()));
+        mManageViewPager.setAdapter(new ManagePagerAdapter(this, mManageTabLayout.getTabCount(), mEventsModel));
 
         TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(
                 mManageTabLayout, mManageViewPager, new TabLayoutMediator.TabConfigurationStrategy() {

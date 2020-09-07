@@ -18,6 +18,8 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.NavbarInterface;
 
 
 public class MainActivity extends AppCompatActivity {

@@ -1,4 +1,4 @@
-package pl.highelo.eatoutwithstrangers;
+package pl.highelo.eatoutwithstrangers.SearchEvent;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -18,11 +18,9 @@ import android.view.MenuItem;
 import android.widget.AbsListView;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,12 +34,14 @@ import com.google.firebase.firestore.QuerySnapshot;
 import org.imperiumlabs.geofirestore.GeoFirestore;
 import org.imperiumlabs.geofirestore.GeoQuery;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
+
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsAdapter;
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.NavbarInterface;
+import pl.highelo.eatoutwithstrangers.R;
 
 public class SearchEventActivity extends AppCompatActivity {
     private static final String TAG = "SearchEventActivity";
@@ -131,7 +131,7 @@ public class SearchEventActivity extends AppCompatActivity {
                         @Override
                         public void OnItemClick(int position) {
                             Intent preview = new Intent(SearchEventActivity.this, EventPreviewActivity.class);
-                            preview.putExtra("itemID", mEventsModelArrayList.get(position).getItemID());
+                            preview.putExtra("model", mEventsModelArrayList.get(position));
                             startActivity(preview);
                         }
                     });
@@ -176,6 +176,8 @@ public class SearchEventActivity extends AppCompatActivity {
                                                     else{
                                                         EventsModel ci = document.toObject(EventsModel.class);
                                                         ci.setItemID(document.getId());
+                                                        ci.setRequests((List<String>) document.get("requests"));
+                                                        ci.setMembers((List<String>) document.get("members"));
                                                         mEventsModelArrayList.add(ci);
                                                     }
                                                 }

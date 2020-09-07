@@ -1,14 +1,12 @@
-package pl.highelo.eatoutwithstrangers;
+package pl.highelo.eatoutwithstrangers.ManageEvent;
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -37,6 +35,8 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 
 import java.util.Arrays;
+
+import pl.highelo.eatoutwithstrangers.R;
 
 public class MapActivity extends AppCompatActivity {
     private static final String TAG = "MapActivity";
@@ -108,10 +108,9 @@ public class MapActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(mSelectedPlace != null){
                     Intent result = new Intent();
-                    result.putExtra("place", mSelectedPlace);
                     result.putExtra("placeName", mSelectedPlace.getName());
                     result.putExtra("placeAddress", mSelectedPlace.getAddress());
-                    result.putExtra("placeLatLng", mSelectedPlace.getLatLng().latitude + "," + mSelectedPlace.getLatLng().longitude);
+                    result.putExtra("placeLatLng", mSelectedPlace.getLatLng());
                     setResult(RESULT_OK, result);
                     finish();
                 }

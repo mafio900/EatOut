@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".ManageEvent.MapActivity">
 
     <include
         android:id="@+id/toolbar"
@@ -18,8 +19,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        tools:context=".MapsActivity" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -81,14 +81,17 @@
         android:id="@+id/selectButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="16dp"
         android:background="@null"
+        android:backgroundTint="@color/accent"
+        android:paddingLeft="24dp"
+        android:paddingTop="16dp"
+        android:paddingRight="24dp"
+        android:paddingBottom="16dp"
         android:text="@string/select_point"
-        android:textColor="@color/secondary_text"
         android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="@+id/toolbar"
-        app:layout_constraintHorizontal_bias="0.96"
-        app:layout_constraintStart_toStartOf="@+id/toolbar"
-        app:layout_constraintTop_toTopOf="@+id/toolbar" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/relLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

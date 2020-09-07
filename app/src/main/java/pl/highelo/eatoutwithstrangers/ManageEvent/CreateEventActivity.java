@@ -1,4 +1,4 @@
-package pl.highelo.eatoutwithstrangers;
+package pl.highelo.eatoutwithstrangers.ManageEvent;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -11,23 +11,22 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.libraries.places.api.model.Place;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -39,13 +38,16 @@ import com.google.firebase.firestore.GeoPoint;
 import org.imperiumlabs.geofirestore.GeoFirestore;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
+import pl.highelo.eatoutwithstrangers.R;
 
 public class CreateEventActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
@@ -56,18 +58,16 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
 
     private Toolbar mToolbar;
 
-    private TextView mName, mAddress, mEventDate, mMaxPeopleTextView;
-    private EditText mTheme;
+    private TextInputLayout mName, mAddress, mEventDate, mTheme, mMaxPeople;
     private Button mCreateEventButton;
-    private SeekBar mMaxPeopleSeekBar;
     private ProgressBar mProgressBar;
 
     //vars
-    Place mPlace;
-    String date;
-    int mYear, mMonth, mDay, mHour, mMinute = -1;
-    int maxPeople = 10, peopleStep = 1;
-    int currentPeople;
+    private LatLng mLatLng;
+    private String mPlaceName;
+    private String mPlaceAddress;
+    private String date;
+    private int mYear, mMonth, mDay, mHour, mMinute = -1;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -79,31 +79,21 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
         setContentView(R.layout.activity_create_event);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setTitle(R.string.creating_event);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mName = findViewById(R.id.placeName);
-        mAddress = findViewById(R.id.placeAddress);
-        mEventDate = findViewById(R.id.eventDate);
-        mTheme = findViewById(R.id.eventTheme);
-        mCreateEventButton = findViewById(R.id.createEventButton);
+        mName = findViewById(R.id.create_event_place_name);
+        mAddress = findViewById(R.id.create_event_place_address);
+        mEventDate = findViewById(R.id.create_event_date);
+        mTheme = findViewById(R.id.create_event_theme);
+        mCreateEventButton = findViewById(R.id.create_event_button);
         mProgressBar = findViewById(R.id.progressBar);
-        mMaxPeopleSeekBar = findViewById(R.id.maxPeopleSeekBar);
-        mMaxPeopleTextView = (TextView) findViewById(R.id.maxPopleTextView);
-        mMaxPeopleSeekBar.setProgress(1);
-        mMaxPeopleSeekBar.setMax(maxPeople / peopleStep);
-        mMaxPeopleSeekBar.setMin(1);
-        mMaxPeopleSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                currentPeople = progress * peopleStep;
-                mMaxPeopleTextView.setText(String.valueOf(currentPeople));
-            }
-            @Override public void onStartTrackingTouch(SeekBar seekBar) {}
-            @Override public void onStopTrackingTouch(SeekBar seekBar) {}
-        });
+        mMaxPeople = findViewById(R.id.create_event_max_people);
 
-        mEventDate.setOnClickListener(new View.OnClickListener() {
+        mMaxPeople.getEditText().setFilters(new InputFilter[]{ new CommonMethods.InputFilterMinMax("1", "10")});
+
+        mEventDate.getEditText().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showDatePickerDialog();
@@ -127,10 +117,12 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == LOCATION_REQUEST_CODE){
             if(resultCode == RESULT_OK && data != null){
-                mPlace = data.getParcelableExtra("place");
+                mPlaceName = data.getStringExtra("placeName");
+                mPlaceAddress = data.getStringExtra("placeAddress");
+                mLatLng = data.getParcelableExtra("placeLatLng");
 
-                mName.setText(mPlace.getName());
-                mAddress.setText(mPlace.getAddress());
+                mName.getEditText().setText(mPlaceName);
+                mAddress.getEditText().setText(mPlaceAddress);
             }
         }
     }
@@ -178,18 +170,19 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
         SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-M-d H:m", Locale.US);
         SimpleDateFormat newFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.US);
         String newDate = CommonMethods.parseDate(date, oldFormat, newFormat);
-        mEventDate.setText(newDate);
+        mEventDate.getEditText().setText(newDate);
     }
 
     private void initMaps(){
-        Button mapBtn = (Button) findViewById(R.id.mapButton);
-        mapBtn.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(CreateEventActivity.this, MapActivity.class);
                 startActivityForResult(intent, LOCATION_REQUEST_CODE);
             }
-        });
+        };
+        mName.getEditText().setOnClickListener(onClickListener);
+        mAddress.getEditText().setOnClickListener(onClickListener);
     }
 
     public boolean isServicesOK(){
@@ -214,23 +207,23 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
     private void saveEvent(){
         boolean flag = true;
 
-        if(TextUtils.isEmpty(mName.getText().toString())){
+        if(TextUtils.isEmpty(mName.getEditText().getText().toString())){
             flag = false;
             mName.setError("Wybierz lokalizację!");
-            mAddress.setError("");
+            mAddress.setError("Wybierz lokalizację!");
         }else{mName.setError(null);mAddress.setError(null);}
-        if(TextUtils.isEmpty(mTheme.getText().toString()) || mTheme.getText().toString().length() < 3 ){
+        if(TextUtils.isEmpty(mTheme.getEditText().getText().toString()) || mTheme.getEditText().getText().toString().length() < 3 ){
             flag = false;
             mTheme.setError("Temat musi mieć co najmniej 3 znaki!");
-        }
-        if(TextUtils.isEmpty(mEventDate.getText().toString())){
+        }else{mTheme.setError(null);}
+        if(TextUtils.isEmpty(mEventDate.getEditText().getText().toString())){
             flag = false;
             mEventDate.setError("Podaj datę!");
         }else{mEventDate.setError(null);}
-        if(mMaxPeopleTextView.getText().toString().equals("0")){
+        if(mMaxPeople.getEditText().getText().toString().equals("")){
             flag = false;
-            mMaxPeopleTextView.setError("Ilość minimalna osób musi wynosić 1!");
-        }else{mMaxPeopleTextView.setError(null);}
+            mMaxPeople.setError("Ilość minimalna osób musi wynosić 1!");
+        }else{mMaxPeople.setError(null);}
         if(flag){
             mProgressBar.setVisibility(View.VISIBLE);
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -240,20 +233,22 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
 
             Map<String, Object> event = new HashMap<>();
             event.put("userID", mAuth.getUid());
-            event.put("placeName", mPlace.getName());
-            event.put("placeAddress", mPlace.getAddress());
+            event.put("placeName", mPlaceName);
+            event.put("placeAddress", mPlaceAddress);
             //event.put("placeLatLng", new GeoPoint(mPlace.getLatLng().latitude, mPlace.getLatLng().longitude));
-            event.put("theme", mTheme.getText().toString());
-            event.put("maxPeople", Integer.parseInt(mMaxPeopleTextView.getText().toString()));
+            event.put("theme", mTheme.getEditText().getText().toString());
+            event.put("maxPeople", Integer.parseInt(mMaxPeople.getEditText().getText().toString()));
             event.put("joinedPeople", 0);
             GregorianCalendar dd = new GregorianCalendar(mYear, mMonth, mDay, mHour, mMinute);
             dd.setTimeZone(TimeZone.getTimeZone("Europe/Warsaw"));
             event.put("timeStamp", new Timestamp(dd.getTime()));
+            event.put("requests", new ArrayList<String>());
+            event.put("members", new ArrayList<String>());
 
             collectionReference.add(event).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                 @Override
                 public void onSuccess(DocumentReference documentReference) {
-                    geoFirestore.setLocation(documentReference.getId(), new GeoPoint(mPlace.getLatLng().latitude, mPlace.getLatLng().longitude));
+                    geoFirestore.setLocation(documentReference.getId(), new GeoPoint(mLatLng.latitude, mLatLng.longitude));
                     mProgressBar.setVisibility(View.GONE);
                     Toast.makeText(CreateEventActivity.this, R.string.create_event_successful, Toast.LENGTH_LONG).show();
                     startActivity(new Intent(getApplicationContext(), YourEventsActivity.class));

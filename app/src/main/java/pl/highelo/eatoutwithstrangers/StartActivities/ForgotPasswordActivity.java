@@ -1,4 +1,4 @@
-package pl.highelo.eatoutwithstrangers;
+package pl.highelo.eatoutwithstrangers.StartActivities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,7 +20,10 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class ForgotPassword extends AppCompatActivity {
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
+import pl.highelo.eatoutwithstrangers.R;
+
+public class ForgotPasswordActivity extends AppCompatActivity {
 
     private Toolbar mToolbar;
 
@@ -48,7 +51,7 @@ public class ForgotPassword extends AppCompatActivity {
         mResetBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //CommonMethods.hideKeyboard(ForgotPassword.this);
+                //CommonMethods.hideKeyboard(ForgotPasswordActivity.this);
                 String email = mEmail.getEditText().getText().toString().trim();
 
                 if(TextUtils.isEmpty(email)){
@@ -62,11 +65,11 @@ public class ForgotPassword extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()){
-                            Toast.makeText(ForgotPassword.this, "Wysłano wiadomość pod podany e-mail", Toast.LENGTH_LONG).show();
+                            Toast.makeText(ForgotPasswordActivity.this, "Wysłano wiadomość pod podany e-mail", Toast.LENGTH_LONG).show();
                             startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                             finish();
                         }else{
-                            Toast.makeText(ForgotPassword.this, R.string.error_email, Toast.LENGTH_LONG).show();
+                            Toast.makeText(ForgotPasswordActivity.this, R.string.error_email, Toast.LENGTH_LONG).show();
                             mProgressBar.setVisibility(View.INVISIBLE);
                         }
                     }
@@ -81,7 +84,7 @@ public class ForgotPassword extends AppCompatActivity {
         if (!(view instanceof TextInputEditText)) {
             view.setOnTouchListener(new View.OnTouchListener() {
                 public boolean onTouch(View v, MotionEvent event) {
-                    CommonMethods.hideKeyboard(ForgotPassword.this);
+                    CommonMethods.hideKeyboard(ForgotPasswordActivity.this);
                     return false;
                 }
             });

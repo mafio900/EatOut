@@ -1,4 +1,4 @@
-package pl.highelo.eatoutwithstrangers;
+package pl.highelo.eatoutwithstrangers.StartActivities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,6 +8,9 @@ import android.view.View;
 import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
+
+import pl.highelo.eatoutwithstrangers.MainActivity;
+import pl.highelo.eatoutwithstrangers.R;
 
 public class StartActivity extends AppCompatActivity {
 

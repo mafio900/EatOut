@@ -1,4 +1,4 @@
-package pl.highelo.eatoutwithstrangers;
+package pl.highelo.eatoutwithstrangers.ModelsAndUtilities;
 
 import android.content.Intent;
 import android.view.MenuItem;
@@ -8,6 +8,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+
+import pl.highelo.eatoutwithstrangers.MainActivity;
+import pl.highelo.eatoutwithstrangers.ManageEvent.YourEventsActivity;
+import pl.highelo.eatoutwithstrangers.ProfileActivities.ChangePasswordActivity;
+import pl.highelo.eatoutwithstrangers.ProfileActivities.ProfileActivity;
+import pl.highelo.eatoutwithstrangers.R;
+import pl.highelo.eatoutwithstrangers.SearchEvent.SearchEventActivity;
+import pl.highelo.eatoutwithstrangers.StartActivities.StartActivity;
 
 public class NavbarInterface implements NavigationView.OnNavigationItemSelectedListener {
 

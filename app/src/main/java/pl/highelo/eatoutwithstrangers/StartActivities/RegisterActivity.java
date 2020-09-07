@@ -1,4 +1,4 @@
-package pl.highelo.eatoutwithstrangers;
+package pl.highelo.eatoutwithstrangers.StartActivities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,9 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -26,7 +24,6 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthEmailException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
@@ -39,11 +36,15 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
+import pl.highelo.eatoutwithstrangers.MainActivity;
+import pl.highelo.eatoutwithstrangers.R;
+
 public class RegisterActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
     private static final String TAG = "RegisterActivity";
     private Toolbar mToolbar;
 
-    private TextInputLayout mFirstName, mEmail, mPassword, mCity, mBirthDate;
+    private TextInputLayout mFirstName, mEmail, mPassword, mConfirmPassword, mCity, mBirthDate;
     private Button mRegisterBtn;
     private FirebaseAuth mAuth;
     private ProgressBar mProgressBar;
@@ -72,13 +73,14 @@ public class RegisterActivity extends AppCompatActivity implements DatePickerDia
             finish();
         }
 
-        mFirstName = (TextInputLayout) findViewById(R.id.nameRgET);
-        mEmail = (TextInputLayout) findViewById(R.id.emailRgET);
-        mPassword = (TextInputLayout) findViewById(R.id.passwordRgET);
-        mCity = (TextInputLayout) findViewById(R.id.cityRgET);
-        mRegisterBtn = (Button) findViewById(R.id.registerRgBT);
-        mBirthDate = (TextInputLayout) findViewById(R.id.birthDateRgET);
-        mProgressBar = (ProgressBar) findViewById(R.id.progressBarRg);
+        mFirstName = (TextInputLayout) findViewById(R.id.register_name);
+        mEmail = (TextInputLayout) findViewById(R.id.register_email);
+        mPassword = (TextInputLayout) findViewById(R.id.register_password);
+        mConfirmPassword = (TextInputLayout) findViewById(R.id.register_confirm_password);
+        mCity = (TextInputLayout) findViewById(R.id.register_city);
+        mRegisterBtn = (Button) findViewById(R.id.register_button);
+        mBirthDate = (TextInputLayout) findViewById(R.id.register_birth_date);
+        mProgressBar = (ProgressBar) findViewById(R.id.register_progressBar);
 
         mBirthDate.getEditText().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,34 +94,38 @@ public class RegisterActivity extends AppCompatActivity implements DatePickerDia
             public void onClick(View v) {
                 final String email = mEmail.getEditText().getText().toString().trim();
                 String password = mPassword.getEditText().getText().toString().trim();
+                String confirmPassword = mConfirmPassword.getEditText().getText().toString().trim();
                 final String firstName = mFirstName.getEditText().getText().toString().trim();
                 final String city = mCity.getEditText().getText().toString().trim();
                 boolean flag = true;
 
                 if(TextUtils.isEmpty(firstName) || firstName.length() < 3){
-                    mFirstName.setError("Musisz podać imię o długości co najmniej 3 znaków");
+                    mFirstName.setError(getString(R.string.name_must_have_three_letters));
                     flag = false;
-                }
+                }else{mFirstName.setError(null);}
                 if(TextUtils.isEmpty(email)){
-                    mEmail.setError("Email jest wymagany");
+                    mEmail.setError(getString(R.string.error_email));
                     flag = false;
-                }
+                }else{mEmail.setError(null);}
                 if(TextUtils.isEmpty(password)){
-                    mPassword.setError("Hasło jest wymagane");
+                    mPassword.setError(getString(R.string.password_required));
                     flag = false;
-                }
-                if(password.length() < 6){
-                    mPassword.setError("Hasło musi posiadać 6 lub więcej znaków");
+                } else if(password.length() < 6){
+                    mPassword.setError(getString(R.string.password_required_more_than_6_chars));
                     flag = false;
-                }
+                }else{mPassword.setError(null);}
+                if(!confirmPassword.equals(password)){
+                    mConfirmPassword.setError(getString(R.string.passwords_must_be_same));
+                    flag = false;
+                }else{mConfirmPassword.setError(null);}
                 if(TextUtils.isEmpty(city) || city.length() < 3){
-                    mCity.setError("Musisz podać swoją miejscowość o długości co najmniej 3 znaków");
+                    mCity.setError(getString(R.string.city_required_atleast_3_chars));
                     flag = false;
-                }
+                }else{mCity.setError(null);}
                 if(TextUtils.isEmpty(date)){
-                    mBirthDate.setError("Musisz podać swoją datę urodzenia!");
+                    mBirthDate.setError(getString(R.string.birth_date_required));
                     flag = false;
-                }
+                }else{mBirthDate.setError(null);}
 
                 if(flag){
                     mProgressBar.setVisibility(View.VISIBLE);
@@ -162,13 +168,13 @@ public class RegisterActivity extends AppCompatActivity implements DatePickerDia
                                     try {
                                         throw task.getException();
                                     } catch(FirebaseAuthWeakPasswordException e) {
-                                        mPassword.setError("Podane hasło jest za słabe");
+                                        mPassword.setError(getString(R.string.given_password_too_weak));
                                         mPassword.requestFocus();
                                     } catch(FirebaseAuthInvalidCredentialsException e) {
-                                        mEmail.setError("Niepoprawny e-mail");
+                                        mEmail.setError(getString(R.string.incorrect_email));
                                         mEmail.requestFocus();
                                     } catch(FirebaseAuthUserCollisionException e) {
-                                        mEmail.setError("Podany e-mail już istnieje");
+                                        mEmail.setError(getString(R.string.email_extists));
                                         mEmail.requestFocus();
                                     } catch(Exception e) {
                                         Log.e(TAG, e.getMessage());

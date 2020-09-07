@@ -1,4 +1,4 @@
-package pl.highelo.eatoutwithstrangers;
+package pl.highelo.eatoutwithstrangers.ModelsAndUtilities;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +17,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import pl.highelo.eatoutwithstrangers.R;
 
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventsViewHolder> implements Filterable {
 
@@ -104,10 +106,10 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventsView
 
         public EventsViewHolder(@NonNull View itemView, final OnEventItemClick listener) {
             super(itemView);
-            eventTheme = itemView.findViewById(R.id.eventTheme);
+            eventTheme = itemView.findViewById(R.id.create_event_theme);
             eventName = itemView.findViewById(R.id.eventName);
             eventAddress = itemView.findViewById(R.id.eventAddress);
-            eventDate = itemView.findViewById(R.id.eventDate);
+            eventDate = itemView.findViewById(R.id.create_event_date);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
