@@ -27,11 +27,11 @@ public class ManagePagerAdapter extends FragmentStateAdapter {
             case 1:
                 return new ChatFragment();
             case 2:
-                return new JoinedPeopleFragment();
+                return JoinedPeopleFragment.newInstance(mEventsModel);
             case 3:
-                return new RequestsFragment();
+                return RequestsFragment.newInstance(mEventsModel);
             default:
-                return new EventInfoFragment();
+                return EventInfoFragment.newInstance(mEventsModel);
         }
     }
 

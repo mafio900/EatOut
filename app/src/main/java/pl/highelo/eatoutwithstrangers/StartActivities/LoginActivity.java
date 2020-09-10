@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,9 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.MainActivity;
@@ -63,15 +67,15 @@ public class LoginActivity extends AppCompatActivity {
                 if(TextUtils.isEmpty(email)){
                     mEmail.setError("Email jest wymagany");
                     return;
-                }
+                }else{mEmail.setError(null);}
                 if(TextUtils.isEmpty(password)){
                     mPassword.setError("Hasło jest wymagane");
                     return;
-                }
+                }else{mPassword.setError(null);}
                 if(password.length() < 6){
                     mPassword.setError("Hasło musi posiadać 6 lub więcej znaków");
                     return;
-                }
+                }else{mPassword.setError(null);}
 
                 mProgressBar.setVisibility(View.VISIBLE);
 
@@ -82,7 +86,21 @@ public class LoginActivity extends AppCompatActivity {
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                             finish();
                         }else{
-                            Toast.makeText(LoginActivity.this, R.string.wrong_login, Toast.LENGTH_SHORT).show();
+                            try {
+                                throw task.getException();
+                            }catch (FirebaseAuthInvalidUserException e){
+                                if(e.getErrorCode().equals("ERROR_USER_DISABLED")){
+                                    Toast.makeText(LoginActivity.this, R.string.acc_banned, Toast.LENGTH_LONG).show();
+                                }
+                                else{
+                                    Toast.makeText(LoginActivity.this, R.string.wrong_login, Toast.LENGTH_SHORT).show();
+                                }
+                            }catch (FirebaseAuthInvalidCredentialsException e){
+                                Toast.makeText(LoginActivity.this, R.string.wrong_login, Toast.LENGTH_SHORT).show();
+                            }
+                            catch(Exception e) {
+                                Log.e("TAG", e.getMessage());
+                            }
                             mProgressBar.setVisibility(View.INVISIBLE);
                         }
                     }

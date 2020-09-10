@@ -14,7 +14,6 @@ public class EventsModel implements Parcelable {
     private String placeAddress;
     private String theme;
     private int maxPeople;
-    private int joinedPeople;
     private String userID;
     private Timestamp timeStamp;
     private List<String> members = new ArrayList<>();
@@ -44,6 +43,24 @@ public class EventsModel implements Parcelable {
         timeStamp = new Timestamp(in.readLong(), 0);
         in.readStringList(members);
         in.readStringList(requests);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(itemID);
+        dest.writeString(placeName);
+        dest.writeString(placeAddress);
+        dest.writeString(theme);
+        dest.writeInt(maxPeople);
+        dest.writeString(userID);
+        dest.writeLong(timeStamp.getSeconds());
+        dest.writeStringList(members);
+        dest.writeStringList(requests);
     }
 
     public static final Creator<EventsModel> CREATOR = new Creator<EventsModel>() {
@@ -114,14 +131,6 @@ public class EventsModel implements Parcelable {
         this.timeStamp = timeStamp;
     }
 
-    public int getJoinedPeople() {
-        return joinedPeople;
-    }
-
-    public void setJoinedPeople(int joinedPeople) {
-        this.joinedPeople = joinedPeople;
-    }
-
     public List<String> getMembers() {
         return members;
     }
@@ -136,23 +145,5 @@ public class EventsModel implements Parcelable {
 
     public void setRequests(List<String> requests) {
         this.requests = requests;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(itemID);
-        dest.writeString(placeName);
-        dest.writeString(placeAddress);
-        dest.writeString(theme);
-        dest.writeInt(maxPeople);
-        dest.writeString(userID);
-        dest.writeLong(timeStamp.getSeconds());
-        dest.writeStringList(members);
-        dest.writeStringList(requests);
     }
 }

@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        CommonMethods.checkIfBanned(this);
+        CommonMethods.validateUser(this);
 
         setContentView(R.layout.activity_main);
 
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
             mDrawerLayout.closeDrawer(GravityCompat.START);
         }
         else{
-            super.onBackPressed();
+            CommonMethods.showDialog(this, "Czy na pewno chcesz wyjść z aplikacji?");
         }
     }
 }

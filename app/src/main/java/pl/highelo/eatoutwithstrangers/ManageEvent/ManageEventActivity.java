@@ -11,6 +11,7 @@ import android.os.Bundle;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
 import pl.highelo.eatoutwithstrangers.R;
 
@@ -24,6 +25,7 @@ public class ManageEventActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CommonMethods.validateUser(this);
         setContentView(R.layout.activity_manage_event);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -62,5 +64,4 @@ public class ManageEventActivity extends AppCompatActivity {
         );
         tabLayoutMediator.attach();
     }
-
 }

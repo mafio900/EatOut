@@ -70,7 +70,7 @@ public class SearchEventActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        CommonMethods.checkIfBanned(this);
+        CommonMethods.validateUser(this);
 
         setContentView(R.layout.activity_search_event);
 
@@ -118,6 +118,8 @@ public class SearchEventActivity extends AppCompatActivity {
                             long diff = documentTime.getSeconds() - currentTime.getSeconds();
                             if(diff <= 0){
                                 mFirestore.collection("events").document(document.getId()).delete();
+                            }else if(((ArrayList<String>)document.get("requests")).contains(mUserID) || ((ArrayList<String>)document.get("members")).contains(mUserID)){
+                                continue;
                             }
                             else{
                                 EventsModel ci = document.toObject(EventsModel.class);
@@ -195,7 +197,7 @@ public class SearchEventActivity extends AppCompatActivity {
                             }
                         }
                     };
-                    mEventsList.setOnScrollListener(onScrollListener);
+                    mEventsList.addOnScrollListener(onScrollListener);
                 }
             }
         });
@@ -253,7 +255,7 @@ public class SearchEventActivity extends AppCompatActivity {
             mDrawerLayout.closeDrawer(GravityCompat.START);
         }
         else{
-            super.onBackPressed();
+            CommonMethods.showDialog(this, "Czy na pewno chcesz wyjść z aplikacji?");
         }
     }
 }

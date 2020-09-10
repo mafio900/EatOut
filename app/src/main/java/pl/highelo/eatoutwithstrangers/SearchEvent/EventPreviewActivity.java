@@ -24,6 +24,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -104,10 +105,10 @@ public class EventPreviewActivity extends AppCompatActivity {
         String newDate = CommonMethods.parseDate(date, oldFormat, newFormat);
         mEventDate.setText(getString(R.string.date_of_begining_preview)+ ": " + newDate);
         mEventMaxPeople.setText(getString(R.string.max_people_preview)+ ": " + mEventsModel.getMaxPeople());
-        mEventJoinedPeople.setText(getString(R.string.already_joined_preview)+ ": " + mEventsModel.getJoinedPeople());
+        mEventJoinedPeople.setText(getString(R.string.already_joined_preview)+ ": " + mEventsModel.getMembers().size());
 
-        requestsList = (List<String>) mEventsModel.getRequests();
-        membersList = (List<String>) mEventsModel.getMembers();
+        requestsList = mEventsModel.getRequests();
+        membersList = mEventsModel.getMembers();
 
 
         DocumentReference userRef = mFirestore.collection("users").document(mCreatorID);
@@ -117,32 +118,14 @@ public class EventPreviewActivity extends AppCompatActivity {
                 mUserName.setText(documentSnapshot.get("fName").toString() + ",");
                 mUserAge.setText(String.valueOf(CommonMethods.getAge(documentSnapshot.get("birthDate").toString())));
                 mUserDescription.setText(documentSnapshot.get("description").toString());
-            }
-        });
-
-        StorageReference imageRef = FirebaseStorage.getInstance().getReference().child("profile_images/" + mCreatorID + "/profile_image_thumbnail");
-        imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
                 Glide.with(EventPreviewActivity.this)
-                        .load(uri)
+                        .load(documentSnapshot.get("image_thumbnail"))
                         .placeholder(R.drawable.ic_person)
                         .into(mUserImage);
             }
         });
 
-        if(requestsList != null && requestsList.contains(mCurrentUserID)){
-            mActionButton.setText(R.string.cancel_request);
-            mStage = "request";
-        }
-        else if(membersList != null && membersList.contains(mCurrentUserID)){
-            mActionButton.setText(R.string.leave_event);
-            mStage = "joined";
-        }
-        else{
-            mActionButton.setText(R.string.join_event);
-            mStage = "neutral";
-        }
+        refreshUI();
 
         mActionButton.setOnClickListener(new View.OnClickListener() {
             DocumentReference eventsRef = mFirestore.collection("events").document(mItemID);
@@ -152,20 +135,45 @@ public class EventPreviewActivity extends AppCompatActivity {
                 switch(mStage){
                     case "neutral":
                         eventsRef.update("requests", FieldValue.arrayUnion(mCurrentUserID));
+                        usersRef.update("requests", FieldValue.arrayUnion(mItemID));
                         mActionButton.setText(R.string.cancel_request);
                         mStage = "request";
                         break;
                     case "request":
                         eventsRef.update("requests", FieldValue.arrayRemove(mCurrentUserID));
+                        usersRef.update("requests", FieldValue.arrayRemove(mItemID));
                         mActionButton.setText(R.string.join_event);
                         mStage = "neutral";
                         break;
                     case "joined":
                         eventsRef.update("members", FieldValue.arrayRemove(mCurrentUserID));
                         usersRef.update("joinedEvents", FieldValue.arrayRemove(mItemID));
-                        mActionButton.setText(R.string.leave_event);
+                        mActionButton.setText(R.string.join_event);
                         mStage = "neutral";
                         break;
+                }
+            }
+        });
+    }
+
+    public void refreshUI(){
+        DocumentReference eventsRef = mFirestore.collection("events").document(mItemID);
+        eventsRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                EventsModel ev = value.toObject(EventsModel.class);
+                mEventJoinedPeople.setText(getString(R.string.already_joined_preview)+ ": " + ev.getMembers().size());
+                if(ev.getRequests() != null && ev.getRequests().contains(mCurrentUserID)){
+                    mActionButton.setText(R.string.cancel_request);
+                    mStage = "request";
+                }
+                else if(ev.getMembers() != null && ev.getMembers().contains(mCurrentUserID)){
+                    mActionButton.setText(R.string.leave_event);
+                    mStage = "joined";
+                }
+                else{
+                    mActionButton.setText(R.string.join_event);
+                    mStage = "neutral";
                 }
             }
         });

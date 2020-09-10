@@ -1,6 +1,7 @@
 package pl.highelo.eatoutwithstrangers.StartActivities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.widget.Button;
 import com.google.firebase.auth.FirebaseAuth;
 
 import pl.highelo.eatoutwithstrangers.MainActivity;
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.R;
 
 public class StartActivity extends AppCompatActivity {
@@ -40,5 +42,10 @@ public class StartActivity extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), RegisterActivity.class));
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        CommonMethods.showDialog(this, "Czy na pewno chcesz wyjść z aplikacji?");
     }
 }

@@ -1,6 +1,7 @@
 package pl.highelo.eatoutwithstrangers.ModelsAndUtilities;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.text.InputFilter;
 import android.text.Spanned;
@@ -8,16 +9,16 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,26 +27,30 @@ import java.util.Date;
 import java.util.Locale;
 
 import pl.highelo.eatoutwithstrangers.R;
-import pl.highelo.eatoutwithstrangers.StartActivities.StartActivity;
+import pl.highelo.eatoutwithstrangers.StartActivities.LoginActivity;
 
 public class CommonMethods {
 
-//    public static void validateUser(final AppCompatActivity t) {
-//        FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
-//        if(mUser != null){
-//            mUser.reload().addOnFailureListener(new OnFailureListener() {
-//                @Override
-//                public void onFailure(@NonNull Exception e) {
-//                    if (e instanceof FirebaseAuthInvalidUserException) {
-//                        Toast.makeText(t, R.string.acc_deleted_or_failed, Toast.LENGTH_LONG).show();
-//                        FirebaseAuth.getInstance().signOut();
-//                        t.startActivity(new Intent(t.getApplicationContext(), LoginActivity.class));
-//                        t.finish();
-//                    }
-//                }
-//            });
-//        }
-//    }
+    public static void validateUser(final AppCompatActivity t) {
+        FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(mUser != null){
+            mUser.reload().addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    if (e instanceof FirebaseAuthInvalidUserException) {
+                        if(((FirebaseAuthInvalidUserException) e).getErrorCode().equals("ERROR_USER_DISABLED")){
+                            Toast.makeText(t, R.string.acc_banned, Toast.LENGTH_LONG).show();
+                        }else{
+                            Toast.makeText(t, "Hasło zostało zmienione", Toast.LENGTH_LONG).show();
+                        }
+                        FirebaseAuth.getInstance().signOut();
+                        t.startActivity(new Intent(t.getApplicationContext(), LoginActivity.class));
+                        t.finish();
+                    }
+                }
+            });
+        }
+    }
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         //Find the currently focused view, so we can grab the correct window token from it.
@@ -57,25 +62,25 @@ public class CommonMethods {
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    public static void checkIfBanned(final AppCompatActivity t){
-        FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
-        FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
-        if(mUser != null){
-            String userID = mUser.getUid();
-            DocumentReference documentReference = mFirestore.collection("users").document(userID);
-            documentReference.addSnapshotListener(t, new EventListener<DocumentSnapshot>() {
-                @Override
-                public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                    if(documentSnapshot.get("isBanned") == null || documentSnapshot.get("isBanned").toString().equals("true")){
-                        Toast.makeText(t, R.string.acc_banned, Toast.LENGTH_LONG).show();
-                        FirebaseAuth.getInstance().signOut();
-                        t.startActivity(new Intent(t.getApplicationContext(), StartActivity.class));
-                        t.finish();
-                    }
-                }
-            });
-        }
-    }
+//    public static void checkIfBanned(final AppCompatActivity t){
+//        FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
+//        FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
+//        if(mUser != null){
+//            String userID = mUser.getUid();
+//            DocumentReference documentReference = mFirestore.collection("users").document(userID);
+//            documentReference.addSnapshotListener(t, new EventListener<DocumentSnapshot>() {
+//                @Override
+//                public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+//                    if(documentSnapshot.get("isBanned") == null || documentSnapshot.get("isBanned").toString().equals("true")){
+//                        Toast.makeText(t, R.string.acc_banned, Toast.LENGTH_LONG).show();
+//                        FirebaseAuth.getInstance().signOut();
+//                        t.startActivity(new Intent(t.getApplicationContext(), StartActivity.class));
+//                        t.finish();
+//                    }
+//                }
+//            });
+//        }
+//    }
 
     public static String parseDate(String inputDateString, SimpleDateFormat inputDateFormat, SimpleDateFormat outputDateFormat) {
         Date date = null;
@@ -87,6 +92,19 @@ public class CommonMethods {
             e.printStackTrace();
         }
         return outputDateString;
+    }
+
+    public static void showDialog(final AppCompatActivity t, String message){
+        new AlertDialog.Builder(t)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        t.finish();
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
     }
 
     public static int getAge(String dobString){

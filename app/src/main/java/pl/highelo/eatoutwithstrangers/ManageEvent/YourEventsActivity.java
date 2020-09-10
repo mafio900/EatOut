@@ -58,7 +58,7 @@ public class YourEventsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_your_events);
 
-        CommonMethods.checkIfBanned(this);
+        CommonMethods.validateUser(this);
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mNavigationView = findViewById(R.id.nav_view);
@@ -146,7 +146,7 @@ public class YourEventsActivity extends AppCompatActivity {
             mDrawerLayout.closeDrawer(GravityCompat.START);
         }
         else{
-            super.onBackPressed();
+            CommonMethods.showDialog(this, "Czy na pewno chcesz wyjść z aplikacji?");
         }
     }
 }

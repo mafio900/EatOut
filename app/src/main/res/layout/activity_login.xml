@@ -61,33 +61,33 @@
         android:paddingRight="24dp"
         android:paddingBottom="16dp"
         android:text="@string/login"
-        app:layout_constraintStart_toStartOf="@+id/passwordLgET"
+        app:layout_constraintEnd_toEndOf="@+id/passwordLgET"
         app:layout_constraintTop_toBottomOf="@+id/passwordLgET" />
 
     <Button
         android:id="@+id/forgotPasswdLgBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
         android:backgroundTint="@color/accent"
         android:paddingLeft="24dp"
         android:paddingTop="16dp"
         android:paddingRight="24dp"
         android:paddingBottom="16dp"
         android:text="@string/forgot_password"
-        app:layout_constraintEnd_toEndOf="@+id/passwordLgET"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/loginLgBT"
-        app:layout_constraintTop_toTopOf="@+id/loginLgBT" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ProgressBar
         android:id="@+id/progressBarLg"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="24dp"
         android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="@+id/forgotPasswdLgBtn"
-        app:layout_constraintStart_toStartOf="@+id/loginLgBT"
-        app:layout_constraintTop_toBottomOf="@+id/forgotPasswdLgBtn" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/loginLgBT" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

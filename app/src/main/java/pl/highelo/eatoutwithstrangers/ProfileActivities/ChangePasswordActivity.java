@@ -49,11 +49,11 @@ public class ChangePasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        CommonMethods.checkIfBanned(this);
+        CommonMethods.validateUser(this);
 
         setContentView(R.layout.activity_change_password);
 
-        //setupUI(findViewById(R.id.parent));
+        setupUI(findViewById(R.id.parent));
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mNavigationView = findViewById(R.id.nav_view);
@@ -143,7 +143,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
             mDrawerLayout.closeDrawer(GravityCompat.START);
         }
         else{
-            super.onBackPressed();
+            CommonMethods.showDialog(this, "Czy na pewno chcesz wyjść z aplikacji?");
         }
     }
 

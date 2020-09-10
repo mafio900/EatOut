@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
@@ -66,7 +67,7 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CommonMethods.checkIfBanned(this);
+        CommonMethods.validateUser(this);
         setContentView(R.layout.activity_profile);
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mNavigationView = findViewById(R.id.nav_view);
@@ -101,17 +102,6 @@ public class ProfileActivity extends AppCompatActivity {
                 imageClick();
             }
         });
-
-        StorageReference imageRef = mStorageReference.child("profile_images/" + mUserID + "/profile_image");
-        imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-            Glide.with(ProfileActivity.this)
-                    .load(uri)
-                    .placeholder(R.drawable.ic_person)
-                    .into(mProfileImageView);
-            }
-        });
         DocumentReference documentReference = mFirestore.collection("users").document(mUserID);
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
             @Override
@@ -120,6 +110,10 @@ public class ProfileActivity extends AppCompatActivity {
                 mProfileAge.setText(String.valueOf(CommonMethods.getAge(documentSnapshot.get("birthDate").toString())));
                 mProfileCity.setText("Mieszka w " + documentSnapshot.get("city").toString());
                 mProfileDescription.setText(documentSnapshot.get("description").toString());
+                Glide.with(ProfileActivity.this)
+                        .load(documentSnapshot.get("image"))
+                        .placeholder(R.drawable.ic_person)
+                        .into(mProfileImageView);
             }
         });
     }
@@ -154,18 +148,18 @@ public class ProfileActivity extends AppCompatActivity {
     public void imageClick() {
         CropImage.activity()
                 .setGuidelines(CropImageView.Guidelines.ON)
-                .setAspectRatio(1,1)
-                .setMinCropResultSize(500,500)
+                .setAspectRatio(1, 1)
+                .setMinCropResultSize(500, 500)
                 .start(this);
     }
 
-    public void handleUpdate(){
-        if(mSelectedImage != null){
+    public void handleUpdate() {
+        if (mSelectedImage != null) {
             final File thumbFile = new File(mSelectedImage.getPath());
             mStorageReference.child("profile_images/" + mUserID + "/profile_image").putFile(mSelectedImage).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                    if(task.isSuccessful()) {
+                    if (task.isSuccessful()) {
                         try {
                             Bitmap thumb_bitmap = new Compressor(ProfileActivity.this)
                                     .setMaxHeight(200)
@@ -174,35 +168,58 @@ public class ProfileActivity extends AppCompatActivity {
                                     .compressToBitmap(thumbFile);
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
                             thumb_bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                            byte[] thumb_byte = baos.toByteArray();
-                            mStorageReference.child("profile_images/" + mUserID + "/profile_image_thumbnail").putBytes(thumb_byte).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                            final byte[] thumb_byte = baos.toByteArray();
+                            mStorageReference.child("profile_images/" + mUserID + "/profile_image").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
-                                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                                    if(task.isCanceled()){
-                                        Toast.makeText(ProfileActivity.this, "Coś poszło nie tak przy wysyłaniu zdjęcia!", Toast.LENGTH_LONG).show();
-                                    }else{
-                                        Toast.makeText(ProfileActivity.this, "Zapisano zdjęcie", Toast.LENGTH_SHORT).show();
-                                    }
+                                public void onSuccess(Uri uri) {
+                                    mFirestore.collection("users").document(mUserID).update("image", uri.toString());
+                                    mStorageReference.child("profile_images/" + mUserID + "/profile_image_thumbnail").putBytes(thumb_byte).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                                            if (task.isSuccessful()) {
+                                                mStorageReference.child("profile_images/" + mUserID + "/profile_image_thumbnail").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                    @Override
+                                                    public void onSuccess(Uri uri) {
+                                                        mFirestore.collection("users").document(mUserID).update("image_thumbnail", uri.toString());
+                                                        Toast.makeText(ProfileActivity.this, "Zapisano zdjęcie", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }).addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Toast.makeText(ProfileActivity.this, "Coś poszło nie tak przy wysyłaniu zdjęcia!", Toast.LENGTH_LONG).show();
+                                                    }
+                                                });
+                                            } else {
+                                                Toast.makeText(ProfileActivity.this, "Coś poszło nie tak przy wysyłaniu zdjęcia!", Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                    });
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(ProfileActivity.this, "Coś poszło nie tak przy wysyłaniu zdjęcia!", Toast.LENGTH_LONG).show();
                                 }
                             });
+
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                    }
-                    else{
+                    } else {
                         Toast.makeText(ProfileActivity.this, "Coś poszło nie tak przy wysyłaniu zdjęcia!", Toast.LENGTH_LONG).show();
                     }
                 }
             });
         }
     }
+
     @Override
     public void onBackPressed() {
         if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
             mDrawerLayout.closeDrawer(GravityCompat.START);
         }
         else{
-            super.onBackPressed();
+            CommonMethods.showDialog(this, "Czy na pewno chcesz wyjść z aplikacji?");
         }
     }
 }

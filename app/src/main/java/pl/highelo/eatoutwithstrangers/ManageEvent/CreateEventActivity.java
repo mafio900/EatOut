@@ -74,7 +74,7 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        CommonMethods.checkIfBanned(this);
+        CommonMethods.validateUser(this);
 
         setContentView(R.layout.activity_create_event);
 
@@ -238,7 +238,6 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
             //event.put("placeLatLng", new GeoPoint(mPlace.getLatLng().latitude, mPlace.getLatLng().longitude));
             event.put("theme", mTheme.getEditText().getText().toString());
             event.put("maxPeople", Integer.parseInt(mMaxPeople.getEditText().getText().toString()));
-            event.put("joinedPeople", 0);
             GregorianCalendar dd = new GregorianCalendar(mYear, mMonth, mDay, mHour, mMinute);
             dd.setTimeZone(TimeZone.getTimeZone("Europe/Warsaw"));
             event.put("timeStamp", new Timestamp(dd.getTime()));

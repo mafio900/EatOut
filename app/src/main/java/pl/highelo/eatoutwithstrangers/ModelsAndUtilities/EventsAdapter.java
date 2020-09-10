@@ -106,10 +106,10 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventsView
 
         public EventsViewHolder(@NonNull View itemView, final OnEventItemClick listener) {
             super(itemView);
-            eventTheme = itemView.findViewById(R.id.create_event_theme);
-            eventName = itemView.findViewById(R.id.eventName);
-            eventAddress = itemView.findViewById(R.id.eventAddress);
-            eventDate = itemView.findViewById(R.id.create_event_date);
+            eventTheme = itemView.findViewById(R.id.list_event_theme);
+            eventName = itemView.findViewById(R.id.list_event_name);
+            eventAddress = itemView.findViewById(R.id.list_event_address);
+            eventDate = itemView.findViewById(R.id.list_event_date);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

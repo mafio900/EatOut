@@ -51,7 +51,7 @@ public class EditProfileActivity extends AppCompatActivity implements DatePicker
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        CommonMethods.checkIfBanned(this);
+        CommonMethods.validateUser(this);
 
         setContentView(R.layout.activity_edit_profile);
 

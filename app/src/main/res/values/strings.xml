@@ -33,7 +33,7 @@
     <string name="set_new_password">Podaj nowe hasło</string>
     <string name="profile_picture">Zdjęcie profilowe</string>
     <string name="acc_banned">Konto zostało zablokowane!</string>
-    <string name="acc_deleted_or_failed">Konto zostało usunięte lub serwery aktualnie nie działają!</string>
+    <string name="acc_banned_or_failed">Konto zostało zbanowane lub serwery aktualnie nie działają!</string>
     <string name="main_page">Strona główna</string>
     <string name="profile">Profil</string>
     <string name="search_event">Szukaj wydarzeń</string>
@@ -97,4 +97,10 @@
     <string name="set_new_pasword_again">Podaj ponownie nowe hasło</string>
     <string name="changing_password">Zmiana hasła</string>
     <string name="incorrect_old_password">Niepoprawne stare hasło!</string>
+    <string name="live_in">Mieszka w</string>
+    <string name="accept_request">Akceptuj prośbę</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="joined">Dołączone</string>
+    <string name="pendings">Oczekujące</string>
 </resources>

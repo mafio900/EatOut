@@ -143,7 +143,6 @@ public class RegisterActivity extends AppCompatActivity implements DatePickerDia
                                 user.put("fName", firstName);
                                 user.put("email", email);
                                 user.put("city", city);
-                                user.put("isBanned", false);
                                 user.put("description", "");
                                 SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-M-d", Locale.US);
                                 SimpleDateFormat newFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.US);

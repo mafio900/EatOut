@@ -1,5 +1,7 @@
 package pl.highelo.eatoutwithstrangers.ManageEvent;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -89,19 +91,36 @@ public class EventInfoFragment extends Fragment {
         String newDate = CommonMethods.parseDate(date, oldFormat, newFormat);
         mEventDate.setText(getString(R.string.date_of_begining_preview)+ ": " + newDate);
         mEventMaxPeople.setText(getString(R.string.max_people_preview)+ ": " + mEventsModel.getMaxPeople());
-        mEventJoinedPeople.setText(getString(R.string.already_joined_preview)+ ": " + mEventsModel.getJoinedPeople());
+        mEventJoinedPeople.setText(getString(R.string.already_joined_preview)+ ": " + mEventsModel.getMembers().size());
 
         if(mAuth.getCurrentUser().getUid().equals(mEventsModel.getUserID())) {
             mActionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mFirestore.collection("events").document(mEventsModel.getItemID()).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setCancelable(true);
+                    builder.setTitle("Usuń wydarzenie");
+                    builder.setMessage("Czy na pewno chcesz usunąć to wydarzenie?");
+                    builder.setPositiveButton(android.R.string.ok,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    mFirestore.collection("events").document(mEventsModel.getItemID()).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            Toast.makeText(getActivity(), R.string.successfully_deleted_event, Toast.LENGTH_LONG).show();
+                                            getActivity().finish();
+                                        }
+                                    });
+                                }
+                            });
+                    builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                         @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            Toast.makeText(getActivity(), R.string.successfully_deleted_event, Toast.LENGTH_LONG).show();
-                            getActivity().finish();
+                        public void onClick(DialogInterface dialog, int which) {
                         }
                     });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
                 }
             });
         }
