@@ -3,6 +3,7 @@ package pl.highelo.eatoutwithstrangers.JoinedEvents;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -38,9 +39,7 @@ public class RequestedEventsFragment extends Fragment {
     private EventsAdapter mAdapter;
     private ArrayList<EventsModel> mEventsModelArrayList = new ArrayList<>();
 
-    public RequestedEventsFragment() {
-        // Required empty public constructor
-    }
+    public RequestedEventsFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,16 +52,21 @@ public class RequestedEventsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View v = inflater.inflate(R.layout.fragment_requested_events, container, false);
+        return inflater.inflate(R.layout.fragment_requested_events, container, false);
+    }
 
-        mRequestedEventsRecyclerView = v.findViewById(R.id.requested_events_recyclerview);
-        mRequestedEventsRecyclerView.setLayoutManager(new LinearLayoutManager(v.getContext()));
+    @Override
+    public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mRequestedEventsRecyclerView = view.findViewById(R.id.requested_events_recyclerview);
+        mRequestedEventsRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         mAdapter = new EventsAdapter(mEventsModelArrayList);
         mRequestedEventsRecyclerView.setAdapter(mAdapter);
         mAdapter.setOnEventItemClick(new EventsAdapter.OnEventItemClick() {
             @Override
             public void OnItemClick(int position) {
-                Intent intent = new Intent(v.getContext(), EventPreviewActivity.class);
+                Intent intent = new Intent(view.getContext(), EventPreviewActivity.class);
                 intent.putExtra("model", mEventsModelArrayList.get(position));
                 startActivity(intent);
             }
@@ -107,7 +111,5 @@ public class RequestedEventsFragment extends Fragment {
                 }
             }
         });
-
-        return v;
     }
 }

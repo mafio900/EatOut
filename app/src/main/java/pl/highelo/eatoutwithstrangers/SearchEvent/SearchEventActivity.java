@@ -99,6 +99,10 @@ public class SearchEventActivity extends AppCompatActivity {
         mLinearLayoutManager = new LinearLayoutManager(this);
         mEventsList.setLayoutManager(mLinearLayoutManager);
 
+        loadData();
+    }
+
+    public void loadData(){
         //Query
         CollectionReference collectionReference = mFirestore.collection("events");
         GeoFirestore geoFirestore = new GeoFirestore(collectionReference);

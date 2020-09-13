@@ -3,6 +3,7 @@ package pl.highelo.eatoutwithstrangers.JoinedEvents;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,22 +20,14 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
-import pl.highelo.eatoutwithstrangers.ManageEvent.ManageEventActivity;
-import pl.highelo.eatoutwithstrangers.ManageEvent.YourEventsActivity;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsAdapter;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
-import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.UsersModel;
 import pl.highelo.eatoutwithstrangers.R;
 import pl.highelo.eatoutwithstrangers.SearchEvent.EventPreviewActivity;
-
-import static com.google.firebase.firestore.DocumentChange.Type.ADDED;
-import static com.google.firebase.firestore.DocumentChange.Type.MODIFIED;
-import static com.google.firebase.firestore.DocumentChange.Type.REMOVED;
 
 public class JoinedEventsFragment extends Fragment {
 
@@ -62,15 +55,21 @@ public class JoinedEventsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View v = inflater.inflate(R.layout.fragment_joined_events, container, false);
-        mJoinedEventsRecyclerView = v.findViewById(R.id.joined_events_recyclerview);
-        mJoinedEventsRecyclerView.setLayoutManager(new LinearLayoutManager(v.getContext()));
+        return inflater.inflate(R.layout.fragment_joined_events, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mJoinedEventsRecyclerView = view.findViewById(R.id.joined_events_recyclerview);
+        mJoinedEventsRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         mAdapter = new EventsAdapter(mEventsModelArrayList);
         mJoinedEventsRecyclerView.setAdapter(mAdapter);
         mAdapter.setOnEventItemClick(new EventsAdapter.OnEventItemClick() {
             @Override
             public void OnItemClick(int position) {
-                Intent intent = new Intent(v.getContext(), EventPreviewActivity.class);
+                Intent intent = new Intent(view.getContext(), EventPreviewActivity.class);
                 intent.putExtra("model", mEventsModelArrayList.get(position));
                 startActivity(intent);
             }
@@ -115,7 +114,5 @@ public class JoinedEventsFragment extends Fragment {
                 }
             }
         });
-
-        return v;
     }
 }

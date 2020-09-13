@@ -9,14 +9,12 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager2.widget.ViewPager2;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-import pl.highelo.eatoutwithstrangers.ManageEvent.ManagePagerAdapter;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.NavbarInterface;
 import pl.highelo.eatoutwithstrangers.R;

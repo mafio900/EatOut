@@ -22,16 +22,14 @@ public class ManagePagerAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         switch (position){
-            case 0:
+            default:
                 return EventInfoFragment.newInstance(mEventsModel);
             case 1:
-                return new ChatFragment();
+                return ChatFragment.newInstance(mEventsModel);
             case 2:
                 return JoinedPeopleFragment.newInstance(mEventsModel);
             case 3:
                 return RequestsFragment.newInstance(mEventsModel);
-            default:
-                return EventInfoFragment.newInstance(mEventsModel);
         }
     }
 

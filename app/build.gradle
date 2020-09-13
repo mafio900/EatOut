@@ -38,6 +38,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage:19.2.0'
     implementation 'com.google.firebase:firebase-inappmessaging-display:19.1.1'
     implementation 'com.firebaseui:firebase-ui-firestore:6.3.0'
+    implementation 'android.arch.paging:runtime:2.1.1'
 
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'androidx.mediarouter:mediarouter:1.1.0'
