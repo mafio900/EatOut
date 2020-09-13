@@ -14,9 +14,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".JoinedEvents.JoinedEventPreview"></activity>
-        <activity android:name=".JoinedEvents.JoinedEventsActivity" />
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
@@ -41,6 +38,11 @@
             android:name=".StartActivities.RegisterActivity"
             android:parentActivityName=".StartActivities.StartActivity" />
         <activity android:name=".MainActivity" />
+        <activity android:name=".JoinedEvents.JoinedEventsActivity" />
+        <activity android:name=".JoinedEvents.JoinedEventPreviewActivity"
+            android:configChanges="orientation|screenSize|keyboard"
+            android:launchMode="singleTop"
+            android:parentActivityName=".JoinedEvents.JoinedEventsActivity"/>
         <activity
             android:name=".ManageEvent.ManageEventActivity"
             android:configChanges="orientation|screenSize|keyboard"

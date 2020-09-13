@@ -10,56 +10,47 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-
-import java.util.ArrayList;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import pl.highelo.eatoutwithstrangers.R;
 
-public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.PeopleViewHolder> {
+public class UsersAdapter extends FirestoreRecyclerAdapter<UsersModel, UsersAdapter.UsersViewHolder> {
 
-    private ArrayList<UsersModel> mPeopleList;
     private OnUsersItemClick mOnUsersItemClick;
     private OnUsersAcceptClick mOnUsersAcceptClick;
     private OnUsersCancelClick mOnUsersCancelClick;
 
-    public UsersAdapter(ArrayList<UsersModel> peopleList) {
-        mPeopleList = peopleList;
+    public UsersAdapter(@NonNull FirestoreRecyclerOptions<UsersModel> options) {
+        super(options);
     }
 
     @NonNull
     @Override
-    public PeopleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public UsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_users_item, parent, false);
-        return new PeopleViewHolder(view, mOnUsersItemClick, mOnUsersAcceptClick, mOnUsersCancelClick);
+        return new UsersViewHolder(view, mOnUsersItemClick, mOnUsersAcceptClick, mOnUsersCancelClick);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PeopleViewHolder holder, int position) {
-        UsersModel currentItem = mPeopleList.get(position);
-
+    protected void onBindViewHolder(@NonNull UsersViewHolder holder, int position, @NonNull UsersModel model) {
         Glide.with(holder.mImage.getContext())
-                .load(currentItem.getImage_thumbnail())
+                .load(model.getImage_thumbnail())
                 .placeholder(R.drawable.ic_person)
                 .into(holder.mImage);
-        holder.mName.setText(currentItem.getfName() + ",");
-        holder.mAge.setText(String.valueOf(CommonMethods.getAge(currentItem.getBirthDate())));
-        holder.mDescription.setText(currentItem.getDescription());
+        holder.mName.setText(model.getfName() + ",");
+        holder.mAge.setText(String.valueOf(CommonMethods.getAge(model.getBirthDate())));
+        holder.mDescription.setText(model.getDescription());
     }
 
-    @Override
-    public int getItemCount() {
-        return mPeopleList.size();
-    }
-
-
-    public static class PeopleViewHolder extends RecyclerView.ViewHolder {
+    public static class UsersViewHolder extends RecyclerView.ViewHolder {
 
         private TextView mName, mAge, mDescription;
         private CircleImageView mImage;
         private ImageButton mAccept, mCancel;
 
-        public PeopleViewHolder(@NonNull View itemView, final OnUsersItemClick onUsersItemClick, final OnUsersAcceptClick onUsersAcceptClick, final OnUsersCancelClick onUsersCancelClick) {
+        public UsersViewHolder(@NonNull View itemView, final OnUsersItemClick onUsersItemClick, final OnUsersAcceptClick onUsersAcceptClick, final OnUsersCancelClick onUsersCancelClick) {
             super(itemView);
             mName = itemView.findViewById(R.id.list_users_name);
             mAge = itemView.findViewById(R.id.list_users_age);

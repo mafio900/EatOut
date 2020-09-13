@@ -76,7 +76,6 @@ public class ChatFragment extends Fragment {
             mEventsModel = getArguments().getParcelable(ARG_EVENTS_MODEL);
             mFirestore = FirebaseFirestore.getInstance();
             mAuth = FirebaseAuth.getInstance();
-
         }
     }
 
@@ -84,11 +83,16 @@ public class ChatFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_chat, container, false);
-        mRecyclerView = v.findViewById(R.id.chat_recyclerview);
-        mMessageEditText = v.findViewById(R.id.chat_message);
-        mSendMessageButton = v.findViewById(R.id.chat_send_button);
-        setupUI(v);
+        return inflater.inflate(R.layout.fragment_chat, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mRecyclerView = view.findViewById(R.id.chat_recyclerview);
+        mMessageEditText = view.findViewById(R.id.chat_message);
+        mSendMessageButton = view.findViewById(R.id.chat_send_button);
+        setupUI(view);
 
         //Query
         Query query = mFirestore.collection("events").document(mEventsModel.getItemID()).collection("chat").orderBy("time", Query.Direction.DESCENDING).limit(PAGE_SIZE);
@@ -103,7 +107,7 @@ public class ChatFragment extends Fragment {
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setAdapter(adapter);
 
-        mSwipeRefreshLayout = v.findViewById(R.id.chat_swipelayout);
+        mSwipeRefreshLayout = view.findViewById(R.id.chat_swipelayout);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -126,7 +130,6 @@ public class ChatFragment extends Fragment {
                 sendMessage();
             }
         });
-        return v;
     }
 
     private void sendMessage() {

@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,19 +20,28 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.firebase.ui.firestore.SnapshotParser;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.MessagesModel;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.UsersAdapter;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.UsersModel;
 import pl.highelo.eatoutwithstrangers.ProfilePreviewActivity;
@@ -45,7 +55,6 @@ public class RequestsFragment extends Fragment {
     private EventsModel mEventsModel;
     private RecyclerView mRecyclerView;
     private UsersAdapter mAdapter;
-    private ArrayList<UsersModel> mUsersList = new ArrayList<>();
     private AlertDialog dialog;
 
     private FirebaseFirestore mFirestore;
@@ -73,47 +82,31 @@ public class RequestsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_requests, container, false);
-        mFirestore.collection("users").whereArrayContains("requests", mEventsModel.getItemID()).addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
-                    UsersModel usersModel = dc.getDocument().toObject(UsersModel.class);
-                    usersModel.setUserID(dc.getDocument().getId());
-                    switch (dc.getType()) {
-                        case ADDED:
-                            if(dialog != null && dialog.isShowing()){
-                                dialog.dismiss();
-                            }
-                            mUsersList.add(usersModel);
-                            mAdapter.notifyDataSetChanged();
-                            break;
-                        case MODIFIED:
+        return v;
+    }
 
-                            break;
-                        case REMOVED:
-                            if(dialog != null &&dialog.isShowing()){
-                                dialog.dismiss();
-                            }
-                            int p = 0;
-                            for(UsersModel u : mUsersList){
-                                if(u.getUserID().equals(usersModel.getUserID())){
-                                    mUsersList.remove(p);
-                                    mAdapter.notifyDataSetChanged();
-                                    break;
-                                }
-                                p++;
-                            }
-                            break;
+    @Override
+    public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        Query query = mFirestore.collection("users").whereArrayContains("requests", mEventsModel.getItemID());
+        FirestoreRecyclerOptions<UsersModel> options = new FirestoreRecyclerOptions.Builder<UsersModel>()
+                .setQuery(query, new SnapshotParser<UsersModel>() {
+                    @NonNull
+                    @Override
+                    public UsersModel parseSnapshot(@NonNull DocumentSnapshot snapshot) {
+                        UsersModel usersModel = snapshot.toObject(UsersModel.class);
+                        usersModel.setUserID(snapshot.getId());
+                        return usersModel;
                     }
-                }
-            }
-        });
-        mAdapter = new UsersAdapter(mUsersList);
+                })
+                .build();
+        mAdapter = new UsersAdapter(options);
         mAdapter.setOnUsersItemClick(new UsersAdapter.OnUsersItemClick() {
             @Override
             public void OnItemClick(int position) {
                 Intent intent = new Intent(getContext(), ProfilePreviewActivity.class);
-                intent.putExtra("user", mUsersList.get(position));
+                intent.putExtra("user", mAdapter.getItem(position));
                 startActivity(intent);
             }
         });
@@ -128,21 +121,26 @@ public class RequestsFragment extends Fragment {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                WriteBatch batch = mFirestore.batch();
+
                                 Map<String, Object> eventMap = new HashMap<>();
-                                eventMap.put("requests", FieldValue.arrayRemove(mUsersList.get(position).getUserID()));
-                                eventMap.put("members", FieldValue.arrayUnion(mUsersList.get(position).getUserID()));
-                                mFirestore.collection("events").document(mEventsModel.getItemID()).update(eventMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                eventMap.put("requests", FieldValue.arrayRemove(mAdapter.getItem(position).getUserID()));
+                                eventMap.put("members", FieldValue.arrayUnion(mAdapter.getItem(position).getUserID()));
+                                DocumentReference evRef = mFirestore.collection("events").document(mEventsModel.getItemID());
+                                batch.update(evRef, eventMap);
+
+                                Map<String, Object> userMap = new HashMap<>();
+                                userMap.put("requests", FieldValue.arrayRemove(mEventsModel.getItemID()));
+                                userMap.put("joinedEvents", FieldValue.arrayUnion(mEventsModel.getItemID()));
+                                DocumentReference userRef = mFirestore.collection("users").document(mAdapter.getItem(position).getUserID());
+                                batch.update(userRef, userMap);
+
+                                batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Map<String, Object> userMap = new HashMap<>();
-                                        userMap.put("requests", FieldValue.arrayRemove(mEventsModel.getItemID()));
-                                        userMap.put("joinedEvents", FieldValue.arrayUnion(mEventsModel.getItemID()));
-                                        mFirestore.collection("users").document(mUsersList.get(position).getUserID()).update(userMap).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                Toast.makeText(getContext(), "Pomyślnie dodano użytkownika", Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+                                            Toast.makeText(getContext(), "Dodano użytkownika do wydarzenia", Toast.LENGTH_LONG).show();
+                                        }
                                     }
                                 });
                             }
@@ -167,15 +165,16 @@ public class RequestsFragment extends Fragment {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                mFirestore.collection("events").document(mEventsModel.getItemID()).update("requests", FieldValue.arrayRemove(mUsersList.get(position).getUserID())).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                WriteBatch batch = mFirestore.batch();
+                                DocumentReference evRef = mFirestore.collection("events").document(mEventsModel.getItemID());
+                                batch.update(evRef,"requests", FieldValue.arrayRemove(mAdapter.getItem(position).getUserID()));
+                                DocumentReference userRef = mFirestore.collection("users").document(mAdapter.getItem(position).getUserID());
+                                batch.update(userRef,"requests", FieldValue.arrayRemove(mEventsModel.getItemID()));
+
+                                batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
-                                    public void onSuccess(Void aVoid) {
-                                        mFirestore.collection("users").document(mUsersList.get(position).getUserID()).update("requests", FieldValue.arrayRemove(mEventsModel.getItemID())).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                Toast.makeText(getContext(), "Pomyślnie usunięto prośbę o dodanie", Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        Toast.makeText(getContext(), "Poprawnie usunięto prośbę o dołączenie", Toast.LENGTH_LONG).show();
                                     }
                                 });
                             }
@@ -189,9 +188,20 @@ public class RequestsFragment extends Fragment {
                 dialog.show();
             }
         });
-        mRecyclerView = v.findViewById(R.id.manage_requests_recyclerview);
+        mRecyclerView = view.findViewById(R.id.manage_requests_recyclerview);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mAdapter);
-        return v;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAdapter.startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mAdapter.stopListening();
     }
 }

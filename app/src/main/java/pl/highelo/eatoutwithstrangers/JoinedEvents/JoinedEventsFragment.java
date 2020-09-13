@@ -69,7 +69,7 @@ public class JoinedEventsFragment extends Fragment {
         mAdapter.setOnEventItemClick(new EventsAdapter.OnEventItemClick() {
             @Override
             public void OnItemClick(int position) {
-                Intent intent = new Intent(view.getContext(), EventPreviewActivity.class);
+                Intent intent = new Intent(view.getContext(), JoinedEventPreviewActivity.class);
                 intent.putExtra("model", mEventsModelArrayList.get(position));
                 startActivity(intent);
             }

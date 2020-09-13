@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -15,9 +16,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -64,7 +71,13 @@ public class EventInfoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_event_info, container, false);
+        return inflater.inflate(R.layout.fragment_event_info, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(v, savedInstanceState);
+
         mEventTheme = (TextView) v.findViewById(R.id.event_info_theme);
         mEventName = (TextView) v.findViewById(R.id.event_info_name);
         mEventAddress = (TextView) v.findViewById(R.id.event_info_address);
@@ -105,11 +118,39 @@ public class EventInfoFragment extends Fragment {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    mFirestore.collection("events").document(mEventsModel.getItemID()).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    mFirestore.collection("users").whereArrayContains("joinedEvents", mEventsModel.getItemID()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                         @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            Toast.makeText(getActivity(), R.string.successfully_deleted_event, Toast.LENGTH_LONG).show();
-                                            getActivity().finish();
+                                        public void onComplete(@NonNull final Task<QuerySnapshot> task1) {
+                                            if(task1.isSuccessful()){
+                                                mFirestore.collection("users").whereArrayContains("requests", mEventsModel.getItemID()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<QuerySnapshot> task2) {
+                                                        if(task2.isSuccessful()){
+                                                            WriteBatch batch = mFirestore.batch();
+
+                                                            for(DocumentSnapshot document : task1.getResult()){
+                                                                DocumentReference userDel = mFirestore.collection("users").document(document.getId());
+                                                                batch.update(userDel, "joinedEvents", FieldValue.arrayRemove(mEventsModel.getItemID()));
+                                                            }
+                                                            for(DocumentSnapshot document : task1.getResult()){
+                                                                DocumentReference userDel = mFirestore.collection("users").document(document.getId());
+                                                                batch.update(userDel, "requests", FieldValue.arrayRemove(mEventsModel.getItemID()));
+                                                            }
+                                                            DocumentReference evDel = mFirestore.collection("events").document(mEventsModel.getItemID());
+                                                            batch.delete(evDel);
+                                                            batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                    if(task.isSuccessful()){
+                                                                        Toast.makeText(getContext(), R.string.successfully_deleted_event, Toast.LENGTH_LONG).show();
+                                                                        getActivity().finish();
+                                                                    }
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+                                                });
+                                            }
                                         }
                                     });
                                 }
@@ -124,6 +165,5 @@ public class EventInfoFragment extends Fragment {
                 }
             });
         }
-        return v;
     }
 }

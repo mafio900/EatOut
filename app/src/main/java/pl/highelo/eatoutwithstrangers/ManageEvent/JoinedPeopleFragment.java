@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,13 +17,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.firebase.ui.firestore.SnapshotParser;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.util.ArrayList;
 
@@ -40,7 +49,6 @@ public class JoinedPeopleFragment extends Fragment {
     private EventsModel mEventsModel;
     private RecyclerView mRecyclerView;
     private UsersAdapter mAdapter;
-    private ArrayList<UsersModel> mUsersList = new ArrayList<>();
     private AlertDialog dialog;
 
     private FirebaseFirestore mFirestore;
@@ -69,52 +77,31 @@ public class JoinedPeopleFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View v = inflater.inflate(R.layout.fragment_joined_people, container, false);
-        mFirestore.collection("users").whereArrayContains("joinedEvents", mEventsModel.getItemID()).addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
-                    UsersModel usersModel = dc.getDocument().toObject(UsersModel.class);
-                    usersModel.setUserID(dc.getDocument().getId());
-                    switch (dc.getType()) {
-                        case ADDED:
-                            if(dialog != null && dialog.isShowing()){
-                                dialog.dismiss();
-                            }
-                            mUsersList.add(usersModel);
-                            mAdapter.notifyDataSetChanged();
-                            Bundle result = new Bundle();
-                            result.putInt("joinedPeople", mUsersList.size());
-                            break;
-                        case MODIFIED:
+        return inflater.inflate(R.layout.fragment_joined_people, container, false);
+    }
 
-                            break;
-                        case REMOVED:
-                            if(dialog.isShowing()){
-                                dialog.dismiss();
-                            }
-                            int p = 0;
-                            for(UsersModel u : mUsersList){
-                                if(u.getUserID().equals(usersModel.getUserID())){
-                                    Log.d(TAG, "onEvent: " + mUsersList.get(p).getfName());
-                                    mUsersList.remove(p);
-                                    mAdapter.notifyDataSetChanged();
-                                    break;
-                                }
-                                p++;
-                            }
-                            p=0;
-                            break;
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        Query query = mFirestore.collection("users").whereArrayContains("joinedEvents", mEventsModel.getItemID());
+        FirestoreRecyclerOptions<UsersModel> options = new FirestoreRecyclerOptions.Builder<UsersModel>()
+                .setQuery(query, new SnapshotParser<UsersModel>() {
+                    @NonNull
+                    @Override
+                    public UsersModel parseSnapshot(@NonNull DocumentSnapshot snapshot) {
+                        UsersModel usersModel = snapshot.toObject(UsersModel.class);
+                        usersModel.setUserID(snapshot.getId());
+                        return usersModel;
                     }
-                }
-            }
-        });
-        mAdapter = new UsersAdapter(mUsersList);
+                })
+                .build();
+        mAdapter = new UsersAdapter(options);
         mAdapter.setOnUsersItemClick(new UsersAdapter.OnUsersItemClick() {
             @Override
             public void OnItemClick(int position) {
                 Intent intent = new Intent(getContext(), ProfilePreviewActivity.class);
-                intent.putExtra("user", mUsersList.get(position));
+                intent.putExtra("user", mAdapter.getItem(position));
                 startActivity(intent);
             }
         });
@@ -129,15 +116,17 @@ public class JoinedPeopleFragment extends Fragment {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                mFirestore.collection("events").document(mEventsModel.getItemID()).update("members", FieldValue.arrayRemove(mUsersList.get(position).getUserID())).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                WriteBatch batch = mFirestore.batch();
+                                DocumentReference evRef = mFirestore.collection("events").document(mEventsModel.getItemID());
+                                batch.update(evRef,"members", FieldValue.arrayRemove(mAdapter.getItem(position).getUserID()));
+                                Log.d(TAG, "onClick: " + mAdapter.getItem(position).getUserID());
+                                DocumentReference userRef = mFirestore.collection("users").document(mAdapter.getItem(position).getUserID());
+                                batch.update(userRef,"joinedEvents", FieldValue.arrayRemove(mEventsModel.getItemID()));
+
+                                batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
-                                    public void onSuccess(Void aVoid) {
-                                        mFirestore.collection("users").document(mUsersList.get(position).getUserID()).update("joinedEvents", FieldValue.arrayRemove(mEventsModel.getItemID())).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                Toast.makeText(getContext(), "Pomyślnie usunięto użytkownika", Toast.LENGTH_LONG).show();
-                                            }
-                                        });
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        Toast.makeText(getContext(), "Pomyślnie usunięto użytkownika", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                             }
@@ -151,9 +140,20 @@ public class JoinedPeopleFragment extends Fragment {
                 dialog.show();
             }
         });
-        mRecyclerView = v.findViewById(R.id.manage_joined_people_recyclerview);
+        mRecyclerView = view.findViewById(R.id.manage_joined_people_recyclerview);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mAdapter);
-        return v;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAdapter.startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mAdapter.stopListening();
     }
 }
