@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -38,6 +39,7 @@ import pl.highelo.eatoutwithstrangers.R;
 
 public class EventInfoFragment extends Fragment {
     private static final String ARG_EVENTS_MODEL = "model";
+    private static final String ARG_EVENTS_CREATOR = "creator";
 
     private EventsModel mEventsModel;
 
@@ -138,6 +140,7 @@ public class EventInfoFragment extends Fragment {
                                                             }
                                                             DocumentReference evDel = mFirestore.collection("events").document(mEventsModel.getItemID());
                                                             batch.delete(evDel);
+
                                                             batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                 @Override
                                                                 public void onComplete(@NonNull Task<Void> task) {
@@ -153,6 +156,32 @@ public class EventInfoFragment extends Fragment {
                                             }
                                         }
                                     });
+                                }
+                            });
+                    builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+            });
+        }
+        else{
+            mActionButton.setText(R.string.leave_event);
+            mActionButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setCancelable(true);
+                    builder.setTitle("Opuść wydarzenie");
+                    builder.setMessage("Czy na pewno chcesz opuścić to wydarzenie?");
+                    builder.setPositiveButton(android.R.string.ok,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
                                 }
                             });
                     builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {

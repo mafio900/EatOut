@@ -1,5 +1,6 @@
 package pl.highelo.eatoutwithstrangers.SearchEvent;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -10,9 +11,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -20,6 +24,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -111,7 +116,7 @@ public class EventPreviewActivity extends AppCompatActivity {
         membersList = mEventsModel.getMembers();
 
 
-        DocumentReference userRef = mFirestore.collection("users").document(mCreatorID);
+        final DocumentReference userRef = mFirestore.collection("users").document(mCreatorID);
         userRef.addSnapshotListener(EventPreviewActivity.this, new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
@@ -130,33 +135,39 @@ public class EventPreviewActivity extends AppCompatActivity {
         mActionButton.setOnClickListener(new View.OnClickListener() {
             DocumentReference eventsRef = mFirestore.collection("events").document(mItemID);
             DocumentReference usersRef = mFirestore.collection("users").document(mCurrentUserID);
+            WriteBatch batch = mFirestore.batch();
             @Override
             public void onClick(View view) {
+                mActionButton.setClickable(false);
                 switch(mStage){
                     case "neutral":
-                        eventsRef.update("requests", FieldValue.arrayUnion(mCurrentUserID));
-                        usersRef.update("requests", FieldValue.arrayUnion(mItemID));
-                        mActionButton.setText(R.string.cancel_request);
-                        mStage = "request";
+                        batch.update(eventsRef, "requests", FieldValue.arrayUnion(mCurrentUserID));
+                        batch.update(usersRef, "requests", FieldValue.arrayUnion(mItemID));
                         break;
                     case "request":
-                        eventsRef.update("requests", FieldValue.arrayRemove(mCurrentUserID));
-                        usersRef.update("requests", FieldValue.arrayRemove(mItemID));
-                        mActionButton.setText(R.string.join_event);
-                        mStage = "neutral";
+                        batch.update(eventsRef, "requests", FieldValue.arrayRemove(mCurrentUserID));
+                        batch.update(usersRef, "requests", FieldValue.arrayRemove(mItemID));
                         break;
                     case "joined":
-                        eventsRef.update("members", FieldValue.arrayRemove(mCurrentUserID));
-                        usersRef.update("joinedEvents", FieldValue.arrayRemove(mItemID));
-                        mActionButton.setText(R.string.join_event);
-                        mStage = "neutral";
+                        batch.update(eventsRef, "members", FieldValue.arrayRemove(mCurrentUserID));
+                        batch.update(usersRef, "joinedEvents", FieldValue.arrayRemove(mItemID));
                         break;
                 }
+                batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(!task.isSuccessful()){
+                            Toast.makeText(EventPreviewActivity.this, "Coś poszło nie tak, spróbuj ponownie", Toast.LENGTH_LONG).show();
+                        }
+                        mActionButton.setClickable(true);
+                    }
+                });
             }
         });
     }
 
     public void refreshUI(){
+        mActionButton.setClickable(false);
         DocumentReference eventsRef = mFirestore.collection("events").document(mItemID);
         eventsRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
@@ -175,6 +186,7 @@ public class EventPreviewActivity extends AppCompatActivity {
                     mActionButton.setText(R.string.join_event);
                     mStage = "neutral";
                 }
+                mActionButton.setClickable(true);
             }
         });
     }
