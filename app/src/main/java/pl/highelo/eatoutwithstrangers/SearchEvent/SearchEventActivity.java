@@ -4,21 +4,32 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AbsListView;
+import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
@@ -37,11 +48,17 @@ import org.imperiumlabs.geofirestore.GeoQuery;
 import java.util.ArrayList;
 import java.util.List;
 
+import pl.highelo.eatoutwithstrangers.LocationResolver;
+import pl.highelo.eatoutwithstrangers.ManageEvent.MapActivity;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsAdapter;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.NavbarInterface;
 import pl.highelo.eatoutwithstrangers.R;
+
+import static pl.highelo.eatoutwithstrangers.ManageEvent.MapActivity.COARSE_LOCATION;
+import static pl.highelo.eatoutwithstrangers.ManageEvent.MapActivity.FINE_LOCATION;
+import static pl.highelo.eatoutwithstrangers.ManageEvent.MapActivity.LOCATION_PERMISSIONS_REQUEST_CODE;
 
 public class SearchEventActivity extends AppCompatActivity {
     private static final String TAG = "SearchEventActivity";
@@ -66,6 +83,10 @@ public class SearchEventActivity extends AppCompatActivity {
     private static final int PAGINATION_LIMIT = 6;
     private ArrayList<EventsModel> mEventsModelArrayList = new ArrayList<>();
 
+    private Button mLocalizationButton;
+    private FusedLocationProviderClient mFusedLocationProviderClient;
+    private Location mCurrentLocation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +99,7 @@ public class SearchEventActivity extends AppCompatActivity {
         mNavigationView = findViewById(R.id.nav_view);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+        getSupportActionBar().setTitle("Szukaj wydarzeń");
         mNavigationView.bringToFront();
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 mToolbar,
@@ -99,16 +121,66 @@ public class SearchEventActivity extends AppCompatActivity {
         mLinearLayoutManager = new LinearLayoutManager(this);
         mEventsList.setLayoutManager(mLinearLayoutManager);
 
-        loadData();
+        mLocalizationButton = findViewById(R.id.search_event_location_button);
+        getLocationPermissions();
+        mLocalizationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getLocationPermissions();
+            }
+        });
     }
 
-    public void loadData(){
+    private void getLocationPermissions(){
+        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION};
+
+        if(ContextCompat.checkSelfPermission(this.getApplicationContext(), FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this.getApplicationContext(), COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            setLocation();
+        }else{
+            ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSIONS_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case LOCATION_PERMISSIONS_REQUEST_CODE:
+                if(grantResults.length > 0){
+                    for(int i : grantResults){
+                        if(!(i == PackageManager.PERMISSION_GRANTED)){
+                            Toast.makeText(this, R.string.location_permissions_denied, Toast.LENGTH_LONG).show();
+                            mLocalizationButton.setVisibility(View.VISIBLE);
+                            return;
+                        }
+                    }
+                    mLocalizationButton.setVisibility(View.GONE);
+                    setLocation();
+                }
+                break;
+        }
+    }
+
+    public void setLocation(){
+        LocationResolver.LocationResult locationResult = new LocationResolver.LocationResult() {
+            @Override
+            public void gotLocation(Location location) {
+                mCurrentLocation = location;
+                getData();
+            }
+        };
+        LocationResolver locationResolver = new LocationResolver();
+        locationResolver.getLocation(this, locationResult, 20000);
+    }
+
+    public void getData(){
         //Query
         CollectionReference collectionReference = mFirestore.collection("events");
         GeoFirestore geoFirestore = new GeoFirestore(collectionReference);
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 
-        GeoQuery geoQuery = geoFirestore.queryAtLocation(new GeoPoint(51.7211, 18.1021), sharedPreferences.getInt(DISTANCE, 10));
+        GeoQuery geoQuery = geoFirestore.queryAtLocation(new GeoPoint(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()), sharedPreferences.getInt(DISTANCE, 10));
         final Query mainQuery = geoQuery.getQueries().get(0);
         Query query = mainQuery.limit(PAGINATION_LIMIT);
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

@@ -5,9 +5,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import pl.highelo.eatoutwithstrangers.ManageEvent.ChatFragment;
-import pl.highelo.eatoutwithstrangers.ManageEvent.EventInfoFragment;
-import pl.highelo.eatoutwithstrangers.ManageEvent.JoinedPeopleFragment;
+import pl.highelo.eatoutwithstrangers.ChatFragment;
+import pl.highelo.eatoutwithstrangers.EventInfoFragment;
+import pl.highelo.eatoutwithstrangers.JoinedPeopleFragment;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
 
 public class JoinedEventPreviewPager extends FragmentStateAdapter {

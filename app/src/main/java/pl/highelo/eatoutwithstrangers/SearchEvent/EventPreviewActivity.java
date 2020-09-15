@@ -39,6 +39,8 @@ import java.util.TimeZone;
 import de.hdodenhof.circleimageview.CircleImageView;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.UsersModel;
+import pl.highelo.eatoutwithstrangers.ProfilePreviewActivity;
 import pl.highelo.eatoutwithstrangers.R;
 
 public class EventPreviewActivity extends AppCompatActivity {
@@ -120,6 +122,8 @@ public class EventPreviewActivity extends AppCompatActivity {
         userRef.addSnapshotListener(EventPreviewActivity.this, new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                final UsersModel user = documentSnapshot.toObject(UsersModel.class);
+                user.setUserID(documentSnapshot.getId());
                 mUserName.setText(documentSnapshot.get("fName").toString() + ",");
                 mUserAge.setText(String.valueOf(CommonMethods.getAge(documentSnapshot.get("birthDate").toString())));
                 mUserDescription.setText(documentSnapshot.get("description").toString());
@@ -127,6 +131,14 @@ public class EventPreviewActivity extends AppCompatActivity {
                         .load(documentSnapshot.get("image_thumbnail"))
                         .placeholder(R.drawable.ic_person)
                         .into(mUserImage);
+                mUserImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent click = new Intent(EventPreviewActivity.this, ProfilePreviewActivity.class);
+                        click.putExtra("user", user);
+                        startActivity(click);
+                    }
+                });
             }
         });
 
@@ -159,7 +171,6 @@ public class EventPreviewActivity extends AppCompatActivity {
                         if(!task.isSuccessful()){
                             Toast.makeText(EventPreviewActivity.this, "Coś poszło nie tak, spróbuj ponownie", Toast.LENGTH_LONG).show();
                         }
-                        mActionButton.setClickable(true);
                     }
                 });
             }

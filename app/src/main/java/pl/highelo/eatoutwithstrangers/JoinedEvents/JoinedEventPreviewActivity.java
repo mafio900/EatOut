@@ -51,7 +51,7 @@ public class JoinedEventPreviewActivity extends AppCompatActivity {
         mTabLayout = (TabLayout) findViewById(R.id.joined_preview_tablayout);
         //mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         mViewPager = (ViewPager2) findViewById(R.id.joined_preview_viewpager);
-        mViewPager.setAdapter(new ManagePagerAdapter(this, mTabLayout.getTabCount(), mEventsModel));
+        mViewPager.setAdapter(new JoinedEventPreviewPager(this, mTabLayout.getTabCount(), mEventsModel));
 
         TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(
                 mTabLayout, mViewPager, new TabLayoutMediator.TabConfigurationStrategy() {

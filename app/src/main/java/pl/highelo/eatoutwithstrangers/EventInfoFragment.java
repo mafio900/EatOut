@@ -1,4 +1,4 @@
-package pl.highelo.eatoutwithstrangers.ManageEvent;
+package pl.highelo.eatoutwithstrangers;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -16,10 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -35,7 +33,6 @@ import java.util.TimeZone;
 
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
-import pl.highelo.eatoutwithstrangers.R;
 
 public class EventInfoFragment extends Fragment {
     private static final String ARG_EVENTS_MODEL = "model";
