@@ -173,6 +173,7 @@ public class EventInfoFragment extends Fragment {
             mActionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    mActionButton.setClickable(false);
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setCancelable(true);
                     builder.setTitle("Opuść wydarzenie");
@@ -181,7 +182,24 @@ public class EventInfoFragment extends Fragment {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+                                    WriteBatch batch = mFirestore.batch();
+                                    DocumentReference eventsRef = mFirestore.collection("events").document(mEventsModel.getItemID());
+                                    DocumentReference usersRef = mFirestore.collection("users").document(mAuth.getCurrentUser().getUid());
+                                    batch.update(eventsRef, "members", FieldValue.arrayRemove(mAuth.getCurrentUser().getUid()));
+                                    batch.update(usersRef, "joinedEvents", FieldValue.arrayRemove(mEventsModel.getItemID()));
 
+                                    batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if(task.isSuccessful()){
+                                                Toast.makeText(getContext(), "Opuściłeś wydarzenia", Toast.LENGTH_LONG).show();
+                                                getActivity().finish();
+                                            }else{
+                                                Toast.makeText(getContext(), "Coś poszło nie tak przy opuszczaniu wydarzenia", Toast.LENGTH_LONG).show();
+                                                mActionButton.setClickable(true);
+                                            }
+                                        }
+                                    });
                                 }
                             });
                     builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {

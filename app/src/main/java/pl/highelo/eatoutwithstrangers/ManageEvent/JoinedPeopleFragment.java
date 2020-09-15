@@ -22,6 +22,7 @@ import com.firebase.ui.firestore.SnapshotParser;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -52,6 +53,7 @@ public class JoinedPeopleFragment extends Fragment {
     private AlertDialog dialog;
 
     private FirebaseFirestore mFirestore;
+    private FirebaseAuth mAuth;
 
     public JoinedPeopleFragment() {
         // Required empty public constructor
@@ -70,6 +72,7 @@ public class JoinedPeopleFragment extends Fragment {
         if (getArguments() != null) {
             mEventsModel = getArguments().getParcelable(ARG_EVENTS_MODEL);
             mFirestore = FirebaseFirestore.getInstance();
+            mAuth = FirebaseAuth.getInstance();
         }
     }
 
@@ -105,41 +108,43 @@ public class JoinedPeopleFragment extends Fragment {
                 startActivity(intent);
             }
         });
-        mAdapter.setOnUsersCancelClick(new UsersAdapter.OnUsersCancelClick() {
-            @Override
-            public void OnCancelClick(final int position) {
-                final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setCancelable(true);
-                builder.setTitle("Usuń użytkownika");
-                builder.setMessage("Czy na pewno chcesz usunąć użytkownika z wydarzenia?");
-                builder.setPositiveButton(android.R.string.ok,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                WriteBatch batch = mFirestore.batch();
-                                DocumentReference evRef = mFirestore.collection("events").document(mEventsModel.getItemID());
-                                batch.update(evRef,"members", FieldValue.arrayRemove(mAdapter.getItem(position).getUserID()));
-                                Log.d(TAG, "onClick: " + mAdapter.getItem(position).getUserID());
-                                DocumentReference userRef = mFirestore.collection("users").document(mAdapter.getItem(position).getUserID());
-                                batch.update(userRef,"joinedEvents", FieldValue.arrayRemove(mEventsModel.getItemID()));
+        if (mAuth.getCurrentUser().getUid().equals(mEventsModel.getUserID())) {
+            mAdapter.setOnUsersCancelClick(new UsersAdapter.OnUsersCancelClick() {
+                @Override
+                public void OnCancelClick(final int position) {
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setCancelable(true);
+                    builder.setTitle("Usuń użytkownika");
+                    builder.setMessage("Czy na pewno chcesz usunąć użytkownika z wydarzenia?");
+                    builder.setPositiveButton(android.R.string.ok,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    WriteBatch batch = mFirestore.batch();
+                                    DocumentReference evRef = mFirestore.collection("events").document(mEventsModel.getItemID());
+                                    batch.update(evRef, "members", FieldValue.arrayRemove(mAdapter.getItem(position).getUserID()));
+                                    Log.d(TAG, "onClick: " + mAdapter.getItem(position).getUserID());
+                                    DocumentReference userRef = mFirestore.collection("users").document(mAdapter.getItem(position).getUserID());
+                                    batch.update(userRef, "joinedEvents", FieldValue.arrayRemove(mEventsModel.getItemID()));
 
-                                batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        Toast.makeText(getContext(), "Pomyślnie usunięto użytkownika", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }
-                        }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                                    batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            Toast.makeText(getContext(), "Pomyślnie usunięto użytkownika", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
 
-                    }
-                });
-                dialog = builder.create();
-                dialog.show();
-            }
-        });
+                        }
+                    });
+                    dialog = builder.create();
+                    dialog.show();
+                }
+            });
+        }
         mRecyclerView = view.findViewById(R.id.manage_joined_people_recyclerview);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mAdapter);
