@@ -8,12 +8,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:183553177554:android:b6fbd1a09c9d7545d03a0b",
+        "mobilesdk_app_id": "1:183553177554:android:8fb98e62586edd20d03a0b",
         "android_client_info": {
           "package_name": "pl.highelo.eatoutwithstrangers"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "183553177554-k180mgiu4t9jmb390q0u6tg8hchl1pu8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "pl.highelo.eatoutwithstrangers",
+            "certificate_hash": "c3fab6a28f7137bac172ff3b12f6c7391ad41c90"
+          }
+        },
         {
           "client_id": "183553177554-1bjf7dt7j1khk6a6pemkrgvq0n3t2imc.apps.googleusercontent.com",
           "client_type": 3
@@ -21,7 +29,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCWicQFt7jbPt2rI6Ohe4PpO5-4Sodgkes"
+          "current_key": "AIzaSyDF2gaS5nx5cXswEzXCTrueTNTvJvWE5LI"
         }
       ],
       "services": {

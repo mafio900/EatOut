@@ -27,9 +27,6 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
@@ -49,7 +46,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pl.highelo.eatoutwithstrangers.LocationResolver;
-import pl.highelo.eatoutwithstrangers.ManageEvent.MapActivity;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsAdapter;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
@@ -84,7 +80,6 @@ public class SearchEventActivity extends AppCompatActivity {
     private ArrayList<EventsModel> mEventsModelArrayList = new ArrayList<>();
 
     private Button mLocalizationButton;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
     private Location mCurrentLocation;
 
     @Override
