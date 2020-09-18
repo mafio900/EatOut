@@ -146,7 +146,7 @@ public class YourEventsActivity extends AppCompatActivity {
             mDrawerLayout.closeDrawer(GravityCompat.START);
         }
         else{
-            CommonMethods.showDialog(this, "Czy na pewno chcesz wyjść z aplikacji?");
+            CommonMethods.showDialog(this, getString(R.string.sure_to_leave_app));
         }
     }
 }

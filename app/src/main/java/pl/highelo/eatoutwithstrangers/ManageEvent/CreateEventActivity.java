@@ -199,7 +199,7 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
             Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(this, available, ERROR_DIALOG_REQUEST);
             dialog.show();
         }else{
-            Toast.makeText(this, "Nie można otworzyć map google!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.cannot_open_googles_map, Toast.LENGTH_SHORT).show();
         }
         return false;
     }
@@ -209,27 +209,26 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
 
         if(TextUtils.isEmpty(mName.getEditText().getText().toString())){
             flag = false;
-            mName.setError("Wybierz lokalizację!");
-            mAddress.setError("Wybierz lokalizację!");
+            mName.setError(getString(R.string.choose_localization));
+            mAddress.setError(getString(R.string.choose_localization));
         }else{mName.setError(null);mAddress.setError(null);}
         if(TextUtils.isEmpty(mTheme.getEditText().getText().toString()) || mTheme.getEditText().getText().toString().length() < 3 ){
             flag = false;
-            mTheme.setError("Temat musi mieć co najmniej 3 znaki!");
+            mTheme.setError(getString(R.string.theme_must_have_atleast_3_chars));
         }else{mTheme.setError(null);}
         if(TextUtils.isEmpty(mEventDate.getEditText().getText().toString())){
             flag = false;
-            mEventDate.setError("Podaj datę!");
+            mEventDate.setError(getString(R.string.set_date));
         }else{mEventDate.setError(null);}
         if(mMaxPeople.getEditText().getText().toString().equals("")){
             flag = false;
-            mMaxPeople.setError("Ilość minimalna osób musi wynosić 1!");
+            mMaxPeople.setError(getString(R.string.min_people_count));
         }else{mMaxPeople.setError(null);}
         if(flag){
             mProgressBar.setVisibility(View.VISIBLE);
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
             FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
             final CollectionReference collectionReference = mFirestore.collection("events");
-            //final GeoFirestore geoFirestore = new GeoFirestore(collectionReference);
 
             Map<String, Object> event = new HashMap<>();
             event.put("userID", mAuth.getUid());
@@ -260,7 +259,7 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
             }).addOnCanceledListener(new OnCanceledListener() {
                 @Override
                 public void onCanceled() {
-                    Toast.makeText(CreateEventActivity.this, "Błąd przy tworzeniu wydarzenia", Toast.LENGTH_LONG).show();
+                    Toast.makeText(CreateEventActivity.this, R.string.error_while_creating_event, Toast.LENGTH_LONG).show();
                 }
             });
         }

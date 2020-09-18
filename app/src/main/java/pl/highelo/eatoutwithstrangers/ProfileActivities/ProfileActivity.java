@@ -31,6 +31,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -108,7 +109,7 @@ public class ProfileActivity extends AppCompatActivity {
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 mProfileName.setText(documentSnapshot.get("fName").toString() + ",");
                 mProfileAge.setText(String.valueOf(CommonMethods.getAge(documentSnapshot.get("birthDate").toString())));
-                mProfileCity.setText("Mieszka w " + documentSnapshot.get("city").toString());
+                mProfileCity.setText(R.string.live_in + ": " + documentSnapshot.get("city").toString());
                 mProfileDescription.setText(documentSnapshot.get("description").toString());
                 Glide.with(ProfileActivity.this)
                         .load(documentSnapshot.get("image"))
@@ -156,6 +157,8 @@ public class ProfileActivity extends AppCompatActivity {
     public void handleUpdate() {
         if (mSelectedImage != null) {
             final File thumbFile = new File(mSelectedImage.getPath());
+            WriteBatch batch = mFirestore.batch();
+
             mStorageReference.child("profile_images/" + mUserID + "/profile_image").putFile(mSelectedImage).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
@@ -181,16 +184,16 @@ public class ProfileActivity extends AppCompatActivity {
                                                     @Override
                                                     public void onSuccess(Uri uri) {
                                                         mFirestore.collection("users").document(mUserID).update("image_thumbnail", uri.toString());
-                                                        Toast.makeText(ProfileActivity.this, "Zapisano zdjęcie", Toast.LENGTH_SHORT).show();
+                                                        Toast.makeText(ProfileActivity.this, R.string.image_saved, Toast.LENGTH_SHORT).show();
                                                     }
                                                 }).addOnFailureListener(new OnFailureListener() {
                                                     @Override
                                                     public void onFailure(@NonNull Exception e) {
-                                                        Toast.makeText(ProfileActivity.this, "Coś poszło nie tak przy wysyłaniu zdjęcia!", Toast.LENGTH_LONG).show();
+                                                        Toast.makeText(ProfileActivity.this, R.string.send_image_error, Toast.LENGTH_LONG).show();
                                                     }
                                                 });
                                             } else {
-                                                Toast.makeText(ProfileActivity.this, "Coś poszło nie tak przy wysyłaniu zdjęcia!", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(ProfileActivity.this, R.string.send_image_error, Toast.LENGTH_LONG).show();
                                             }
                                         }
                                     });
@@ -198,7 +201,7 @@ public class ProfileActivity extends AppCompatActivity {
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(ProfileActivity.this, "Coś poszło nie tak przy wysyłaniu zdjęcia!", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(ProfileActivity.this, R.string.send_image_error, Toast.LENGTH_LONG).show();
                                 }
                             });
 
@@ -206,7 +209,7 @@ public class ProfileActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     } else {
-                        Toast.makeText(ProfileActivity.this, "Coś poszło nie tak przy wysyłaniu zdjęcia!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(ProfileActivity.this, R.string.send_image_error, Toast.LENGTH_LONG).show();
                     }
                 }
             });
@@ -219,7 +222,7 @@ public class ProfileActivity extends AppCompatActivity {
             mDrawerLayout.closeDrawer(GravityCompat.START);
         }
         else{
-            CommonMethods.showDialog(this, "Czy na pewno chcesz wyjść z aplikacji?");
+            CommonMethods.showDialog(this, getString(R.string.sure_to_leave_app));
         }
     }
 }

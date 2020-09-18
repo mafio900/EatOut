@@ -71,7 +71,7 @@ public class EventPreviewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_preview);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mToolbar.setTitle("Podgląd wydarzenia");
+        mToolbar.setTitle(R.string.event_preview);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -98,8 +98,8 @@ public class EventPreviewActivity extends AppCompatActivity {
         mFirestore = FirebaseFirestore.getInstance();
         mCreatorID = mEventsModel.getUserID();
 
-        mEventTheme.setText(getString(R.string.theme_preview) + ": " + mEventsModel.getTheme());
-        mEventName.setText(getString(R.string.place_preview)+ ": " + mEventsModel.getPlaceName());
+        mEventTheme.setText(getString(R.string.theme) + ": " + mEventsModel.getTheme());
+        mEventName.setText(getString(R.string.place)+ ": " + mEventsModel.getPlaceName());
         mEventAddress.setText(mEventsModel.getPlaceAddress());
         GregorianCalendar d = new GregorianCalendar(TimeZone.getTimeZone("Europe/Warsaw"));
         d.setTime(mEventsModel.getTimeStamp().toDate());
@@ -111,9 +111,9 @@ public class EventPreviewActivity extends AppCompatActivity {
         SimpleDateFormat oldFormat = new SimpleDateFormat("d.M.yyyy H:m", Locale.US);
         SimpleDateFormat newFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.US);
         String newDate = CommonMethods.parseDate(date, oldFormat, newFormat);
-        mEventDate.setText(getString(R.string.date_of_begining_preview)+ ": " + newDate);
-        mEventMaxPeople.setText(getString(R.string.max_people_preview)+ ": " + mEventsModel.getMaxPeople());
-        mEventJoinedPeople.setText(getString(R.string.already_joined_preview)+ ": " + mEventsModel.getMembers().size());
+        mEventDate.setText(getString(R.string.date_of_beginning)+ ": " + newDate);
+        mEventMaxPeople.setText(getString(R.string.max_people)+ ": " + mEventsModel.getMaxPeople());
+        mEventJoinedPeople.setText(getString(R.string.already_joined)+ ": " + mEventsModel.getMembers().size());
 
         requestsList = mEventsModel.getRequests();
         membersList = mEventsModel.getMembers();
@@ -170,7 +170,7 @@ public class EventPreviewActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if(!task.isSuccessful()){
-                            Toast.makeText(EventPreviewActivity.this, "Coś poszło nie tak, spróbuj ponownie", Toast.LENGTH_LONG).show();
+                            Toast.makeText(EventPreviewActivity.this, R.string.sorry_try_again, Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -186,11 +186,11 @@ public class EventPreviewActivity extends AppCompatActivity {
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                 if(!value.exists()){
                     finish();
-                    Toast.makeText(EventPreviewActivity.this, "To wydarzenie już nie istnieje", Toast.LENGTH_LONG).show();
+                    Toast.makeText(EventPreviewActivity.this, R.string.this_event_doesnt_exist_anymore, Toast.LENGTH_LONG).show();
                     return;
                 }
                 EventsModel ev = value.toObject(EventsModel.class);
-                mEventJoinedPeople.setText(getString(R.string.already_joined_preview)+ ": " + ev.getMembers().size());
+                mEventJoinedPeople.setText(getString(R.string.already_joined)+ ": " + ev.getMembers().size());
                 if(ev.getRequests() != null && ev.getRequests().contains(mCurrentUserID)){
                     mActionButton.setText(R.string.cancel_request);
                     mStage = "request";

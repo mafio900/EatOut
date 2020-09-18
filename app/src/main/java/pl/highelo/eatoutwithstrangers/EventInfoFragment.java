@@ -88,8 +88,8 @@ public class EventInfoFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
 
-        mEventTheme.setText(getString(R.string.theme_preview) + ": " + mEventsModel.getTheme());
-        mEventName.setText(getString(R.string.place_preview)+ ": " + mEventsModel.getPlaceName());
+        mEventTheme.setText(getString(R.string.theme) + ": " + mEventsModel.getTheme());
+        mEventName.setText(getString(R.string.place)+ ": " + mEventsModel.getPlaceName());
         mEventAddress.setText(mEventsModel.getPlaceAddress());
         GregorianCalendar d = new GregorianCalendar(TimeZone.getTimeZone("Europe/Warsaw"));
         d.setTime(mEventsModel.getTimeStamp().toDate());
@@ -101,9 +101,9 @@ public class EventInfoFragment extends Fragment {
         SimpleDateFormat oldFormat = new SimpleDateFormat("d.M.yyyy H:m", Locale.US);
         SimpleDateFormat newFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.US);
         String newDate = CommonMethods.parseDate(date, oldFormat, newFormat);
-        mEventDate.setText(getString(R.string.date_of_begining_preview)+ ": " + newDate);
-        mEventMaxPeople.setText(getString(R.string.max_people_preview)+ ": " + mEventsModel.getMaxPeople());
-        mEventJoinedPeople.setText(getString(R.string.already_joined_preview)+ ": " + mEventsModel.getMembers().size());
+        mEventDate.setText(getString(R.string.date_of_beginning)+ ": " + newDate);
+        mEventMaxPeople.setText(getString(R.string.max_people)+ ": " + mEventsModel.getMaxPeople());
+        mEventJoinedPeople.setText(getString(R.string.already_joined)+ ": " + mEventsModel.getMembers().size());
 
         if(mAuth.getCurrentUser().getUid().equals(mEventsModel.getUserID())) {
             mActionButton.setOnClickListener(new View.OnClickListener() {
@@ -111,8 +111,8 @@ public class EventInfoFragment extends Fragment {
                 public void onClick(View view) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setCancelable(true);
-                    builder.setTitle("Usuń wydarzenie");
-                    builder.setMessage("Czy na pewno chcesz usunąć to wydarzenie?");
+                    builder.setTitle(R.string.delete_event);
+                    builder.setMessage(R.string.sure_to_delete_event);
                     builder.setPositiveButton(android.R.string.ok,
                             new DialogInterface.OnClickListener() {
                                 @Override
@@ -173,8 +173,8 @@ public class EventInfoFragment extends Fragment {
                     mActionButton.setClickable(false);
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setCancelable(true);
-                    builder.setTitle("Opuść wydarzenie");
-                    builder.setMessage("Czy na pewno chcesz opuścić to wydarzenie?");
+                    builder.setTitle(R.string.leave_event);
+                    builder.setMessage(R.string.sure_to_leave_event);
                     builder.setPositiveButton(android.R.string.ok,
                             new DialogInterface.OnClickListener() {
                                 @Override
@@ -189,10 +189,10 @@ public class EventInfoFragment extends Fragment {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if(task.isSuccessful()){
-                                                Toast.makeText(getContext(), "Opuściłeś wydarzenia", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(getContext(), R.string.you_left_event, Toast.LENGTH_LONG).show();
                                                 getActivity().finish();
                                             }else{
-                                                Toast.makeText(getContext(), "Coś poszło nie tak przy opuszczaniu wydarzenia", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(getContext(), R.string.something_went_wrong_while_deleting_event, Toast.LENGTH_LONG).show();
                                                 mActionButton.setClickable(true);
                                             }
                                         }

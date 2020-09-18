@@ -55,7 +55,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 String email = mEmail.getEditText().getText().toString().trim();
 
                 if(TextUtils.isEmpty(email)){
-                    mEmail.setError("Email jest wymagany");
+                    mEmail.setError(getString(R.string.email_is_required));
                     return;
                 }
 
@@ -65,7 +65,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()){
-                            Toast.makeText(ForgotPasswordActivity.this, "Wysłano wiadomość pod podany e-mail", Toast.LENGTH_LONG).show();
+                            Toast.makeText(ForgotPasswordActivity.this, R.string.message_send_to_given_email, Toast.LENGTH_LONG).show();
                             startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                             finish();
                         }else{

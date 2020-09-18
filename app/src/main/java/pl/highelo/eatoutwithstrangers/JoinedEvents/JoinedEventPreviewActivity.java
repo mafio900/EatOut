@@ -42,7 +42,7 @@ public class JoinedEventPreviewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_joined_event_preview);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mToolbar.setTitle("Przeglądaj wydarzenie");
+        mToolbar.setTitle(R.string.review_events);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -53,7 +53,7 @@ public class JoinedEventPreviewActivity extends AppCompatActivity {
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                 if(!value.exists() || !((List<String>)value.get("members")).contains(FirebaseAuth.getInstance().getCurrentUser().getUid())){
                     finish();
-                    Toast.makeText(JoinedEventPreviewActivity.this, "Zostałeś wyrzucony albo wydarzenie już nie istnieje!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(JoinedEventPreviewActivity.this, R.string.kicked_or_event_doesnt_exist, Toast.LENGTH_LONG).show();
                 }
             }
         });

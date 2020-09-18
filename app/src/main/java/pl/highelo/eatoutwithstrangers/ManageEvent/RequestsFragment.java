@@ -115,8 +115,8 @@ public class RequestsFragment extends Fragment {
             public void OnAcceptClick(final int position) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setCancelable(true);
-                builder.setTitle("Dodaj użytkownika");
-                builder.setMessage("Czy na pewno chcesz dodać tego użytkownika do wydarzenia?");
+                builder.setTitle(R.string.add_user);
+                builder.setMessage(R.string.sure_to_add_user_to_event);
                 builder.setPositiveButton(android.R.string.ok,
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -139,7 +139,7 @@ public class RequestsFragment extends Fragment {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if(task.isSuccessful()){
-                                            Toast.makeText(getContext(), "Dodano użytkownika do wydarzenia", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(getContext(), R.string.user_has_been_added, Toast.LENGTH_LONG).show();
                                         }
                                     }
                                 });
@@ -159,8 +159,8 @@ public class RequestsFragment extends Fragment {
             public void OnCancelClick(final int position) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setCancelable(true);
-                builder.setTitle("Usuń prośbę");
-                builder.setMessage("Czy na pewno chcesz usunąć prośbę tego użytkownika?");
+                builder.setTitle(R.string.delete_request);
+                builder.setMessage(R.string.sure_to_delete_users_request);
                 builder.setPositiveButton(android.R.string.ok,
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -174,7 +174,7 @@ public class RequestsFragment extends Fragment {
                                 batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        Toast.makeText(getContext(), "Poprawnie usunięto prośbę o dołączenie", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getContext(), R.string.successfully_deleted_users_request, Toast.LENGTH_LONG).show();
                                     }
                                 });
                             }

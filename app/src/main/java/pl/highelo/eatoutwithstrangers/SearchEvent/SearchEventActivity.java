@@ -20,7 +20,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,17 +37,14 @@ import com.ckdroid.geofirequery.utils.BoundingBoxUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import pl.highelo.eatoutwithstrangers.LocationResolver;
@@ -56,7 +52,6 @@ import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsAdapter;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.NavbarInterface;
-import pl.highelo.eatoutwithstrangers.ProfilePreviewActivity;
 import pl.highelo.eatoutwithstrangers.R;
 
 import static pl.highelo.eatoutwithstrangers.ManageEvent.MapActivity.COARSE_LOCATION;
@@ -104,7 +99,7 @@ public class SearchEventActivity extends AppCompatActivity {
         mNavigationView = findViewById(R.id.nav_view);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle("Szukaj wydarzeń");
+        getSupportActionBar().setTitle(R.string.search_events);
         mNavigationView.bringToFront();
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 mToolbar,
@@ -290,7 +285,7 @@ public class SearchEventActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_search_events, menu);
 
         final SearchView searchView = (SearchView) menu.findItem(R.id.app_bar_search).getActionView();
-        searchView.setQueryHint("Szukaj tematów");
+        searchView.setQueryHint(getString(R.string.search_themes));
         searchView.setIconified(false);
 
         int id = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
@@ -385,7 +380,7 @@ public class SearchEventActivity extends AppCompatActivity {
             mDrawerLayout.closeDrawer(GravityCompat.START);
         }
         else{
-            CommonMethods.showDialog(this, "Czy na pewno chcesz wyjść z aplikacji?");
+            CommonMethods.showDialog(this, getString(R.string.sure_to_leave_app));
         }
     }
 }

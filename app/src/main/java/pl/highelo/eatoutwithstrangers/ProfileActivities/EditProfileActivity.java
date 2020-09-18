@@ -145,10 +145,10 @@ public class EditProfileActivity extends AppCompatActivity implements DatePicker
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if(task.isSuccessful()){
-                        Toast.makeText(EditProfileActivity.this, "Pomyślnie zaktualizowano dane!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(EditProfileActivity.this, R.string.successfully_update_data, Toast.LENGTH_LONG).show();
                         finish();
                     }else{
-                        Toast.makeText(EditProfileActivity.this, "Coś poszło nie tak przy aktualizacji danych!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(EditProfileActivity.this, R.string.something_went_wrong_while_updating_data, Toast.LENGTH_LONG).show();
                     }
                 }
             });

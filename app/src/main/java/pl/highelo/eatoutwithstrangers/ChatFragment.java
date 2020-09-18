@@ -133,14 +133,13 @@ public class ChatFragment extends Fragment {
             message.put("userID", mAuth.getUid());
             message.put("time", FieldValue.serverTimestamp());
             message.put("message", mMessageEditText.getText().toString());
-            mMessageEditText.setText("");
             mFirestore.collection("events").document(mEventsModel.getItemID()).collection("chat").add(message).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentReference> task) {
                     if (task.isSuccessful()) {
-                        Toast.makeText(getContext(), "Wysłano", Toast.LENGTH_SHORT).show();
+                        mMessageEditText.setText("");
                     } else {
-                        Toast.makeText(getContext(), "Przykro nam spróbuje ponownie", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), R.string.sorry_try_again, Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -181,16 +180,6 @@ public class ChatFragment extends Fragment {
                 }
             });
         }
-
-//        if (!(view instanceof EditText) || !(view instanceof ImageButton)) {
-//            view.setOnTouchListener(new View.OnTouchListener() {
-//                public boolean onTouch(View v, MotionEvent event) {
-//                    CommonMethods.hideKeyboard(getActivity());
-//                    v.clearFocus();
-//                    return false;
-//                }
-//            });
-//        }
 
         //If a layout container, iterate over children and seed recursion.
         if (view instanceof ViewGroup) {

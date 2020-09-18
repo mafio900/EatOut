@@ -138,7 +138,7 @@ public class MapActivity extends AppCompatActivity {
                             LatLng ll = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                             moveCamera(ll, 15f, "");
                         } else {
-                            Toast.makeText(MapActivity.this, "Nie można znaleźć obecnej lokalizacji", Toast.LENGTH_LONG).show();
+                            Toast.makeText(MapActivity.this, R.string.cannot_find_current_localization, Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -164,7 +164,6 @@ public class MapActivity extends AppCompatActivity {
         mapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
-                Toast.makeText(MapActivity.this, "Mapa jest gotowa!", Toast.LENGTH_LONG).show();
                 mMap = googleMap;
 
                 if(mLocationPermissionGranted){

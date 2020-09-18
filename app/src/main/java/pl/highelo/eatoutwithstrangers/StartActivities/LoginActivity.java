@@ -65,15 +65,15 @@ public class LoginActivity extends AppCompatActivity {
                 String password = mPassword.getEditText().getText().toString().trim();
 
                 if(TextUtils.isEmpty(email)){
-                    mEmail.setError("Email jest wymagany");
+                    mEmail.setError(getString(R.string.email_is_required));
                     return;
                 }else{mEmail.setError(null);}
                 if(TextUtils.isEmpty(password)){
-                    mPassword.setError("Hasło jest wymagane");
+                    mPassword.setError(getString(R.string.password_required));
                     return;
                 }else{mPassword.setError(null);}
                 if(password.length() < 6){
-                    mPassword.setError("Hasło musi posiadać 6 lub więcej znaków");
+                    mPassword.setError(getString(R.string.password_required_more_than_6_chars));
                     return;
                 }else{mPassword.setError(null);}
 

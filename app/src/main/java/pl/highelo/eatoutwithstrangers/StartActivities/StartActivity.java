@@ -46,6 +46,6 @@ public class StartActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        CommonMethods.showDialog(this, "Czy na pewno chcesz wyjść z aplikacji?");
+        CommonMethods.showDialog(this, getString(R.string.sure_to_leave_app));
     }
 }

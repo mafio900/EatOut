@@ -37,7 +37,7 @@ public class JoinedEventsActivity extends AppCompatActivity {
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mNavigationView = findViewById(R.id.nav_view);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mToolbar.setTitle("Dołączone wydarzenia");
+        mToolbar.setTitle(R.string.joined_events);
         setSupportActionBar(mToolbar);
         mNavigationView.bringToFront();
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout,
@@ -76,7 +76,7 @@ public class JoinedEventsActivity extends AppCompatActivity {
             mDrawerLayout.closeDrawer(GravityCompat.START);
         }
         else{
-            CommonMethods.showDialog(this, "Czy na pewno chcesz wyjść z aplikacji?");
+            CommonMethods.showDialog(this, getString(R.string.sure_to_leave_app));
         }
     }
 }

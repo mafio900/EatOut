@@ -41,7 +41,7 @@ public class CommonMethods {
                         if(((FirebaseAuthInvalidUserException) e).getErrorCode().equals("ERROR_USER_DISABLED")){
                             Toast.makeText(t, R.string.acc_banned, Toast.LENGTH_LONG).show();
                         }else{
-                            Toast.makeText(t, "Hasło zostało zmienione", Toast.LENGTH_LONG).show();
+                            Toast.makeText(t, R.string.password_changed, Toast.LENGTH_LONG).show();
                         }
                         FirebaseAuth.getInstance().signOut();
                         t.startActivity(new Intent(t.getApplicationContext(), LoginActivity.class));

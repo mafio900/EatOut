@@ -39,7 +39,7 @@
             android:paddingTop="16dp"
             android:paddingRight="24dp"
             android:paddingBottom="16dp"
-            android:text="Włącz lokalizacje"
+            android:text="@string/turn_localization"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

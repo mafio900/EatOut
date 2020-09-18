@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsAdapter;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
 import pl.highelo.eatoutwithstrangers.R;
-import pl.highelo.eatoutwithstrangers.SearchEvent.EventPreviewActivity;
 
 public class JoinedEventsFragment extends Fragment {
 

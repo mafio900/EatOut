@@ -116,11 +116,11 @@ public class ChangePasswordActivity extends AppCompatActivity {
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     mProgressBar.setVisibility(ProgressBar.GONE);
                                                     if (task.isSuccessful()) {
-                                                        Toast.makeText(ChangePasswordActivity.this, "Hasło zostało zmienione", Toast.LENGTH_LONG).show();
+                                                        Toast.makeText(ChangePasswordActivity.this, R.string.password_changed, Toast.LENGTH_LONG).show();
                                                         startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                                         finish();
                                                     } else {
-                                                        Toast.makeText(ChangePasswordActivity.this, "Coś poszło nie tak przy zmianie hasła!", Toast.LENGTH_LONG).show();
+                                                        Toast.makeText(ChangePasswordActivity.this, R.string.something_went_wrong_while_chaning_passwd, Toast.LENGTH_LONG).show();
                                                     }
                                                 }
                                             });
@@ -143,7 +143,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
             mDrawerLayout.closeDrawer(GravityCompat.START);
         }
         else{
-            CommonMethods.showDialog(this, "Czy na pewno chcesz wyjść z aplikacji?");
+            CommonMethods.showDialog(this, getString(R.string.sure_to_leave_app));
         }
     }
 

@@ -40,7 +40,7 @@ public class ProfilePreviewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_preview);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mToolbar.setTitle("Podgląd profilu");
+        mToolbar.setTitle(R.string.profile_preview);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -71,7 +71,7 @@ public class ProfilePreviewActivity extends AppCompatActivity {
                         .setPositiveButton("Report", null)
                         .setNegativeButton("Cancel", null)
                         .create();
-                ((TextView)view.findViewById(R.id.dialog_report_title)).setText("Zgłoś użytkownika " + mUsersModel.getfName());
+                ((TextView)view.findViewById(R.id.dialog_report_title)).setText(R.string.report_user + mUsersModel.getfName());
                 dialog.setOnShowListener(new DialogInterface.OnShowListener() {
                     @Override
                     public void onShow(DialogInterface dialogInterface) {
@@ -82,11 +82,11 @@ public class ProfilePreviewActivity extends AppCompatActivity {
                                 TextInputLayout theme = dialog.findViewById(R.id.dialog_report_theme);
                                 TextInputLayout message = dialog.findViewById(R.id.dialog_report_message);
                                 if(TextUtils.isEmpty(theme.getEditText().getText())){
-                                    theme.setError("Temat nie może być pusty!");
+                                    theme.setError(getString(R.string.theme_cannot_be_empty));
                                     return;
                                 }else{theme.setError(null);}
                                 if(message.getEditText().getText().length() < 10){
-                                    message.setError("Wiadomość musi mieć przynajmniej 10 znaków");
+                                    message.setError(getString(R.string.message_must_have_atleast_10_chars));
                                     return;
                                 }else{message.setError(null);}
 
@@ -101,11 +101,11 @@ public class ProfilePreviewActivity extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentReference> task) {
                                         if(task.isSuccessful()){
-                                            Toast.makeText(ProfilePreviewActivity.this, "Użytkownik został zgłoszony", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(ProfilePreviewActivity.this, R.string.user_has_been_reported, Toast.LENGTH_LONG).show();
                                             dialog.dismiss();
                                         }
                                         else{
-                                            Toast.makeText(ProfilePreviewActivity.this, "Wystąpił błąd przy wysyłaniu zgłoszenia!", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(ProfilePreviewActivity.this, R.string.error_while_reporting, Toast.LENGTH_LONG).show();
                                         }
                                     }
                                 });

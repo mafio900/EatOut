@@ -105,8 +105,8 @@ public class JoinedPeopleFragment extends Fragment {
                 public void OnCancelClick(final int position) {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setCancelable(true);
-                    builder.setTitle("Usuń użytkownika");
-                    builder.setMessage("Czy na pewno chcesz usunąć użytkownika z wydarzenia?");
+                    builder.setTitle(R.string.delete_user);
+                    builder.setMessage(R.string.sure_to_delete_user_from_event);
                     builder.setPositiveButton(android.R.string.ok,
                             new DialogInterface.OnClickListener() {
                                 @Override
@@ -121,7 +121,7 @@ public class JoinedPeopleFragment extends Fragment {
                                     batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
-                                            Toast.makeText(getContext(), "Pomyślnie usunięto użytkownika", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getContext(), R.string.successfully_deleted_user, Toast.LENGTH_SHORT).show();
                                         }
                                     });
                                 }
