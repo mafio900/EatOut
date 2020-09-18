@@ -12,13 +12,14 @@ import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QuerySnapshot;
 
-import pl.highelo.eatoutwithstrangers.ManageEvent.ManagePagerAdapter;
+import java.util.List;
+
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
 import pl.highelo.eatoutwithstrangers.R;
@@ -47,9 +48,17 @@ public class JoinedEventPreviewActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         mEventsModel = intent.getParcelableExtra("model");
+        FirebaseFirestore.getInstance().collection("events").document(mEventsModel.getItemID()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                if(!value.exists() || !((List<String>)value.get("members")).contains(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                    finish();
+                    Toast.makeText(JoinedEventPreviewActivity.this, "Zostałeś wyrzucony albo wydarzenie już nie istnieje!", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
 
         mTabLayout = (TabLayout) findViewById(R.id.joined_preview_tablayout);
-        //mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         mViewPager = (ViewPager2) findViewById(R.id.joined_preview_viewpager);
         mViewPager.setAdapter(new JoinedEventPreviewPager(this, mTabLayout.getTabCount(), mEventsModel));
 

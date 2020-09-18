@@ -1,5 +1,7 @@
 package pl.highelo.eatoutwithstrangers.ModelsAndUtilities;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import pl.highelo.eatoutwithstrangers.ProfilePreviewActivity;
 import pl.highelo.eatoutwithstrangers.R;
 
 public class MessagesAdapter extends FirestoreRecyclerAdapter<MessagesModel, MessagesAdapter.MessagesViewHolder> {
@@ -25,9 +28,12 @@ public class MessagesAdapter extends FirestoreRecyclerAdapter<MessagesModel, Mes
     private FirebaseFirestore mFirestore;
     private HashMap<String, UsersModel> mUsersMap = new HashMap<>();
 
-    public MessagesAdapter(@NonNull FirestoreRecyclerOptions<MessagesModel> options) {
+    private Context mContext;
+
+    public MessagesAdapter(@NonNull FirestoreRecyclerOptions<MessagesModel> options, Context context) {
         super(options);
         mFirestore = FirebaseFirestore.getInstance();
+        mContext = context;
     }
 
     @NonNull
@@ -40,11 +46,20 @@ public class MessagesAdapter extends FirestoreRecyclerAdapter<MessagesModel, Mes
     @Override
     protected void onBindViewHolder(@NonNull final MessagesViewHolder holder, int position, @NonNull final MessagesModel model) {
         if(mUsersMap.containsKey(model.getUserID())){
-            holder.mName.setText(mUsersMap.get(model.getUserID()).getfName());
+            final UsersModel user = mUsersMap.get(model.getUserID());
+            holder.mName.setText(user.getfName());
             Glide.with(holder.itemView.getContext())
                     .asBitmap()
-                    .load(mUsersMap.get(model.getUserID()).getImage_thumbnail())
+                    .load(user.getImage_thumbnail())
                     .into(holder.mImage);
+            holder.mImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mContext, ProfilePreviewActivity.class);
+                    intent.putExtra("user", user);
+                    mContext.startActivity(intent);
+                }
+            });
         }else{
             mFirestore.collection("users").document(model.getUserID()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
@@ -60,6 +75,14 @@ public class MessagesAdapter extends FirestoreRecyclerAdapter<MessagesModel, Mes
                                 .load(user.getImage_thumbnail())
                                 .into(holder.mImage);
                     }
+                    holder.mImage.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(mContext, ProfilePreviewActivity.class);
+                            intent.putExtra("user", user);
+                            mContext.startActivity(intent);
+                        }
+                    });
                 }
             });
         }

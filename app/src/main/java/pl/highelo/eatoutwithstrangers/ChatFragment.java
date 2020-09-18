@@ -94,7 +94,7 @@ public class ChatFragment extends Fragment {
         FirestoreRecyclerOptions<MessagesModel> options = new FirestoreRecyclerOptions.Builder<MessagesModel>()
                 .setQuery(query, MessagesModel.class)
                 .build();
-        adapter = new MessagesAdapter(options);
+        adapter = new MessagesAdapter(options, getContext());
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         manager.setReverseLayout(true);
         manager.setStackFromEnd(true);
