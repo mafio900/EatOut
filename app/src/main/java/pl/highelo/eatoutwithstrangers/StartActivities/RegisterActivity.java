@@ -119,7 +119,7 @@ public class RegisterActivity extends AppCompatActivity implements DatePickerDia
                     flag = false;
                 }else{mConfirmPassword.setError(null);}
                 if(TextUtils.isEmpty(city) || city.length() < 3){
-                    mCity.setError(getString(R.string.city_required_atleast_3_chars));
+                    mCity.setError(getString(R.string.city_must_have_three_letters));
                     flag = false;
                 }else{mCity.setError(null);}
                 if(TextUtils.isEmpty(date)){

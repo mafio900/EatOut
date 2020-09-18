@@ -126,6 +126,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                                             });
                                         } else {
                                             Toast.makeText(ChangePasswordActivity.this, R.string.incorrect_old_password, Toast.LENGTH_LONG).show();
+                                            mProgressBar.setVisibility(View.GONE);
                                         }
                                     }
                                 });

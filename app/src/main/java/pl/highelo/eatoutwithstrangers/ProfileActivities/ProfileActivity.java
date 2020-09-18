@@ -109,7 +109,7 @@ public class ProfileActivity extends AppCompatActivity {
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 mProfileName.setText(documentSnapshot.get("fName").toString() + ",");
                 mProfileAge.setText(String.valueOf(CommonMethods.getAge(documentSnapshot.get("birthDate").toString())));
-                mProfileCity.setText(R.string.live_in + ": " + documentSnapshot.get("city").toString());
+                mProfileCity.setText(getString(R.string.live_in) + ": " + documentSnapshot.get("city").toString());
                 mProfileDescription.setText(documentSnapshot.get("description").toString());
                 Glide.with(ProfileActivity.this)
                         .load(documentSnapshot.get("image"))
@@ -184,6 +184,7 @@ public class ProfileActivity extends AppCompatActivity {
                                                     @Override
                                                     public void onSuccess(Uri uri) {
                                                         mFirestore.collection("users").document(mUserID).update("image_thumbnail", uri.toString());
+                                                        mProfileImageView.setImageURI(mSelectedImage);
                                                         Toast.makeText(ProfileActivity.this, R.string.image_saved, Toast.LENGTH_SHORT).show();
                                                     }
                                                 }).addOnFailureListener(new OnFailureListener() {

@@ -57,7 +57,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 if(TextUtils.isEmpty(email)){
                     mEmail.setError(getString(R.string.email_is_required));
                     return;
-                }
+                }else{mEmail.setError(null);}
 
                 mProgressBar.setVisibility(View.VISIBLE);
 

@@ -67,7 +67,6 @@
         <activity android:name=".ProfileActivities.ChangePasswordActivity" />
         <activity
             android:name=".ProfileActivities.ProfileActivity"
-            android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ProfileActivities.EditProfileActivity"
