@@ -1,5 +1,6 @@
 package pl.highelo.eatoutwithstrangers.ManageEvent;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,21 +22,20 @@ import android.widget.ProgressBar;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.ckdroid.geofirequery.ExtensionKt;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCanceledListener;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
-
-
-import org.imperiumlabs.geofirestore.GeoFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -228,14 +228,13 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
             mProgressBar.setVisibility(View.VISIBLE);
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
             FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
-            CollectionReference collectionReference = mFirestore.collection("events");
-            final GeoFirestore geoFirestore = new GeoFirestore(collectionReference);
+            final CollectionReference collectionReference = mFirestore.collection("events");
+            //final GeoFirestore geoFirestore = new GeoFirestore(collectionReference);
 
             Map<String, Object> event = new HashMap<>();
             event.put("userID", mAuth.getUid());
             event.put("placeName", mPlaceName);
             event.put("placeAddress", mPlaceAddress);
-            //event.put("placeLatLng", new GeoPoint(mPlace.getLatLng().latitude, mPlace.getLatLng().longitude));
             event.put("theme", mTheme.getEditText().getText().toString());
             event.put("maxPeople", Integer.parseInt(mMaxPeople.getEditText().getText().toString()));
             GregorianCalendar dd = new GregorianCalendar(mYear, mMonth, mDay, mHour, mMinute);
@@ -247,11 +246,16 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
             collectionReference.add(event).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                 @Override
                 public void onSuccess(DocumentReference documentReference) {
-                    geoFirestore.setLocation(documentReference.getId(), new GeoPoint(mLatLng.latitude, mLatLng.longitude));
-                    mProgressBar.setVisibility(View.GONE);
-                    Toast.makeText(CreateEventActivity.this, R.string.create_event_successful, Toast.LENGTH_LONG).show();
-                    startActivity(new Intent(getApplicationContext(), YourEventsActivity.class));
-                    finish();
+                    ExtensionKt.setLocation(documentReference, mLatLng.latitude, mLatLng.longitude, "l", true).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                mProgressBar.setVisibility(View.GONE);
+                                Toast.makeText(CreateEventActivity.this, R.string.create_event_successful, Toast.LENGTH_LONG).show();
+                                finish();
+                            }
+                        }
+                    });
                 }
             }).addOnCanceledListener(new OnCanceledListener() {
                 @Override

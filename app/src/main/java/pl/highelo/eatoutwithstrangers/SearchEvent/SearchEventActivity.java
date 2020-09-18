@@ -2,6 +2,7 @@ package pl.highelo.eatoutwithstrangers.SearchEvent;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -12,37 +13,42 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ckdroid.geofirequery.GeoQuery;
+import com.ckdroid.geofirequery.model.Distance;
+import com.ckdroid.geofirequery.utils.BoundingBoxUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import org.imperiumlabs.geofirestore.GeoFirestore;
-import org.imperiumlabs.geofirestore.GeoQuery;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import pl.highelo.eatoutwithstrangers.LocationResolver;
@@ -50,6 +56,7 @@ import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsAdapter;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.NavbarInterface;
+import pl.highelo.eatoutwithstrangers.ProfilePreviewActivity;
 import pl.highelo.eatoutwithstrangers.R;
 
 import static pl.highelo.eatoutwithstrangers.ManageEvent.MapActivity.COARSE_LOCATION;
@@ -81,6 +88,9 @@ public class SearchEventActivity extends AppCompatActivity {
 
     private Button mLocalizationButton;
     private Location mCurrentLocation;
+
+    private RadioGroup mRadioGroup;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,13 +181,14 @@ public class SearchEventActivity extends AppCompatActivity {
 
     public void getData(){
         //Query
-        CollectionReference collectionReference = mFirestore.collection("events");
-        GeoFirestore geoFirestore = new GeoFirestore(collectionReference);
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 
-        GeoQuery geoQuery = geoFirestore.queryAtLocation(new GeoPoint(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()), sharedPreferences.getInt(DISTANCE, 10));
-        final Query mainQuery = geoQuery.getQueries().get(0);
-        Query query = mainQuery.limit(PAGINATION_LIMIT);
+        Distance distance = new Distance(sharedPreferences.getInt(DISTANCE, 10), BoundingBoxUtils.DistanceUnit.KILOMETERS);
+        final GeoQuery geoQuery = new GeoQuery()
+                .collection("events")
+                .whereNearToLocation(mCurrentLocation, distance, "l");
+
+        Query query = geoQuery.limit(PAGINATION_LIMIT).getQuery();
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -233,7 +244,7 @@ public class SearchEventActivity extends AppCompatActivity {
                             if(mIsScrolling && (firstVisibleItem + visibleItemCount == totalItemCount) && !mIsLastItemReached){
                                 mIsScrolling = false;
 
-                                Query nextQuery = mainQuery.startAfter(mLastVisible).limit(PAGINATION_LIMIT);
+                                Query nextQuery = geoQuery.startAfter(mLastVisible).limit(PAGINATION_LIMIT).getQuery();
                                 nextQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -315,9 +326,57 @@ public class SearchEventActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.app_bar_settings) {
-            startActivity(new Intent(this, SearchEventSettingsActivity.class));
+            View view = getLayoutInflater().inflate(R.layout.dialog_search_settings, null);
+            final AlertDialog dialog = new AlertDialog.Builder(SearchEventActivity.this)
+                    .setView(view)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            mEventsModelArrayList.clear();
+                            getData();
+                        }
+                    })
+                    .create();
+            dialog.show();
+            mRadioGroup = view.findViewById(R.id.dialog_search_settings_radio_group);
+            sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+            switch (sharedPreferences.getInt(DISTANCE, 10)){
+                case 10:
+                    ((RadioButton) view.findViewById(R.id.dialog_search_settings_radio_button_10km)).setChecked(true);
+                    break;
+                case 15:
+                    ((RadioButton) view.findViewById(R.id.dialog_search_settings_radio_button_15km)).setChecked(true);
+                    break;
+                case 20:
+                    ((RadioButton) view.findViewById(R.id.dialog_search_settings_radio_button_20km)).setChecked(true);
+                    break;
+                case 30:
+                    ((RadioButton) view.findViewById(R.id.dialog_search_settings_radio_button_30km)).setChecked(true);
+                    break;
+            }
         }
         return true;
+    }
+
+    public void checkButton(View view) {
+        int radioId = mRadioGroup.getCheckedRadioButtonId();
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        switch (radioId){
+            case R.id.dialog_search_settings_radio_button_10km:
+                editor.putInt(DISTANCE, 10);
+                break;
+            case R.id.dialog_search_settings_radio_button_15km:
+                editor.putInt(DISTANCE, 15);
+                break;
+            case R.id.dialog_search_settings_radio_button_20km:
+                editor.putInt(DISTANCE, 20);
+                break;
+            case R.id.dialog_search_settings_radio_button_30km:
+                editor.putInt(DISTANCE, 30);
+                break;
+        }
+        editor.apply();
     }
 
     @Override

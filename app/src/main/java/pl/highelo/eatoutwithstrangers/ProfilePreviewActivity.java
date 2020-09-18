@@ -1,21 +1,30 @@
 package pl.highelo.eatoutwithstrangers;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
+import android.text.TextUtils;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
 
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.UsersModel;
@@ -38,7 +47,7 @@ public class ProfilePreviewActivity extends AppCompatActivity {
         mUsersModel = getIntent().getParcelableExtra("user");
 
         ImageView userImage = findViewById(R.id.profile_preview_image);
-        TextView userName = findViewById(R.id.profile_preview_name);
+        final TextView userName = findViewById(R.id.profile_preview_name);
         TextView userAge = findViewById(R.id.profile_preview_age);
         TextView userCity = findViewById(R.id.profile_preview_city);
         TextView userDescription = findViewById(R.id.profile_preview_description);
@@ -56,20 +65,54 @@ public class ProfilePreviewActivity extends AppCompatActivity {
         reportButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final EditText taskEditText = new EditText(ProfilePreviewActivity.this);
-                AlertDialog dialog = new AlertDialog.Builder(ProfilePreviewActivity.this)
-                        .setTitle("Add a new task")
-                        .setMessage("What do you want to do next?")
-                        .setView(taskEditText)
-                        .setView(taskEditText)
-                        .setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Log.d("TAG", "onClick: " + taskEditText.getText());
-                            }
-                        })
+                View view = getLayoutInflater().inflate(R.layout.dialog_report, null);
+                final AlertDialog dialog = new AlertDialog.Builder(ProfilePreviewActivity.this)
+                        .setView(view)
+                        .setPositiveButton("Report", null)
                         .setNegativeButton("Cancel", null)
                         .create();
+                ((TextView)view.findViewById(R.id.dialog_report_title)).setText("Zgłoś użytkownika " + mUsersModel.getfName());
+                dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialogInterface) {
+                        Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                        positive.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                TextInputLayout theme = dialog.findViewById(R.id.dialog_report_theme);
+                                TextInputLayout message = dialog.findViewById(R.id.dialog_report_message);
+                                if(TextUtils.isEmpty(theme.getEditText().getText())){
+                                    theme.setError("Temat nie może być pusty!");
+                                    return;
+                                }else{theme.setError(null);}
+                                if(message.getEditText().getText().length() < 10){
+                                    message.setError("Wiadomość musi mieć przynajmniej 10 znaków");
+                                    return;
+                                }else{message.setError(null);}
+
+                                HashMap<String, Object> report = new HashMap<>();
+                                report.put("theme", theme.getEditText().getText().toString());
+                                report.put("message", message.getEditText().getText().toString());
+                                report.put("timeStamp", Timestamp.now());
+                                report.put("reportedUser", mUsersModel.getUserID());
+                                report.put("reportingUser", FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                                FirebaseFirestore.getInstance().collection("reports").add(report).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentReference> task) {
+                                        if(task.isSuccessful()){
+                                            Toast.makeText(ProfilePreviewActivity.this, "Użytkownik został zgłoszony", Toast.LENGTH_LONG).show();
+                                            dialog.dismiss();
+                                        }
+                                        else{
+                                            Toast.makeText(ProfilePreviewActivity.this, "Wystąpił błąd przy wysyłaniu zgłoszenia!", Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
                 dialog.show();
             }
         });

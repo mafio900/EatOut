@@ -8,6 +8,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -183,6 +184,11 @@ public class EventPreviewActivity extends AppCompatActivity {
         eventsRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                if(!value.exists()){
+                    finish();
+                    Toast.makeText(EventPreviewActivity.this, "To wydarzenie już nie istnieje", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 EventsModel ev = value.toObject(EventsModel.class);
                 mEventJoinedPeople.setText(getString(R.string.already_joined_preview)+ ": " + ev.getMembers().size());
                 if(ev.getRequests() != null && ev.getRequests().contains(mCurrentUserID)){

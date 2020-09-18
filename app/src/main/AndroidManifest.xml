@@ -57,9 +57,6 @@
             android:parentActivityName=".ManageEvent.CreateEventActivity" />
         <activity android:name=".SearchEvent.SearchEventActivity" />
         <activity
-            android:name=".SearchEvent.SearchEventSettingsActivity"
-            android:parentActivityName=".SearchEvent.SearchEventActivity" />
-        <activity
             android:name=".SearchEvent.EventPreviewActivity"
             android:configChanges="orientation|screenSize|keyboard"
             android:launchMode="singleTop"
