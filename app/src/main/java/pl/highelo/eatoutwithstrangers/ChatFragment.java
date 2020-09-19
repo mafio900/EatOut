@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -101,12 +102,24 @@ public class ChatFragment extends Fragment {
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setAdapter(adapter);
 
+        mRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+                mRecyclerView.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mRecyclerView.smoothScrollToPosition(0);
+                    }
+                }, 500);
+            }
+        });
+
         mSwipeRefreshLayout = view.findViewById(R.id.chat_swipelayout);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 if(!stopRef){
-                    PAGE_SIZE += 10;
+                    PAGE_SIZE += 60;
                     Query refQuery = mFirestore.collection("events").document(mEventsModel.getItemID()).collection("chat").orderBy("time", Query.Direction.DESCENDING).limit(PAGE_SIZE);
                     FirestoreRecyclerOptions<MessagesModel> refOptions = new FirestoreRecyclerOptions.Builder<MessagesModel>()
                             .setQuery(refQuery, MessagesModel.class)
@@ -122,6 +135,17 @@ public class ChatFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 sendMessage();
+            }
+        });
+
+        mMessageEditText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                if((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && i == KeyEvent.KEYCODE_ENTER){
+                    sendMessage();
+                    return true;
+                }
+                return false;
             }
         });
     }

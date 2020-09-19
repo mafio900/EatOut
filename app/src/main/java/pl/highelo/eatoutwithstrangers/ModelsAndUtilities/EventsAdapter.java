@@ -1,5 +1,6 @@
 package pl.highelo.eatoutwithstrangers.ModelsAndUtilities;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,9 +27,12 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventsView
     private ArrayList<EventsModel> mEventsListFull;
     private OnEventItemClick mOnEventItemClick;
 
-    public EventsAdapter(ArrayList<EventsModel> eventsList){
+    private Context mContext;
+
+    public EventsAdapter(ArrayList<EventsModel> eventsList, Context context){
         mEventsList = eventsList;
         mEventsListFull = new ArrayList<>(eventsList);
+        mContext = context;
     }
 
     public void setEventsListFull(ArrayList<EventsModel> arrayList){
@@ -46,8 +50,8 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventsView
     public void onBindViewHolder(@NonNull EventsViewHolder holder, int position) {
         EventsModel currentItem = mEventsList.get(position);
 
-        holder.eventTheme.setText(R.string.theme + ": " + currentItem.getTheme());
-        holder.eventName.setText(R.string.place + ": " + currentItem.getPlaceName());
+        holder.eventTheme.setText(mContext.getString(R.string.theme) + ": " + currentItem.getTheme());
+        holder.eventName.setText(mContext.getString(R.string.place) + ": " + currentItem.getPlaceName());
         holder.eventAddress.setText(currentItem.getPlaceAddress());
         GregorianCalendar d = new GregorianCalendar(TimeZone.getTimeZone("Europe/Warsaw"));
         d.setTime(currentItem.getTimeStamp().toDate());
@@ -59,7 +63,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventsView
         SimpleDateFormat oldFormat = new SimpleDateFormat("d.M.yyyy H:m", Locale.US);
         SimpleDateFormat newFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.US);
         String newDate = CommonMethods.parseDate(date, oldFormat, newFormat);
-        holder.eventDate.setText(R.string.date_of_beginning + ": " + newDate);
+        holder.eventDate.setText(mContext.getString(R.string.date_of_beginning) + ": " + newDate);
     }
 
     @Override

@@ -61,7 +61,7 @@ public class RequestedEventsFragment extends Fragment {
 
         mRequestedEventsRecyclerView = view.findViewById(R.id.requested_events_recyclerview);
         mRequestedEventsRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        mAdapter = new EventsAdapter(mEventsModelArrayList);
+        mAdapter = new EventsAdapter(mEventsModelArrayList, getContext());
         mRequestedEventsRecyclerView.setAdapter(mAdapter);
         mAdapter.setOnEventItemClick(new EventsAdapter.OnEventItemClick() {
             @Override

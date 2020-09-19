@@ -63,6 +63,7 @@
             android:parentActivityName=".SearchEvent.SearchEventActivity" />
         <activity
             android:name=".ManageEvent.CreateEventActivity"
+            android:launchMode="singleTop"
             android:parentActivityName=".ManageEvent.YourEventsActivity" />
         <activity android:name=".ProfileActivities.ChangePasswordActivity" />
         <activity

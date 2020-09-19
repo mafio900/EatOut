@@ -114,7 +114,7 @@
     <string name="message_must_have_atleast_10_chars">Message must have at least 10 chars</string>
     <string name="user_has_been_reported">User has been reported</string>
     <string name="error_while_reporting">Something went wrong while reporting user</string>
-    <string name="review_events">Browse events</string>
+    <string name="review_events">Event preview</string>
     <string name="kicked_or_event_doesnt_exist">You have been kicked or event doesn\'t exist anymore</string>
     <string name="joined_events">Joined events</string>
     <string name="cannot_open_googles_map">Cannot open Google\'s map</string>

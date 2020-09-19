@@ -66,10 +66,9 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
     private LatLng mLatLng;
     private String mPlaceName;
     private String mPlaceAddress;
-    private String date;
+    private String mDate;
     private int mYear, mMonth, mDay, mHour, mMinute = -1;
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,7 +140,7 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
     }
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        date = year + "-" + (month+1) + "-" + dayOfMonth;
+        mDate = year + "-" + (month+1) + "-" + dayOfMonth;
         mYear = year;
         mMonth = month;
         mDay = dayOfMonth;
@@ -166,10 +165,10 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         mHour = hourOfDay;
         mMinute = minute;
-        date += " " + hourOfDay + ":" + minute;
+        mDate += " " + hourOfDay + ":" + minute;
         SimpleDateFormat oldFormat = new SimpleDateFormat("yyyy-M-d H:m", Locale.US);
         SimpleDateFormat newFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.US);
-        String newDate = CommonMethods.parseDate(date, oldFormat, newFormat);
+        String newDate = CommonMethods.parseDate(mDate, oldFormat, newFormat);
         mEventDate.getEditText().setText(newDate);
     }
 

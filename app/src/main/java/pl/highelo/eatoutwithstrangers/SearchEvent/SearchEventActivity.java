@@ -205,7 +205,7 @@ public class SearchEventActivity extends AppCompatActivity {
                             }
                         }
                     }
-                    mAdapter = new EventsAdapter(mEventsModelArrayList);
+                    mAdapter = new EventsAdapter(mEventsModelArrayList, getApplicationContext());
                     mAdapter.setOnEventItemClick(new EventsAdapter.OnEventItemClick() {
                         @Override
                         public void OnItemClick(int position) {

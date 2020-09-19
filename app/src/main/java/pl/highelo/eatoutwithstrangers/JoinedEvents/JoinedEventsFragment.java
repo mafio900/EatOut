@@ -63,7 +63,7 @@ public class JoinedEventsFragment extends Fragment {
 
         mJoinedEventsRecyclerView = view.findViewById(R.id.joined_events_recyclerview);
         mJoinedEventsRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        mAdapter = new EventsAdapter(mEventsModelArrayList);
+        mAdapter = new EventsAdapter(mEventsModelArrayList, getContext());
         mJoinedEventsRecyclerView.setAdapter(mAdapter);
         mAdapter.setOnEventItemClick(new EventsAdapter.OnEventItemClick() {
             @Override
