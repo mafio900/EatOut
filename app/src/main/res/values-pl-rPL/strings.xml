@@ -167,4 +167,7 @@
     <string name="search_user_by_email">Szukaj użytkownika poprzez e-maila</string>
     <string name="user_banned">Użytkownik został zablokowany</string>
     <string name="error_while_banning">Coś poszło nie tak podczas blokowania użytkownika</string>
+    <string name="reason">Powód</string>
+    <string name="ban">Zablokuj</string>
+    <string name="report">Zgłoś</string>
 </resources>

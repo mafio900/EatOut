@@ -114,8 +114,8 @@ public class BanUserFragment extends Fragment {
                 View view = getLayoutInflater().inflate(R.layout.dialog_ban_user, null);
                 final AlertDialog dialog = new AlertDialog.Builder(getContext())
                         .setView(view)
-                        .setPositiveButton("Report", null)
-                        .setNegativeButton("Cancel", null)
+                        .setPositiveButton(R.string.ban, null)
+                        .setNegativeButton(android.R.string.cancel, null)
                         .create();
                 ((TextView)view.findViewById(R.id.dialog_ban_user_title)).setText(getString(R.string.ban_user) + " " + mUser.getfName());
                 dialog.setOnShowListener(new DialogInterface.OnShowListener() {

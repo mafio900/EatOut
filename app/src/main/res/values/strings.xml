@@ -167,4 +167,7 @@
     <string name="search_user_by_email">Search user by e-mail</string>
     <string name="user_banned">User has been banned</string>
     <string name="error_while_banning">Something went wrong while banning the user</string>
+    <string name="reason">Reason</string>
+    <string name="ban">Ban</string>
+    <string name="report">Report</string>
 </resources>
