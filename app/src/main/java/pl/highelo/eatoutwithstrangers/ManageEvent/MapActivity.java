@@ -36,6 +36,7 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 
 import java.util.Arrays;
 
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.LocationResolver;
 import pl.highelo.eatoutwithstrangers.R;
 
 public class MapActivity extends AppCompatActivity {
@@ -50,7 +51,7 @@ public class MapActivity extends AppCompatActivity {
     private boolean mLocationPermissionGranted = false;
 
     private GoogleMap mMap;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
+    private Location mLocation;
     private Place mSelectedPlace;
     private Marker mMarker;
     Button selectButton;
@@ -126,22 +127,18 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private void getDeviceCurrentLocation(){
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         try {
             if(mLocationPermissionGranted){
-                Task location = mFusedLocationProviderClient.getLastLocation();
-                location.addOnCompleteListener(new OnCompleteListener() {
+                LocationResolver.LocationResult locationResult = new LocationResolver.LocationResult() {
                     @Override
-                    public void onComplete(@NonNull Task task) {
-                        if (task.isSuccessful()) {
-                            Location currentLocation = (Location) task.getResult();
-                            LatLng ll = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-                            moveCamera(ll, 15f, "");
-                        } else {
-                            Toast.makeText(MapActivity.this, R.string.cannot_find_current_localization, Toast.LENGTH_LONG).show();
-                        }
+                    public void gotLocation(Location location) {
+                        mLocation = location;
+                        LatLng ll = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
+                        moveCamera(ll, 15f, "");
                     }
-                });
+                };
+                LocationResolver locationResolver = new LocationResolver();
+                locationResolver.getLocation(this, locationResult, 20000);
             }
         }catch (SecurityException e){
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();

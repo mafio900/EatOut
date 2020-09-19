@@ -1,4 +1,4 @@
-package pl.highelo.eatoutwithstrangers;
+package pl.highelo.eatoutwithstrangers.ModelsAndUtilities;
 
 import android.content.Context;
 import android.location.Location;

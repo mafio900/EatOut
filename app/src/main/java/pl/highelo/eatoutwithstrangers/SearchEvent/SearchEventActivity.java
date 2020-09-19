@@ -47,7 +47,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-import pl.highelo.eatoutwithstrangers.LocationResolver;
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.LocationResolver;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsAdapter;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
