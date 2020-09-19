@@ -1,22 +1,16 @@
 package pl.highelo.eatoutwithstrangers;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.functions.FirebaseFunctions;
 
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.NavbarInterface;
@@ -31,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
+    private FirebaseFunctions mFunctions;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,29 +55,39 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mAuth.useAppLanguage();
         mUser = mAuth.getCurrentUser();
+        mFunctions = FirebaseFunctions.getInstance();
 
-
-        if(mUser != null && !mUser.isEmailVerified()) {
-            Button mVerifyBtn = (Button) findViewById(R.id.verifyBtn);
-            mVerifyBtn.setVisibility(View.VISIBLE);
-            mVerifyBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mUser.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
-                                Toast.makeText(MainActivity.this, "Wysłano e-mail weryfikacyjny", Toast.LENGTH_SHORT).show();
-                            } else{
-                                Toast.makeText(MainActivity.this, "Coś poszło nie tak przy wysyłaniu e-maila, spróbuj ponownie później", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-                }
-            });
-        }
         mNavigationView.setCheckedItem(R.id.nav_home);
+
+//        addMessage("elo").addOnCompleteListener(new OnCompleteListener<String>() {
+//            @Override
+//            public void onComplete(@NonNull Task<String> task) {
+//                if(task.isSuccessful()){
+//                    Log.d(TAG, "onComplete: " + task.getResult());
+//                }else{
+//                    Log.d(TAG, "onComplete: error" + task.getException().getMessage());
+//                }
+//            }
+//        });
     }
+
+//    private Task<String> addMessage(String text) {
+//        // Create the arguments to the callable function.
+//        Map<String, Object> data = new HashMap<>();
+//        data.put("text", text);
+//        data.put("push", true);
+//
+//        return mFunctions
+//                .getHttpsCallable("iksde")
+//                .call(data)
+//                .continueWith(new Continuation<HttpsCallableResult, String>() {
+//                    @Override
+//                    public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+//                        String result = (String) task.getResult().getData();
+//                        return result;
+//                    }
+//                });
+//    }
 
     @Override
     public void onBackPressed() {

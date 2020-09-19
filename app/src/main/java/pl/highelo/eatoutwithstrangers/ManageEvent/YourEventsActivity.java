@@ -88,33 +88,34 @@ public class YourEventsActivity extends AppCompatActivity {
         collectionReference.whereEqualTo("userID", mUserID).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                mEventsModelArrayList.clear();
-                for (QueryDocumentSnapshot document : queryDocumentSnapshots){
-                    Timestamp currentTime = Timestamp.now();
-                    Timestamp documentTime = document.getTimestamp("timeStamp");
-                    long diff = documentTime.getSeconds() - currentTime.getSeconds();
-                    if(diff <= 0){
-                        mFirestore.collection("events").document(document.getId()).delete();
+                if (e == null) {
+                    mEventsModelArrayList.clear();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        Timestamp currentTime = Timestamp.now();
+                        Timestamp documentTime = document.getTimestamp("timeStamp");
+                        long diff = documentTime.getSeconds() - currentTime.getSeconds();
+                        if (diff <= 0) {
+                            mFirestore.collection("events").document(document.getId()).delete();
+                        } else {
+                            EventsModel ci = document.toObject(EventsModel.class);
+                            ci.setItemID(document.getId());
+                            mEventsModelArrayList.add(ci);
+                        }
                     }
-                    else{
-                        EventsModel ci = document.toObject(EventsModel.class);
-                        ci.setItemID(document.getId());
-                        mEventsModelArrayList.add(ci);
-                    }
+                    mAdapter = new EventsAdapter(mEventsModelArrayList, getApplicationContext());
+                    mAdapter.setOnEventItemClick(new EventsAdapter.OnEventItemClick() {
+                        @Override
+                        public void OnItemClick(int position) {
+                            Intent intent = new Intent(YourEventsActivity.this, ManageEventActivity.class);
+                            intent.putExtra("model", mEventsModelArrayList.get(position));
+                            startActivity(intent);
+                        }
+                    });
+                    mEventsList = findViewById(R.id.events_list);
+                    mEventsList.setLayoutManager(new LinearLayoutManager(YourEventsActivity.this));
+                    mEventsList.setAdapter(mAdapter);
+                    changeVisibility();
                 }
-                mAdapter = new EventsAdapter(mEventsModelArrayList, getApplicationContext());
-                mAdapter.setOnEventItemClick(new EventsAdapter.OnEventItemClick() {
-                    @Override
-                    public void OnItemClick(int position) {
-                        Intent intent = new Intent(YourEventsActivity.this, ManageEventActivity.class);
-                        intent.putExtra("model", mEventsModelArrayList.get(position));
-                        startActivity(intent);
-                    }
-                });
-                mEventsList = findViewById(R.id.events_list);
-                mEventsList.setLayoutManager(new LinearLayoutManager(YourEventsActivity.this));
-                mEventsList.setAdapter(mAdapter);
-                changeVisibility();
             }
         });
 

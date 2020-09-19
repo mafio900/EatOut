@@ -152,4 +152,11 @@
     <string name="report_theme">Report theme</string>
     <string name="report_message">Report message</string>
     <string name="choose_distance_event_search">Choose search distance</string>
+    <string name="verify_email_before_login">First of all you need verify your email if you want to log in</string>
+    <string name="send_verification_email">Send verification e-mail</string>
+    <string name="check_if_email_is_verified">Check if e-mail is verified</string>
+    <string name="email_verified">Email has been verified!</string>
+    <string name="send_email_error">Something went wrong while sending an e-mail</string>
+    <string name="verification_email_sent">Verification e-mail has been sent</string>
+    <string name="email_not_verified">Email has not been verified!</string>
 </resources>

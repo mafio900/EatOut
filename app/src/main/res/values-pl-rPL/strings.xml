@@ -152,4 +152,11 @@
     <string name="report_theme">Temat zgłoszenia</string>
     <string name="report_message">Wiadomość zgłoszenia</string>
     <string name="choose_distance_event_search">Wybierz dystans szukania wydarzeń w okolicy</string>
+    <string name="send_email_error">Coś poszło nie tak przy wysyłaniu e-maila, spróbuj ponownie później</string>
+    <string name="verification_email_sent">Wysłano e-mail weryfikacyjny</string>
+    <string name="verify_email_before_login">Po pierwsze musisz zwerifikować swój e-mail aby się zalogować</string>
+    <string name="send_verification_email">Wyślij e-mail weryfikacyjny</string>
+    <string name="check_if_email_is_verified">Sprawdź weryfikację e-maila</string>
+    <string name="email_verified">E-mail został potwierdzony</string>
+    <string name="email_not_verified">E-mail nie został potwierdzony!</string>
 </resources>

@@ -153,7 +153,7 @@ public class RegisterActivity extends AppCompatActivity implements DatePickerDia
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if(task.isSuccessful()){
                                             Toast.makeText(RegisterActivity.this, R.string.account_created, Toast.LENGTH_SHORT).show();
-                                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                            startActivity(new Intent(getApplicationContext(), VerifyEmailActivity.class));
                                             finish();
                                         } else{
                                             mAuth.getCurrentUser().delete();

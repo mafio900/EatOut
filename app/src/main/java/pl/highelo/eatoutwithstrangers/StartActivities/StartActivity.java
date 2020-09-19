@@ -9,7 +9,6 @@ import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import pl.highelo.eatoutwithstrangers.MainActivity;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.R;
 
@@ -23,7 +22,7 @@ public class StartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_start);
 
         if(FirebaseAuth.getInstance().getCurrentUser() != null){
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            startActivity(new Intent(getApplicationContext(), VerifyEmailActivity.class));
             finish();
         }
 
