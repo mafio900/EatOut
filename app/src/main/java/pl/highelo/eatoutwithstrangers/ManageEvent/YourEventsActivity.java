@@ -88,7 +88,7 @@ public class YourEventsActivity extends AppCompatActivity {
         collectionReference.whereEqualTo("userID", mUserID).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                if (e == null) {
+                if (queryDocumentSnapshots != null) {
                     mEventsModelArrayList.clear();
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         Timestamp currentTime = Timestamp.now();

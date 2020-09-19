@@ -159,4 +159,12 @@
     <string name="send_email_error">Something went wrong while sending an e-mail</string>
     <string name="verification_email_sent">Verification e-mail has been sent</string>
     <string name="email_not_verified">Email has not been verified!</string>
+    <string name="reports">Reports</string>
+    <string name="give_admin">Give admin</string>
+    <string name="ban_user">Ban user</string>
+    <string name="admin_panel">Admin panel</string>
+    <string name="report_date">Report date</string>
+    <string name="search_user_by_email">Search user by e-mail</string>
+    <string name="user_banned">User has been banned</string>
+    <string name="error_while_banning">Something went wrong while banning the user</string>
 </resources>

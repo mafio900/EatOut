@@ -159,4 +159,12 @@
     <string name="check_if_email_is_verified">Sprawdź weryfikację e-maila</string>
     <string name="email_verified">E-mail został potwierdzony</string>
     <string name="email_not_verified">E-mail nie został potwierdzony!</string>
+    <string name="report_date">Data zgłoszenia</string>
+    <string name="reports">Zgłoszenia</string>
+    <string name="admin_panel">Panel admina</string>
+    <string name="ban_user">Zablokuj użytkownika</string>
+    <string name="give_admin">Dodaj admina</string>
+    <string name="search_user_by_email">Szukaj użytkownika poprzez e-maila</string>
+    <string name="user_banned">Użytkownik został zablokowany</string>
+    <string name="error_while_banning">Coś poszło nie tak podczas blokowania użytkownika</string>
 </resources>

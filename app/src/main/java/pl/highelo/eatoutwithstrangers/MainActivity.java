@@ -6,11 +6,15 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+
 import androidx.appcompat.widget.Toolbar;
+
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.auth.GetTokenResult;
 
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.NavbarInterface;
@@ -22,10 +26,6 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private Toolbar mToolbar;
-
-    private FirebaseAuth mAuth;
-    private FirebaseUser mUser;
-    private FirebaseFunctions mFunctions;
 
 
     @Override
@@ -40,6 +40,15 @@ public class MainActivity extends AppCompatActivity {
         mNavigationView = findViewById(R.id.nav_view);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
+        FirebaseAuth.getInstance().getCurrentUser().getIdToken(false).addOnSuccessListener(new OnSuccessListener<GetTokenResult>() {
+            @Override
+            public void onSuccess(GetTokenResult getTokenResult) {
+                if(getTokenResult.getClaims().get("admin") != null && ((Boolean) getTokenResult.getClaims().get("admin"))){
+                    mNavigationView.getMenu().findItem(R.id.nav_admin_page).setVisible(true);
+                }
+            }
+        });
+
         setSupportActionBar(mToolbar);
         mNavigationView.bringToFront();
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout,
@@ -51,43 +60,8 @@ public class MainActivity extends AppCompatActivity {
 
         mNavigationView.setNavigationItemSelectedListener(new NavbarInterface(this));
 
-
-        mAuth = FirebaseAuth.getInstance();
-        mAuth.useAppLanguage();
-        mUser = mAuth.getCurrentUser();
-        mFunctions = FirebaseFunctions.getInstance();
-
         mNavigationView.setCheckedItem(R.id.nav_home);
-
-//        addMessage("elo").addOnCompleteListener(new OnCompleteListener<String>() {
-//            @Override
-//            public void onComplete(@NonNull Task<String> task) {
-//                if(task.isSuccessful()){
-//                    Log.d(TAG, "onComplete: " + task.getResult());
-//                }else{
-//                    Log.d(TAG, "onComplete: error" + task.getException().getMessage());
-//                }
-//            }
-//        });
     }
-
-//    private Task<String> addMessage(String text) {
-//        // Create the arguments to the callable function.
-//        Map<String, Object> data = new HashMap<>();
-//        data.put("text", text);
-//        data.put("push", true);
-//
-//        return mFunctions
-//                .getHttpsCallable("iksde")
-//                .call(data)
-//                .continueWith(new Continuation<HttpsCallableResult, String>() {
-//                    @Override
-//                    public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
-//                        String result = (String) task.getResult().getData();
-//                        return result;
-//                    }
-//                });
-//    }
 
     @Override
     public void onBackPressed() {

@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
+import pl.highelo.eatoutwithstrangers.AdminActivities.AdminActivity;
 import pl.highelo.eatoutwithstrangers.JoinedEvents.JoinedEventsActivity;
 import pl.highelo.eatoutwithstrangers.MainActivity;
 import pl.highelo.eatoutwithstrangers.ManageEvent.YourEventsActivity;
@@ -32,6 +33,12 @@ public class NavbarInterface implements NavigationView.OnNavigationItemSelectedL
             case R.id.nav_home:
                 if(!(t instanceof MainActivity)){
                     t.startActivity(new Intent(t.getApplicationContext(), MainActivity.class));
+                    t.finish();
+                }
+                break;
+            case R.id.nav_admin_page:
+                if(!(t instanceof AdminActivity)){
+                    t.startActivity(new Intent(t.getApplicationContext(), AdminActivity.class));
                     t.finish();
                 }
                 break;

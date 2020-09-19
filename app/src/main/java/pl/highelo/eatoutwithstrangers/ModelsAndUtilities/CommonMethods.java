@@ -13,16 +13,22 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.HttpsCallableResult;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import pl.highelo.eatoutwithstrangers.R;
 import pl.highelo.eatoutwithstrangers.StartActivities.LoginActivity;
@@ -58,6 +64,58 @@ public class CommonMethods {
             view = new View(activity);
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    private Task<Boolean> makeAdmin(String uid) {
+        // Create the arguments to the callable function.
+        Map<String, Object> data = new HashMap<>();
+        data.put("uid", uid);
+
+        return FirebaseFunctions.getInstance()
+                .getHttpsCallable("makeAdmin")
+                .call(data)
+                .continueWith(new Continuation<HttpsCallableResult, Boolean>() {
+                    @Override
+                    public Boolean then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                        boolean result = (Boolean) task.getResult().getData();
+                        return result;
+                    }
+                });
+    }
+
+    public static Task<Boolean> banUser(String uid, String reason) {
+        // Create the arguments to the callable function.
+        Map<String, Object> data = new HashMap<>();
+        data.put("uid", uid);
+        data.put("reason", reason);
+
+        return FirebaseFunctions.getInstance()
+                .getHttpsCallable("banUser")
+                .call(data)
+                .continueWith(new Continuation<HttpsCallableResult, Boolean>() {
+                    @Override
+                    public Boolean then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                        boolean result = (Boolean) task.getResult().getData();
+                        return result;
+                    }
+                });
+    }
+
+    public static Task<Boolean> unBanUser(String uid) {
+        // Create the arguments to the callable function.
+        Map<String, Object> data = new HashMap<>();
+        data.put("uid", uid);
+
+        return FirebaseFunctions.getInstance()
+                .getHttpsCallable("unBanUser")
+                .call(data)
+                .continueWith(new Continuation<HttpsCallableResult, Boolean>() {
+                    @Override
+                    public Boolean then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                        boolean result = (Boolean) task.getResult().getData();
+                        return result;
+                    }
+                });
     }
 
 //    public static void checkIfBanned(final AppCompatActivity t){

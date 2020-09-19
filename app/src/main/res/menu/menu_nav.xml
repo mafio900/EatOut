@@ -6,6 +6,11 @@
             android:icon="@drawable/ic_home"
             android:title="@string/main_page"/>
 
+        <item android:id="@+id/nav_admin_page"
+            android:icon="@drawable/ic_home"
+            android:title="@string/admin_panel"
+            android:visible="false"/>
+
         <item android:title="@string/events">
             <menu>
                 <group android:checkableBehavior="single">

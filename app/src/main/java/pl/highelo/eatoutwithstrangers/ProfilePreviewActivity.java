@@ -71,7 +71,7 @@ public class ProfilePreviewActivity extends AppCompatActivity {
                         .setPositiveButton("Report", null)
                         .setNegativeButton("Cancel", null)
                         .create();
-                ((TextView)view.findViewById(R.id.dialog_report_title)).setText(R.string.report_user + mUsersModel.getfName());
+                ((TextView)view.findViewById(R.id.dialog_report_title)).setText(getString(R.string.report_user) + " " + mUsersModel.getfName());
                 dialog.setOnShowListener(new DialogInterface.OnShowListener() {
                     @Override
                     public void onShow(DialogInterface dialogInterface) {
