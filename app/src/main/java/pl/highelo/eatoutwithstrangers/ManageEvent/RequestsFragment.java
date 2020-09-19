@@ -11,37 +11,26 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.firebase.ui.firestore.SnapshotParser;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
-import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.MessagesModel;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.UsersAdapter;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.UsersModel;
 import pl.highelo.eatoutwithstrangers.ProfilePreviewActivity;

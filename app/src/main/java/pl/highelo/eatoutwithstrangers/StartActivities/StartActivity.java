@@ -1,7 +1,6 @@
 package pl.highelo.eatoutwithstrangers.StartActivities;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
 
 import android.content.Intent;
 import android.os.Bundle;
