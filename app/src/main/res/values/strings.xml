@@ -155,7 +155,7 @@
     <string name="verify_email_before_login">First of all you need verify your email if you want to log in</string>
     <string name="send_verification_email">Send verification e-mail</string>
     <string name="check_if_email_is_verified">Check if e-mail is verified</string>
-    <string name="email_verified">Email has been verified!</string>
+    <string name="email_verified_login_again">Email has been verified, please log in again!</string>
     <string name="send_email_error">Something went wrong while sending an e-mail</string>
     <string name="verification_email_sent">Verification e-mail has been sent</string>
     <string name="email_not_verified">Email has not been verified!</string>
@@ -170,4 +170,21 @@
     <string name="reason">Reason</string>
     <string name="ban">Ban</string>
     <string name="report">Report</string>
+    <string name="report_preview">Report preview</string>
+    <string name="reporting_user">Reporting user</string>
+    <string name="reported_user">Reported User</string>
+    <string name="information_about_the_report">Information about the report</string>
+    <string name="select_option">Select option</string>
+    <string name="what_do_you_want_to_do">What do you want to do?</string>
+    <string name="reason_cannot_be_empty">Reason cannot be empty</string>
+    <string name="reason_must_have_5chars">Reason must have at least 5 chars</string>
+    <string-array name="reports_option">
+        <item>Delete report</item>
+        <item>Ban reported user</item>
+        <item>Ban reporting user</item>
+    </string-array>
+    <string name="delete_report">Delete report</string>
+    <string name="delete_report_ask">Are you sure you want to delete this report?</string>
+    <string name="delete_report_successfully">Report has been deleted</string>
+    <string name="delete_report_error">Something went wrong while deleting the report</string>
 </resources>

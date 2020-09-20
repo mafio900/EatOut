@@ -53,16 +53,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventsView
         holder.eventTheme.setText(mContext.getString(R.string.theme) + ": " + currentItem.getTheme());
         holder.eventName.setText(mContext.getString(R.string.place) + ": " + currentItem.getPlaceName());
         holder.eventAddress.setText(currentItem.getPlaceAddress());
-        GregorianCalendar d = new GregorianCalendar(TimeZone.getTimeZone("Europe/Warsaw"));
-        d.setTime(currentItem.getTimeStamp().toDate());
-        String date = d.get(Calendar.DAY_OF_MONTH)+"."
-                +(d.get(Calendar.MONTH)+1)+"."
-                +d.get(Calendar.YEAR)+" "
-                +d.get(Calendar.HOUR_OF_DAY)+":"
-                +d.get(Calendar.MINUTE);
-        SimpleDateFormat oldFormat = new SimpleDateFormat("d.M.yyyy H:m", Locale.US);
-        SimpleDateFormat newFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.US);
-        String newDate = CommonMethods.parseDate(date, oldFormat, newFormat);
+        String newDate = CommonMethods.parseDate(currentItem.getTimeStamp());
         holder.eventDate.setText(mContext.getString(R.string.date_of_beginning) + ": " + newDate);
     }
 

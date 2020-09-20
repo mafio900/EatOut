@@ -14,8 +14,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".StartActivities.VerifyEmailActivity"></activity>
         <activity android:name=".AdminActivities.AdminActivity" />
+        <activity android:name=".AdminActivities.ReportActivity"
+            android:parentActivityName=".AdminActivities.AdminActivity"
+            android:launchMode="singleTop"/>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -34,6 +36,7 @@
         <activity
             android:name=".StartActivities.LoginActivity"
             android:parentActivityName=".StartActivities.StartActivity" />
+        <activity android:name=".StartActivities.VerifyEmailActivity" />
         <activity
             android:name=".StartActivities.ForgotPasswordActivity"
             android:parentActivityName=".StartActivities.LoginActivity" />

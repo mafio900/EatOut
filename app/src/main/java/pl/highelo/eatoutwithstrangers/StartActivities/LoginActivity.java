@@ -13,9 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -23,6 +25,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.MainActivity;
@@ -60,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
         mLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = mEmail.getEditText().getText().toString().trim();
+                final String email = mEmail.getEditText().getText().toString().trim();
                 String password = mPassword.getEditText().getText().toString().trim();
 
                 if(TextUtils.isEmpty(email)){
@@ -90,6 +94,14 @@ public class LoginActivity extends AppCompatActivity {
                             }catch (FirebaseAuthInvalidUserException e){
                                 if(e.getErrorCode().equals("ERROR_USER_DISABLED")){
                                     Toast.makeText(LoginActivity.this, R.string.acc_banned, Toast.LENGTH_LONG).show();
+                                    FirebaseFirestore.getInstance().collection("bannedUsers").whereEqualTo("email", email).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                            TextView reason = findViewById(R.id.login_ban_reason);
+                                            reason.setText(getString(R.string.reason) + ": " + queryDocumentSnapshots.getDocuments().get(0).get("reason").toString());
+                                            reason.setVisibility(View.VISIBLE);
+                                        }
+                                    });
                                 }
                                 else{
                                     Toast.makeText(LoginActivity.this, R.string.wrong_login, Toast.LENGTH_SHORT).show();

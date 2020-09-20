@@ -7,6 +7,7 @@ import com.google.firebase.Timestamp;
 
 public class ReportsModel implements Parcelable {
 
+    private String reportID;
     private String reportedUser;
     private String reportingUser;
     private String theme;
@@ -15,15 +16,8 @@ public class ReportsModel implements Parcelable {
 
     public ReportsModel(){}
 
-    public ReportsModel(String reportedUser, String reportingUser, String theme, String message, Timestamp timeStamp) {
-        this.reportedUser = reportedUser;
-        this.reportingUser = reportingUser;
-        this.theme = theme;
-        this.message = message;
-        this.timeStamp = timeStamp;
-    }
-
     protected ReportsModel(Parcel in) {
+        reportID = in.readString();
         reportedUser = in.readString();
         reportingUser = in.readString();
         theme = in.readString();
@@ -33,6 +27,7 @@ public class ReportsModel implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(reportID);
         dest.writeString(reportedUser);
         dest.writeString(reportingUser);
         dest.writeString(theme);
@@ -56,6 +51,14 @@ public class ReportsModel implements Parcelable {
             return new ReportsModel[size];
         }
     };
+
+    public String getReportID() {
+        return reportID;
+    }
+
+    public void setReportID(String reportID) {
+        this.reportID = reportID;
+    }
 
     public String getReportedUser() {
         return reportedUser;

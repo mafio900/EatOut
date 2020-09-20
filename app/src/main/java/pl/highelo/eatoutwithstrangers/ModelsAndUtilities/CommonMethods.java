@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,9 +27,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import pl.highelo.eatoutwithstrangers.R;
 import pl.highelo.eatoutwithstrangers.StartActivities.LoginActivity;
@@ -137,6 +140,28 @@ public class CommonMethods {
 //            });
 //        }
 //    }
+
+    public static String parseDate(Timestamp timestamp) {
+        GregorianCalendar d = new GregorianCalendar(TimeZone.getTimeZone("Europe/Warsaw"));
+        d.setTime(timestamp.toDate());
+        String inputDateString = d.get(Calendar.DAY_OF_MONTH)+"."
+                +(d.get(Calendar.MONTH)+1)+"."
+                +d.get(Calendar.YEAR)+" "
+                +d.get(Calendar.HOUR_OF_DAY)+":"
+                +d.get(Calendar.MINUTE);
+        SimpleDateFormat inputDateFormat = new SimpleDateFormat("d.M.yyyy H:m", Locale.US);
+        SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.US);
+
+        Date date = null;
+        String outputDateString = null;
+        try {
+            date = inputDateFormat.parse(inputDateString);
+            outputDateString = outputDateFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return outputDateString;
+    }
 
     public static String parseDate(String inputDateString, SimpleDateFormat inputDateFormat, SimpleDateFormat outputDateFormat) {
         Date date = null;

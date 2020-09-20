@@ -157,7 +157,7 @@
     <string name="verify_email_before_login">Po pierwsze musisz zwerifikować swój e-mail aby się zalogować</string>
     <string name="send_verification_email">Wyślij e-mail weryfikacyjny</string>
     <string name="check_if_email_is_verified">Sprawdź weryfikację e-maila</string>
-    <string name="email_verified">E-mail został potwierdzony</string>
+    <string name="email_verified_login_again">E-mail został potwierdzony, proszę zalogować się ponownie</string>
     <string name="email_not_verified">E-mail nie został potwierdzony!</string>
     <string name="report_date">Data zgłoszenia</string>
     <string name="reports">Zgłoszenia</string>
@@ -170,4 +170,21 @@
     <string name="reason">Powód</string>
     <string name="ban">Zablokuj</string>
     <string name="report">Zgłoś</string>
+    <string name="report_preview">Podgląd zgłoszenia</string>
+    <string name="reporting_user">Użytkownik zgłaszający</string>
+    <string name="reported_user">Zgłoszony użytkownik</string>
+    <string name="information_about_the_report">Informacje o zgłoszeniu</string>
+    <string name="select_option">Wybierz opcję</string>
+    <string-array name="reports_option">
+        <item>Usuń zgłoszenie</item>
+        <item>Zablokuj zgłoszonego użytkownika</item>
+        <item>Zablokuj użytkownika zgłaszającego</item>
+    </string-array>
+    <string name="what_do_you_want_to_do">Co chcesz zrobić?</string>
+    <string name="reason_cannot_be_empty">Powód nie może być pusty</string>
+    <string name="reason_must_have_5chars">Powód musi mieć co najmniej 5 znaków</string>
+    <string name="delete_report">Usunięcie zgłoszenia</string>
+    <string name="delete_report_ask">Czy na pewno chcesz usunąć to zgłoszenie?</string>
+    <string name="delete_report_successfully">Zgłoszenie zostało usunięte</string>
+    <string name="delete_report_error">Usunięcie zgłoszenia nie powiodło się</string>
 </resources>

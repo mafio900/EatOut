@@ -1,5 +1,6 @@
 package pl.highelo.eatoutwithstrangers.AdminActivities;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.firebase.ui.firestore.SnapshotParser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
@@ -50,10 +53,26 @@ public class ReportsFragment extends Fragment {
 
         Query query = mFirestore.collection("reports").orderBy("timeStamp", Query.Direction.ASCENDING).limit(10);
         FirestoreRecyclerOptions<ReportsModel> options = new FirestoreRecyclerOptions.Builder<ReportsModel>()
-                .setQuery(query, ReportsModel.class)
+                .setQuery(query, new SnapshotParser<ReportsModel>() {
+                    @NonNull
+                    @Override
+                    public ReportsModel parseSnapshot(@NonNull DocumentSnapshot snapshot) {
+                        ReportsModel model = snapshot.toObject(ReportsModel.class);
+                        model.setReportID(snapshot.getId());
+                        return model;
+                    }
+                })
                 .build();
 
         mReportsAdapter = new ReportsAdapter(options);
+        mReportsAdapter.setOnReportItemClick(new ReportsAdapter.OnReportItemClick() {
+            @Override
+            public void onItemClick(int position) {
+                Intent intent = new Intent(getContext(), ReportActivity.class);
+                intent.putExtra("model", mReportsAdapter.getItem(position));
+                startActivity(intent);
+            }
+        });
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setAdapter(mReportsAdapter);

@@ -17,7 +17,6 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GetTokenResult;
 
-import pl.highelo.eatoutwithstrangers.ManageEvent.ManagePagerAdapter;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.NavbarInterface;
 import pl.highelo.eatoutwithstrangers.R;
@@ -64,7 +63,7 @@ public class AdminActivity extends AppCompatActivity {
         mNavigationView.setNavigationItemSelectedListener(new NavbarInterface(this));
 
         mTabLayout = (TabLayout) findViewById(R.id.admin_tablayout);
-        //mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+        mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         mViewPager = (ViewPager2) findViewById(R.id.admin_viewpager);
         mViewPager.setAdapter(new AdminPagerAdapter(this, mTabLayout.getTabCount()));
 
