@@ -23,6 +23,8 @@ public class AdminPagerAdapter extends FragmentStateAdapter {
             case 1:
                 return new BanUserFragment();
             case 2:
+                return new UnbanUserFragment();
+            case 3:
                 return new GiveAdminFragment();
         }
     }

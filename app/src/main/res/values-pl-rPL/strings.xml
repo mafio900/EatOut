@@ -187,4 +187,11 @@
     <string name="delete_report_ask">Czy na pewno chcesz usunąć to zgłoszenie?</string>
     <string name="delete_report_successfully">Zgłoszenie zostało usunięte</string>
     <string name="delete_report_error">Usunięcie zgłoszenia nie powiodło się</string>
+    <string name="unban_user">odblokuj użytkownika</string>
+    <string name="user_doesnt_exist">Nie ma takiego użytkownika!</string>
+    <string name="unban">Odblokuj</string>
+    <string name="user_unbanned">Użytkownik został odblokowany</string>
+    <string name="error_while_unbanning">Coś poszło nie tak przy odblokowywaniu</string>
+    <string name="email_not_banned">Podany e-mail nie jest zablokowany</string>
+    <string name="sure_to_unban_user">Czy jesteś pewnien, że chcesz odblokować tego użytkownika?</string>
 </resources>

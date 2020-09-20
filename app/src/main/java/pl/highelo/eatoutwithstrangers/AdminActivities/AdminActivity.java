@@ -79,6 +79,9 @@ public class AdminActivity extends AppCompatActivity {
                         tab.setText(R.string.ban_user);
                         break;
                     case 2:
+                        tab.setText(R.string.unban_user);
+                        break;
+                    case 3:
                         tab.setText(R.string.give_admin);
                         break;
                 }

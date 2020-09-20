@@ -101,7 +101,7 @@ public class BanUserFragment extends Fragment {
                                 }
 
                             }else{
-                                emailInput.setError("Nie ma takiego użytkownika!");
+                                emailInput.setError(getString(R.string.user_doesnt_exist));
                             }
                         }
                     });
@@ -128,11 +128,11 @@ public class BanUserFragment extends Fragment {
                             public void onClick(View view) {
                                 TextInputLayout reason = dialog.findViewById(R.id.dialog_ban_user_reason);
                                 if(TextUtils.isEmpty(reason.getEditText().getText())){
-                                    reason.setError("Reason cannot be empty");
+                                    reason.setError(getString(R.string.reason_cannot_be_empty));
                                     return;
                                 }else{reason.setError(null);}
                                 if(reason.getEditText().getText().length() < 5){
-                                    reason.setError("Reason must have at least 5 chars");
+                                    reason.setError(getString(R.string.reason_must_have_5chars));
                                     return;
                                 }else{reason.setError(null);}
 

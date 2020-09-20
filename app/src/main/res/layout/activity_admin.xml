@@ -19,7 +19,7 @@
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/admin_tablayout"
-            android:layout_width="409dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -38,20 +38,25 @@
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/unban_user" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/give_admin" />
         </com.google.android.material.tabs.TabLayout>
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/admin_viewpager"
-            android:layout_width="409dp"
-            android:layout_height="625dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:focusable="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/admin_tablayout"
-            app:layout_constraintVertical_bias="0.0"
-            android:focusable="false"/>
+            app:layout_constraintVertical_bias="0.0" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.drawerlayout.widget.DrawerLayout>

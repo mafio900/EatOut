@@ -104,7 +104,7 @@ public class CommonMethods {
                 });
     }
 
-    public static Task<Boolean> unBanUser(String uid) {
+    public static Task<Boolean> unbanUser(String uid) {
         // Create the arguments to the callable function.
         Map<String, Object> data = new HashMap<>();
         data.put("uid", uid);
