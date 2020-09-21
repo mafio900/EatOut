@@ -194,4 +194,10 @@
     <string name="error_while_unbanning">Coś poszło nie tak przy odblokowywaniu</string>
     <string name="email_not_banned">Podany e-mail nie jest zablokowany</string>
     <string name="sure_to_unban_user">Czy jesteś pewnien, że chcesz odblokować tego użytkownika?</string>
+    <string name="search_user_to_revoke_admin">Szukaj użytkownika poprzez e-mail aby odebrać prawa administratora</string>
+    <string name="revoke">Odbierz</string>
+    <string name="admin_revoked">Administrator został odebrany dla tego użytkownika</string>
+    <string name="error_while_revoking_admin">Coś poszło nie tak przy odbieraniu administratora</string>
+    <string name="revoke_admin">Odbierz administratora</string>
+    <string name="sure_to_revoke_admin">Czy na pewno chcesz odbebrać administratora temu użytkownikowi?</string>
 </resources>

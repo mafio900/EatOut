@@ -196,4 +196,10 @@
     <string name="user_doesnt_exist">User do no exist</string>
     <string name="unban">Unban</string>
     <string name="sure_to_unban_user">Are you sure you want to unban this user?</string>
+    <string name="search_user_to_revoke_admin">Search user by e-mail to revoke admin permissions</string>
+    <string name="revoke">Revoke</string>
+    <string name="admin_revoked">Admin for this user has been revoked</string>
+    <string name="error_while_revoking_admin">Something went wrong while revoking admin</string>
+    <string name="revoke_admin">Revoke admin</string>
+    <string name="sure_to_revoke_admin">Are you sure you want to revoke admin for this user?</string>
 </resources>

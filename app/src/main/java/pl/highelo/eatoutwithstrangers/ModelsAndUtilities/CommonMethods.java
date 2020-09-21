@@ -69,13 +69,30 @@ public class CommonMethods {
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    private Task<Boolean> makeAdmin(String uid) {
+    public Task<Boolean> makeAdmin(String uid) {
         // Create the arguments to the callable function.
         Map<String, Object> data = new HashMap<>();
         data.put("uid", uid);
 
         return FirebaseFunctions.getInstance()
                 .getHttpsCallable("makeAdmin")
+                .call(data)
+                .continueWith(new Continuation<HttpsCallableResult, Boolean>() {
+                    @Override
+                    public Boolean then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                        boolean result = (Boolean) task.getResult().getData();
+                        return result;
+                    }
+                });
+    }
+
+    public static Task<Boolean> revokeAdmin(String uid) {
+        // Create the arguments to the callable function.
+        Map<String, Object> data = new HashMap<>();
+        data.put("uid", uid);
+
+        return FirebaseFunctions.getInstance()
+                .getHttpsCallable("revokeAdmin")
                 .call(data)
                 .continueWith(new Continuation<HttpsCallableResult, Boolean>() {
                     @Override

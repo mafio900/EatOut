@@ -84,6 +84,9 @@ public class AdminActivity extends AppCompatActivity {
                     case 3:
                         tab.setText(R.string.give_admin);
                         break;
+                    case 4:
+                        tab.setText(R.string.revoke_admin);
+                        break;
                 }
             }
         }
