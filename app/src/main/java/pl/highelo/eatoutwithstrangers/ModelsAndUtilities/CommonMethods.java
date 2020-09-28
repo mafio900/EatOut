@@ -69,7 +69,7 @@ public class CommonMethods {
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    public Task<Boolean> makeAdmin(String uid) {
+    public static Task<Boolean> makeAdmin(String uid) {
         // Create the arguments to the callable function.
         Map<String, Object> data = new HashMap<>();
         data.put("uid", uid);

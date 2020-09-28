@@ -63,7 +63,7 @@ public class AdminActivity extends AppCompatActivity {
         mNavigationView.setNavigationItemSelectedListener(new NavbarInterface(this));
 
         mTabLayout = (TabLayout) findViewById(R.id.admin_tablayout);
-        mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+        //mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         mViewPager = (ViewPager2) findViewById(R.id.admin_viewpager);
         mViewPager.setAdapter(new AdminPagerAdapter(this, mTabLayout.getTabCount()));
 
@@ -76,16 +76,7 @@ public class AdminActivity extends AppCompatActivity {
                         tab.setText(R.string.reports);
                         break;
                     case 1:
-                        tab.setText(R.string.ban_user);
-                        break;
-                    case 2:
-                        tab.setText(R.string.unban_user);
-                        break;
-                    case 3:
-                        tab.setText(R.string.give_admin);
-                        break;
-                    case 4:
-                        tab.setText(R.string.revoke_admin);
+                        tab.setText(R.string.manage_user);
                         break;
                 }
             }

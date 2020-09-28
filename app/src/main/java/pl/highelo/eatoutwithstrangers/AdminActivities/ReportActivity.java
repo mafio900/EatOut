@@ -224,11 +224,11 @@ public class ReportActivity extends AppCompatActivity {
         }
         View view = getLayoutInflater().inflate(R.layout.dialog_ban_user, null);
         final AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.ban_user) + " " + user.getfName())
                 .setView(view)
                 .setPositiveButton(R.string.ban, null)
                 .setNegativeButton(android.R.string.cancel, null)
                 .create();
-        ((TextView)view.findViewById(R.id.dialog_ban_user_title)).setText(getString(R.string.ban_user) + " " + user.getfName());
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialogInterface) {

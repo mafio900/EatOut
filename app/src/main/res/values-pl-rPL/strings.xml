@@ -187,7 +187,7 @@
     <string name="delete_report_ask">Czy na pewno chcesz usunąć to zgłoszenie?</string>
     <string name="delete_report_successfully">Zgłoszenie zostało usunięte</string>
     <string name="delete_report_error">Usunięcie zgłoszenia nie powiodło się</string>
-    <string name="unban_user">odblokuj użytkownika</string>
+    <string name="unban_user">Odblokuj użytkownika</string>
     <string name="user_doesnt_exist">Nie ma takiego użytkownika!</string>
     <string name="unban">Odblokuj</string>
     <string name="user_unbanned">Użytkownik został odblokowany</string>
@@ -200,4 +200,14 @@
     <string name="error_while_revoking_admin">Coś poszło nie tak przy odbieraniu administratora</string>
     <string name="revoke_admin">Odbierz administratora</string>
     <string name="sure_to_revoke_admin">Czy na pewno chcesz odbebrać administratora temu użytkownikowi?</string>
+    <string name="execute">Wykonaj</string>
+    <string name="manage_user">Zarządzaj użytkownikiem</string>
+    <string name="sure_to_give_admin">Czy jesteś pewnien, że chcesz nadać uprawienia administratora temu użytkownikowi?</string>
+    <string name="give">Nadaj</string>
+    <string-array name="manage_user_options">
+        <item>Zablokuj użytkownika</item>
+        <item>Odblokuj użytkownika</item>
+        <item>Nadaj uprawnienia administratora</item>
+        <item>Odbierz uprawnienia administratora</item>
+    </string-array>
 </resources>

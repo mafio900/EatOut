@@ -69,7 +69,7 @@ public class RegisterActivity extends AppCompatActivity implements DatePickerDia
         mFirestore = FirebaseFirestore.getInstance();
 
         if(mAuth.getCurrentUser() != null){
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
             finish();
         }
 
@@ -153,7 +153,9 @@ public class RegisterActivity extends AppCompatActivity implements DatePickerDia
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if(task.isSuccessful()){
                                             Toast.makeText(RegisterActivity.this, R.string.account_created, Toast.LENGTH_SHORT).show();
-                                            startActivity(new Intent(getApplicationContext(), VerifyEmailActivity.class));
+                                            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                                            mAuth.getCurrentUser().sendEmailVerification();
+                                            mAuth.signOut();
                                             finish();
                                         } else{
                                             mAuth.getCurrentUser().delete();

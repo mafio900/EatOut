@@ -36,7 +36,6 @@
         <activity
             android:name=".StartActivities.LoginActivity"
             android:parentActivityName=".StartActivities.StartActivity" />
-        <activity android:name=".StartActivities.VerifyEmailActivity" />
         <activity
             android:name=".StartActivities.ForgotPasswordActivity"
             android:parentActivityName=".StartActivities.LoginActivity" />

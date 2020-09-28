@@ -86,8 +86,13 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                            startActivity(new Intent(getApplicationContext(), VerifyEmailActivity.class));
-                            finish();
+                            if(mAuth.getCurrentUser().isEmailVerified()){
+                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                finish();
+                            }else{
+                                mAuth.signOut();
+                                mEmail.setError(getString(R.string.email_not_verified));
+                            }
                         }else{
                             try {
                                 throw task.getException();
@@ -112,8 +117,8 @@ public class LoginActivity extends AppCompatActivity {
                             catch(Exception e) {
                                 Log.e("TAG", e.getMessage());
                             }
-                            mProgressBar.setVisibility(View.INVISIBLE);
                         }
+                        mProgressBar.setVisibility(View.INVISIBLE);
                     }
                 });
             }
