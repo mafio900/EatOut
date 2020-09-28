@@ -50,7 +50,6 @@ public class YourEventsActivity extends AppCompatActivity {
     private EventsAdapter mAdapter;
     private ArrayList<EventsModel> mEventsModelArrayList = new ArrayList<>();
 
-    private TextView textView;
     private TextView emptyTV;
 
     @Override
@@ -80,7 +79,6 @@ public class YourEventsActivity extends AppCompatActivity {
         mFirestore = FirebaseFirestore.getInstance();
         mUserID = mAuth.getCurrentUser().getUid();
 
-        textView = findViewById(R.id.yourEventsTV);
         emptyTV = findViewById(R.id.emptyEvents);
 
         CollectionReference collectionReference = mFirestore.collection("events");
@@ -88,7 +86,7 @@ public class YourEventsActivity extends AppCompatActivity {
         collectionReference.whereEqualTo("userID", mUserID).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                if (queryDocumentSnapshots != null) {
+                if (e == null && queryDocumentSnapshots != null) {
                     mEventsModelArrayList.clear();
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         Timestamp currentTime = Timestamp.now();
@@ -131,11 +129,9 @@ public class YourEventsActivity extends AppCompatActivity {
 
     private void changeVisibility(){
         if(mEventsModelArrayList.size() == 0){
-            textView.setVisibility(View.GONE);
             mEventsList.setVisibility(View.GONE);
             emptyTV.setVisibility(View.VISIBLE);
         }else{
-            textView.setVisibility(View.VISIBLE);
             mEventsList.setVisibility(View.VISIBLE);
             emptyTV.setVisibility(View.GONE);
         }

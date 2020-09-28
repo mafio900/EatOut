@@ -51,10 +51,10 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventsView
         EventsModel currentItem = mEventsList.get(position);
 
         holder.eventTheme.setText(mContext.getString(R.string.theme) + ": " + currentItem.getTheme());
-        holder.eventName.setText(mContext.getString(R.string.place) + ": " + currentItem.getPlaceName());
+        holder.eventName.setText(currentItem.getPlaceName());
         holder.eventAddress.setText(currentItem.getPlaceAddress());
         String newDate = CommonMethods.parseDate(currentItem.getTimeStamp());
-        holder.eventDate.setText(mContext.getString(R.string.date_of_beginning) + ": " + newDate);
+        holder.eventDate.setText(newDate);
     }
 
     @Override

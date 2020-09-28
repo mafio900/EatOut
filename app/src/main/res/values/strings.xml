@@ -65,7 +65,7 @@
     <string name="city_must_have_three_letters">City must have at least three chars</string>
     <string name="need_set_birthdate">You need to set your birthdate</string>
     <string name="profile_preview">Profile preview</string>
-    <string name="info_about_event">Informations about the event</string>
+    <string name="info_about_event">Information about the event</string>
     <string name="event_created_by">Event created by:</string>
     <string name="theme">Theme</string>
     <string name="place">Place</string>
@@ -77,7 +77,7 @@
     <string name="cancel_request">Cancel request</string>
     <string name="informations">Informations</string>
     <string name="chat">Chat</string>
-    <string name="people">People</string>
+    <string name="participants">participants</string>
     <string name="request_to_join">Join requests</string>
     <string name="delete_event">Delete event</string>
     <string name="successfully_deleted_event">Successfully deleted the event</string>

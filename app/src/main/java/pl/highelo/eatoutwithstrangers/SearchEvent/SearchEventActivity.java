@@ -177,6 +177,7 @@ public class SearchEventActivity extends AppCompatActivity {
     public void getData(){
         //Query
         sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        mEventsModelArrayList.clear();
 
         Distance distance = new Distance(sharedPreferences.getInt(DISTANCE, 10), BoundingBoxUtils.DistanceUnit.KILOMETERS);
         final GeoQuery geoQuery = new GeoQuery()

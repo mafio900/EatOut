@@ -53,7 +53,7 @@ public class ManageEventActivity extends AppCompatActivity {
                         tab.setText(R.string.chat);
                         break;
                     case 2:
-                        tab.setText(R.string.people);
+                        tab.setText(R.string.participants);
                         break;
                     case 3:
                         tab.setText(R.string.request_to_join);

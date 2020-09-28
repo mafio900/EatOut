@@ -74,7 +74,7 @@ public class JoinedEventPreviewActivity extends AppCompatActivity {
                         tab.setText(R.string.chat);
                         break;
                     case 2:
-                        tab.setText(R.string.people);
+                        tab.setText(R.string.participants);
                         break;
                 }
             }

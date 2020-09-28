@@ -70,14 +70,14 @@
     <string name="theme">Temat</string>
     <string name="place">Miejsce</string>
     <string name="date_of_beginning">Data rozpoczęcia</string>
-    <string name="max_people">Maksymalna liczba ludzi</string>
+    <string name="max_people">Maksymalna liczba osób</string>
     <string name="already_joined">Obecnie dołączyło</string>
     <string name="join_event">Dołącz do wydarzenia</string>
     <string name="leave_event">Opuść wydarzenie</string>
     <string name="cancel_request">Anuluj prośbę</string>
     <string name="informations">Informacje</string>
     <string name="chat">Czat</string>
-    <string name="people">Ludzie</string>
+    <string name="participants">Uczestnicy</string>
     <string name="request_to_join">Prośby o dołączenie</string>
     <string name="delete_event">Usuń wydarzenie</string>
     <string name="successfully_deleted_event">Pomyślnie usunięto wydarzenie</string>
