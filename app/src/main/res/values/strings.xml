@@ -53,7 +53,7 @@
     <string name="meeting_date">Event\'s date</string>
     <string name="click_set_date">Click to add date</string>
     <string name="create_event">Create event</string>
-    <string name="max_people_between_1_and_10">Number of people between 1 and 10</string>
+    <string name="max_participants_between_1_and_10">Number of participants between 1 and 10</string>
     <string name="edit_event">Edit event</string>
     <string name="create_event_successful">Event created successfully</string>
     <string name="confirm_password">Repeat password</string>
@@ -70,7 +70,7 @@
     <string name="theme">Theme</string>
     <string name="place">Place</string>
     <string name="date_of_beginning">Beginning date</string>
-    <string name="max_people">Max people</string>
+    <string name="max_participants">Maximum participants</string>
     <string name="already_joined">Already joined</string>
     <string name="join_event">Join event</string>
     <string name="leave_event">Leave event</string>
@@ -121,7 +121,7 @@
     <string name="choose_localization">Choose localization!</string>
     <string name="theme_must_have_atleast_3_chars">Theme must have at least 3 chars</string>
     <string name="set_date">Pick date!</string>
-    <string name="min_people_count">Set max people</string>
+    <string name="max_participants_count">Set maximum number of participants</string>
     <string name="error_while_creating_event">Something went wrong while creating an event</string>
     <string name="cannot_find_current_localization">Cannot find current localization</string>
     <string name="add_user">Add user</string>

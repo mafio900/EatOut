@@ -106,7 +106,7 @@ public class EventPreviewActivity extends AppCompatActivity {
         SimpleDateFormat newFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.US);
         String newDate = CommonMethods.parseDate(date, oldFormat, newFormat);
         mEventDate.setText(getString(R.string.date_of_beginning)+ ": " + newDate);
-        mEventMaxPeople.setText(getString(R.string.max_people)+ ": " + mEventsModel.getMaxPeople());
+        mEventMaxPeople.setText(getString(R.string.max_participants)+ ": " + mEventsModel.getMaxPeople());
         mEventJoinedPeople.setText(getString(R.string.already_joined)+ ": " + mEventsModel.getMembers().size());
 
         requestsList = mEventsModel.getRequests();

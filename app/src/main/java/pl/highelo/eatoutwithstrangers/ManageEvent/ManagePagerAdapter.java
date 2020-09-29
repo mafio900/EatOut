@@ -7,7 +7,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import pl.highelo.eatoutwithstrangers.ChatFragment;
 import pl.highelo.eatoutwithstrangers.EventInfoFragment;
-import pl.highelo.eatoutwithstrangers.JoinedPeopleFragment;
+import pl.highelo.eatoutwithstrangers.ParticipantsFragment;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
 
 public class ManagePagerAdapter extends FragmentStateAdapter {
@@ -30,7 +30,7 @@ public class ManagePagerAdapter extends FragmentStateAdapter {
             case 1:
                 return ChatFragment.newInstance(mEventsModel);
             case 2:
-                return JoinedPeopleFragment.newInstance(mEventsModel);
+                return ParticipantsFragment.newInstance(mEventsModel);
             case 3:
                 return RequestsFragment.newInstance(mEventsModel);
         }

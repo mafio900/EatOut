@@ -93,7 +93,7 @@ public class EventInfoFragment extends Fragment {
         mEventAddress.setText(mEventsModel.getPlaceAddress());
         String newDate = CommonMethods.parseDate(mEventsModel.getTimeStamp());
         mEventDate.setText(getString(R.string.date_of_beginning)+ ": " + newDate);
-        mEventMaxPeople.setText(getString(R.string.max_people)+ ": " + mEventsModel.getMaxPeople());
+        mEventMaxPeople.setText(getString(R.string.max_participants)+ ": " + mEventsModel.getMaxPeople());
         mEventJoinedPeople.setText(getString(R.string.already_joined)+ ": " + mEventsModel.getMembers().size());
 
         if(mAuth.getCurrentUser().getUid().equals(mEventsModel.getUserID())) {

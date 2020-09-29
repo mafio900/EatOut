@@ -53,7 +53,7 @@
     <string name="meeting_date">Data wydarzenia</string>
     <string name="click_set_date">Kliknij aby dodać date</string>
     <string name="create_event">Swórz wydarzenie</string>
-    <string name="max_people_between_1_and_10">Liczba osób pomiędzy 1 a 10</string>
+    <string name="max_participants_between_1_and_10">Liczba uczestników pomiędzy 1 a 10</string>
     <string name="edit_event">Edytuj wydarzenie</string>
     <string name="create_event_successful">Wydarzenie stworzone poprawnie</string>
     <string name="confirm_password">Powtórz hasło</string>
@@ -70,7 +70,7 @@
     <string name="theme">Temat</string>
     <string name="place">Miejsce</string>
     <string name="date_of_beginning">Data rozpoczęcia</string>
-    <string name="max_people">Maksymalna liczba osób</string>
+    <string name="max_participants">Maksymalna liczba uczestników</string>
     <string name="already_joined">Obecnie dołączyło</string>
     <string name="join_event">Dołącz do wydarzenia</string>
     <string name="leave_event">Opuść wydarzenie</string>
@@ -121,7 +121,7 @@
     <string name="choose_localization">Wybierz lokalizację!</string>
     <string name="theme_must_have_atleast_3_chars">Temat musi mieć co najmniej 3 znaki!</string>
     <string name="set_date">Podaj datę!</string>
-    <string name="min_people_count">Ilość minimalna osób musi wynosić 1!</string>
+    <string name="max_participants_count">Ilość minimalna uczestników musi wynosić 1!</string>
     <string name="error_while_creating_event">Błąd przy tworzeniu wydarzenia</string>
     <string name="cannot_find_current_localization">Nie można znaleźć obecnej lokalizacji</string>
     <string name="add_user">Dodaj użytkownika</string>
@@ -161,7 +161,7 @@
     <string name="email_not_verified">E-mail nie został potwierdzony!</string>
     <string name="report_date">Data zgłoszenia</string>
     <string name="reports">Zgłoszenia</string>
-    <string name="admin_panel">Panel admina</string>
+    <string name="admin_panel">Panel administratora</string>
     <string name="ban_user">Zablokuj użytkownika</string>
     <string name="give_admin">Dodaj admina</string>
     <string name="search_user_by_email">Szukaj użytkownika poprzez e-maila</string>

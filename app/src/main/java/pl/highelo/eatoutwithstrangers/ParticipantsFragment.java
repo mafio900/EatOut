@@ -33,8 +33,8 @@ import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.UsersAdapter;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.UsersModel;
 
-public class JoinedPeopleFragment extends Fragment {
-    private static final String TAG = "JoinedPeopleFragment";
+public class ParticipantsFragment extends Fragment {
+    private static final String TAG = "ParticipantsFragment";
 
     private static final String ARG_EVENTS_MODEL = "model";
 
@@ -46,11 +46,11 @@ public class JoinedPeopleFragment extends Fragment {
     private FirebaseFirestore mFirestore;
     private FirebaseAuth mAuth;
 
-    public JoinedPeopleFragment() {
+    public ParticipantsFragment() {
         // Required empty public constructor
     }
-    public static JoinedPeopleFragment newInstance(EventsModel eventsModel) {
-        JoinedPeopleFragment fragment = new JoinedPeopleFragment();
+    public static ParticipantsFragment newInstance(EventsModel eventsModel) {
+        ParticipantsFragment fragment = new ParticipantsFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_EVENTS_MODEL, eventsModel);
         fragment.setArguments(args);
@@ -71,7 +71,7 @@ public class JoinedPeopleFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_joined_people, container, false);
+        return inflater.inflate(R.layout.fragment_participants, container, false);
     }
 
     @Override
@@ -136,7 +136,7 @@ public class JoinedPeopleFragment extends Fragment {
                 }
             });
         }
-        mRecyclerView = view.findViewById(R.id.manage_joined_people_recyclerview);
+        mRecyclerView = view.findViewById(R.id.manage_participants_recyclerview);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mAdapter);
     }

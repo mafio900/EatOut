@@ -12,6 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/chat_message"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -31,12 +32,18 @@
         android:id="@+id/chat_message"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/custom_chat_input"
         android:hint="@string/write_message"
+        android:importantForAutofill="no"
         android:inputType="text"
+        android:padding="12dp"
+        android:textColor="@android:color/black"
+        android:textColorHint="#777"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/chat_send_button"
-        app:layout_constraintStart_toStartOf="parent"
-        android:importantForAutofill="no" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
         android:id="@+id/chat_send_button"
@@ -44,9 +51,11 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@android:color/transparent"
         android:contentDescription="@string/send_button_descr"
+        android:padding="12dp"
         android:src="@drawable/ic_send_grey"
         android:tint="@color/primary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/chat_message"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/chat_message" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

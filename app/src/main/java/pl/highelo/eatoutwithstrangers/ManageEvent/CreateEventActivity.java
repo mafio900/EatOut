@@ -219,7 +219,7 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
         }else{mEventDate.setError(null);}
         if(mMaxPeople.getEditText().getText().toString().equals("")){
             flag = false;
-            mMaxPeople.setError(getString(R.string.min_people_count));
+            mMaxPeople.setError(getString(R.string.max_participants_count));
         }else{mMaxPeople.setError(null);}
         if(flag){
             mProgressBar.setVisibility(View.VISIBLE);

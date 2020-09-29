@@ -68,10 +68,10 @@ public class ProfilePreviewActivity extends AppCompatActivity {
                 View view = getLayoutInflater().inflate(R.layout.dialog_report, null);
                 final AlertDialog dialog = new AlertDialog.Builder(ProfilePreviewActivity.this)
                         .setView(view)
+                        .setTitle(getString(R.string.report_user) + " " + mUsersModel.getfName())
                         .setPositiveButton(R.string.report, null)
                         .setNegativeButton(android.R.string.cancel, null)
                         .create();
-                ((TextView)view.findViewById(R.id.dialog_report_title)).setText(getString(R.string.report_user) + " " + mUsersModel.getfName());
                 dialog.setOnShowListener(new DialogInterface.OnShowListener() {
                     @Override
                     public void onShow(DialogInterface dialogInterface) {
