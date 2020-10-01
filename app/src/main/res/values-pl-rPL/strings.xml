@@ -204,10 +204,17 @@
     <string name="manage_user">Zarządzaj użytkownikiem</string>
     <string name="sure_to_give_admin">Czy jesteś pewnien, że chcesz nadać uprawienia administratora temu użytkownikowi?</string>
     <string name="give">Nadaj</string>
+    <string name="error_while_giving_admin">Coś poszło nie tak przy nadawaniu uprawnień</string>
+    <string name="user_got_admin">Użytkownik został administratorem</string>
     <string-array name="manage_user_options">
         <item>Zablokuj użytkownika</item>
         <item>Odblokuj użytkownika</item>
         <item>Nadaj uprawnienia administratora</item>
         <item>Odbierz uprawnienia administratora</item>
     </string-array>
+    <string name="error">Błąd</string>
+    <string name="cannot_find_events_in_this_area">" Nie ma żadnych wydarzeń w tym obszarze"</string>
+    <string name="error_while_searching_area">Wystąpił błąd podczas szukania wydarzeń</string>
+    <string name="did_not_joined_to_events_yet">Nie dołączyłeś do żadnego wydarzenia</string>
+    <string name="didnt_requested_events">Nie wysłałeś żadnej prośby o dołączenie do wydarzenia</string>
 </resources>

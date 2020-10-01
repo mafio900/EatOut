@@ -10,11 +10,13 @@ import androidx.fragment.app.Fragment;
 
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +24,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -31,6 +34,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.UsersModel;
 import pl.highelo.eatoutwithstrangers.R;
+import pl.highelo.eatoutwithstrangers.StartActivities.LoginActivity;
 
 public class ManageUserFragment extends Fragment {
 
@@ -59,6 +63,7 @@ public class ManageUserFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setupUI(view);
         mFirestore = FirebaseFirestore.getInstance();
 
         Button searchButton = view.findViewById(R.id.manage_user_search_button);
@@ -69,6 +74,7 @@ public class ManageUserFragment extends Fragment {
         final TextView age = view.findViewById(R.id.manage_user_age);
         final TextView description = view.findViewById(R.id.manage_user_description);
 
+        final RelativeLayout relativeLayoutSpinner = view.findViewById(R.id.manage_user_rel_spinner);
         final Spinner spinner = (Spinner) view.findViewById(R.id.manage_user_action_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.manage_user_options, android.R.layout.simple_spinner_item);
@@ -126,7 +132,7 @@ public class ManageUserFragment extends Fragment {
                                 age.setVisibility(View.VISIBLE);
                                 description.setVisibility(View.VISIBLE);
                                 actionButton.setVisibility(View.VISIBLE);
-                                spinner.setVisibility(View.VISIBLE);
+                                relativeLayoutSpinner.setVisibility(View.VISIBLE);
                                 for(DocumentSnapshot doc : task.getResult().getDocuments()) {
                                     mUser = doc.toObject(UsersModel.class);
                                     mUser.setUserID(doc.getId());
@@ -147,6 +153,26 @@ public class ManageUserFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void setupUI(View view) {
+        // Set up touch listener for non-text box views to hide keyboard.
+        if (!(view instanceof TextInputEditText)) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    CommonMethods.hideKeyboard(getActivity());
+                    return false;
+                }
+            });
+        }
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View innerView = ((ViewGroup) view).getChildAt(i);
+                setupUI(innerView);
+            }
+        }
     }
 
     private void banUserDialog(){
@@ -227,9 +253,9 @@ public class ManageUserFragment extends Fragment {
                             @Override
                             public void onComplete(@NonNull Task<Boolean> task) {
                                 if(task.isSuccessful() && task.getResult()){
-                                    Toast.makeText(getContext(), "Użytkownik został administratorem", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getContext(), R.string.user_got_admin, Toast.LENGTH_LONG).show();
                                 }else{
-                                    Toast.makeText(getContext(), "Coś poszło nie tak przy nadawaniu uprawnień", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getContext(), R.string.error_while_giving_admin, Toast.LENGTH_LONG).show();
                                 }
                             }
                         });

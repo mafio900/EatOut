@@ -39,19 +39,6 @@ public class MainActivity extends AppCompatActivity {
         mNavigationView = findViewById(R.id.nav_view);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        if(user!=null){
-            user.getIdToken(false).addOnSuccessListener(new OnSuccessListener<GetTokenResult>() {
-                @Override
-                public void onSuccess(GetTokenResult getTokenResult) {
-                    if(getTokenResult.getClaims().get("admin") != null && ((Boolean) getTokenResult.getClaims().get("admin"))){
-                        mNavigationView.getMenu().findItem(R.id.nav_admin_page).setVisible(true);
-                    }
-                }
-            });
-        }
-
         setSupportActionBar(mToolbar);
         mNavigationView.bringToFront();
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout,
@@ -61,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        mNavigationView.setNavigationItemSelectedListener(new NavbarInterface(this));
+        mNavigationView.setNavigationItemSelectedListener(new NavbarInterface(this, mNavigationView.getMenu()));
 
         mNavigationView.setCheckedItem(R.id.nav_home);
     }

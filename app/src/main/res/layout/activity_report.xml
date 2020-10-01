@@ -23,6 +23,7 @@
             android:layout_marginEnd="16dp"
             android:gravity="center_horizontal"
             android:text="@string/reporting_user"
+            android:textColor="@color/primary"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -79,6 +80,7 @@
             android:layout_marginTop="24dp"
             android:gravity="center_horizontal"
             android:text="@string/reported_user"
+            android:textColor="@color/primary"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="@+id/report_reporting_user_description"
@@ -133,6 +135,7 @@
             android:layout_marginTop="32dp"
             android:gravity="center_horizontal"
             android:text="@string/information_about_the_report"
+            android:textColor="@color/primary"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="@+id/report_reported_user_description"
@@ -179,21 +182,31 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:text="@string/what_do_you_want_to_do"
+            android:textColor="@color/accent"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="@+id/report_message"
             app:layout_constraintStart_toStartOf="@+id/report_message"
             app:layout_constraintTop_toBottomOf="@+id/report_message" />
 
-        <Spinner
-            android:id="@+id/report_action_spinner"
+        <RelativeLayout
+            android:id="@+id/report_action_rel_spinner"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:background="@drawable/custom_spinner"
             android:layout_marginTop="16dp"
-            android:spinnerMode="dropdown"
             app:layout_constraintEnd_toEndOf="@+id/report_message"
             app:layout_constraintStart_toStartOf="@+id/report_message"
-            app:layout_constraintTop_toBottomOf="@+id/textView7" />
+            app:layout_constraintTop_toBottomOf="@+id/textView7">
+
+            <Spinner
+                android:id="@+id/report_action_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:spinnerMode="dropdown" />
+
+        </RelativeLayout>
 
         <Button
             android:id="@+id/report_action_button"
@@ -207,9 +220,9 @@
             android:paddingBottom="16dp"
             android:text="@string/select_option"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/report_action_spinner"
-            app:layout_constraintStart_toStartOf="@+id/report_action_spinner"
-            app:layout_constraintTop_toBottomOf="@+id/report_action_spinner" />
+            app:layout_constraintEnd_toEndOf="@+id/report_action_rel_spinner"
+            app:layout_constraintStart_toStartOf="@+id/report_action_rel_spinner"
+            app:layout_constraintTop_toBottomOf="@+id/report_action_rel_spinner" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

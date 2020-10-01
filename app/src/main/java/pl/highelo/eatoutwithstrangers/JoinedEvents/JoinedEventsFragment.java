@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,6 +37,8 @@ public class JoinedEventsFragment extends Fragment {
     private String mUserID;
 
     private RecyclerView mJoinedEventsRecyclerView;
+    private TextView mEmptyText;
+    private ProgressBar mProgressBar;
     private EventsAdapter mAdapter;
     private ArrayList<EventsModel> mEventsModelArrayList = new ArrayList<>();
 
@@ -62,6 +66,8 @@ public class JoinedEventsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mJoinedEventsRecyclerView = view.findViewById(R.id.joined_events_recyclerview);
+        mEmptyText = view.findViewById(R.id.joined_events_empty_text);
+        mProgressBar = view.findViewById(R.id.joined_events_progressbar);
         mJoinedEventsRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         mAdapter = new EventsAdapter(mEventsModelArrayList, getContext());
         mJoinedEventsRecyclerView.setAdapter(mAdapter);
@@ -79,6 +85,8 @@ public class JoinedEventsFragment extends Fragment {
         collectionReference.whereArrayContains("members", mUserID).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                mProgressBar.setVisibility(View.GONE);
+                mEmptyText.setVisibility(View.GONE);
                 for (DocumentChange document : queryDocumentSnapshots.getDocumentChanges()){
                     Timestamp currentTime = Timestamp.now();
                     Timestamp documentTime = document.getDocument().getTimestamp("timeStamp");
@@ -110,6 +118,9 @@ public class JoinedEventsFragment extends Fragment {
                                 break;
                         }
                     }
+                }
+                if(mEventsModelArrayList.isEmpty()){
+                    mEmptyText.setVisibility(View.VISIBLE);
                 }
             }
         });

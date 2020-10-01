@@ -129,6 +129,7 @@ public class RegisterActivity extends AppCompatActivity implements DatePickerDia
 
                 if(flag){
                     mProgressBar.setVisibility(View.VISIBLE);
+                    mRegisterBtn.setClickable(false);
 
                     //register user
 
@@ -182,7 +183,8 @@ public class RegisterActivity extends AppCompatActivity implements DatePickerDia
                                     }
                                 }
                             }
-                            mProgressBar.setVisibility(View.INVISIBLE);
+                            mProgressBar.setVisibility(View.GONE);
+                            mRegisterBtn.setClickable(true);
                         }
                     });
                 }

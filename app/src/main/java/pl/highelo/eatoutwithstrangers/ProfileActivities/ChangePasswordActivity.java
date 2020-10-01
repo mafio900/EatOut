@@ -135,7 +135,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
             }
         });
 
-        mNavigationView.setNavigationItemSelectedListener(new NavbarInterface(this));
+        mNavigationView.setNavigationItemSelectedListener(new NavbarInterface(this, mNavigationView.getMenu()));
     }
 
     @Override

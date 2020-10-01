@@ -60,7 +60,8 @@ public class AdminActivity extends AppCompatActivity {
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        mNavigationView.setNavigationItemSelectedListener(new NavbarInterface(this));
+        mNavigationView.setNavigationItemSelectedListener(new NavbarInterface(this, mNavigationView.getMenu()));
+        mNavigationView.setCheckedItem(R.id.nav_admin_page);
 
         mTabLayout = (TabLayout) findViewById(R.id.admin_tablayout);
         //mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);

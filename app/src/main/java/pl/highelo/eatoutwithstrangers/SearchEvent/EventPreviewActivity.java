@@ -142,9 +142,9 @@ public class EventPreviewActivity extends AppCompatActivity {
         mActionButton.setOnClickListener(new View.OnClickListener() {
             DocumentReference eventsRef = mFirestore.collection("events").document(mItemID);
             DocumentReference usersRef = mFirestore.collection("users").document(mCurrentUserID);
-            WriteBatch batch = mFirestore.batch();
             @Override
             public void onClick(View view) {
+                WriteBatch batch = mFirestore.batch();
                 mActionButton.setClickable(false);
                 switch(mStage){
                     case "neutral":
@@ -178,7 +178,7 @@ public class EventPreviewActivity extends AppCompatActivity {
         eventsRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                if(!value.exists()){
+                if(value == null || !value.exists()){
                     finish();
                     Toast.makeText(EventPreviewActivity.this, R.string.this_event_doesnt_exist_anymore, Toast.LENGTH_LONG).show();
                     return;

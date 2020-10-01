@@ -1,6 +1,7 @@
 package pl.highelo.eatoutwithstrangers.ModelsAndUtilities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.text.InputFilter;
@@ -80,8 +81,10 @@ public class CommonMethods {
                 .continueWith(new Continuation<HttpsCallableResult, Boolean>() {
                     @Override
                     public Boolean then(@NonNull Task<HttpsCallableResult> task) throws Exception {
-                        boolean result = (Boolean) task.getResult().getData();
-                        return result;
+                        if(task.isSuccessful()){
+                            return (Boolean) task.getResult().getData();
+                        }
+                        return false;
                     }
                 });
     }
@@ -97,8 +100,10 @@ public class CommonMethods {
                 .continueWith(new Continuation<HttpsCallableResult, Boolean>() {
                     @Override
                     public Boolean then(@NonNull Task<HttpsCallableResult> task) throws Exception {
-                        boolean result = (Boolean) task.getResult().getData();
-                        return result;
+                        if(task.isSuccessful()){
+                            return (Boolean) task.getResult().getData();
+                        }
+                        return false;
                     }
                 });
     }
@@ -115,8 +120,10 @@ public class CommonMethods {
                 .continueWith(new Continuation<HttpsCallableResult, Boolean>() {
                     @Override
                     public Boolean then(@NonNull Task<HttpsCallableResult> task) throws Exception {
-                        boolean result = (Boolean) task.getResult().getData();
-                        return result;
+                        if(task.isSuccessful()){
+                            return (Boolean) task.getResult().getData();
+                        }
+                        return false;
                     }
                 });
     }
@@ -132,8 +139,10 @@ public class CommonMethods {
                 .continueWith(new Continuation<HttpsCallableResult, Boolean>() {
                     @Override
                     public Boolean then(@NonNull Task<HttpsCallableResult> task) throws Exception {
-                        boolean result = (Boolean) task.getResult().getData();
-                        return result;
+                        if(task.isSuccessful()){
+                            return (Boolean) task.getResult().getData();
+                        }
+                        return false;
                     }
                 });
     }
@@ -202,6 +211,14 @@ public class CommonMethods {
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    public static void showErrorDialog(final Context t, String title, String message){
+        new AlertDialog.Builder(t)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, null)
                 .show();
     }
 

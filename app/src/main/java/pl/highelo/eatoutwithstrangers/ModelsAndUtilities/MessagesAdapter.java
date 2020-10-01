@@ -48,10 +48,12 @@ public class MessagesAdapter extends FirestoreRecyclerAdapter<MessagesModel, Mes
         if(mUsersMap.containsKey(model.getUserID())){
             final UsersModel user = mUsersMap.get(model.getUserID());
             holder.mName.setText(user.getfName());
-            Glide.with(holder.itemView.getContext())
-                    .asBitmap()
-                    .load(user.getImage_thumbnail())
-                    .into(holder.mImage);
+            if(user.getImage_thumbnail() != null){
+                Glide.with(holder.itemView.getContext())
+                        .asBitmap()
+                        .load(user.getImage_thumbnail())
+                        .into(holder.mImage);
+            }
             holder.mImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

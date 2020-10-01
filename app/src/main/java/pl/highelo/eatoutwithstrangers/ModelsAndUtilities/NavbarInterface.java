@@ -1,13 +1,17 @@
 package pl.highelo.eatoutwithstrangers.ModelsAndUtilities;
 
 import android.content.Intent;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 
 import pl.highelo.eatoutwithstrangers.AdminActivities.AdminActivity;
 import pl.highelo.eatoutwithstrangers.JoinedEvents.JoinedEventsActivity;
@@ -23,8 +27,20 @@ public class NavbarInterface implements NavigationView.OnNavigationItemSelectedL
 
     private AppCompatActivity t;
 
-    public NavbarInterface(AppCompatActivity tt){
+    public NavbarInterface(AppCompatActivity tt, final Menu menu){
         t = tt;
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if(user!=null){
+            user.getIdToken(false).addOnSuccessListener(new OnSuccessListener<GetTokenResult>() {
+                @Override
+                public void onSuccess(GetTokenResult getTokenResult) {
+                    if(getTokenResult.getClaims().get("admin") != null && ((Boolean) getTokenResult.getClaims().get("admin"))){
+                        menu.findItem(R.id.nav_admin_page).setVisible(true);
+                    }
+                }
+            });
+        }
     }
 
     @Override

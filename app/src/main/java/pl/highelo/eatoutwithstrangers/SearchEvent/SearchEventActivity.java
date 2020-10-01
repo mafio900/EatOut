@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SearchView;
@@ -78,8 +79,9 @@ public class SearchEventActivity extends AppCompatActivity {
     private DocumentSnapshot mLastVisible;
     private boolean mIsScrolling;
     private boolean mIsLastItemReached = false;
-    private static final int PAGINATION_LIMIT = 6;
+    private static final int PAGINATION_LIMIT = 4;
     private ArrayList<EventsModel> mEventsModelArrayList = new ArrayList<>();
+    private ProgressBar mProgressBar;
 
     private Button mLocalizationButton;
     private Location mCurrentLocation;
@@ -108,7 +110,7 @@ public class SearchEventActivity extends AppCompatActivity {
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        mNavigationView.setNavigationItemSelectedListener(new NavbarInterface(this));
+        mNavigationView.setNavigationItemSelectedListener(new NavbarInterface(this, mNavigationView.getMenu()));
         mNavigationView.setCheckedItem(R.id.nav_search_events);
 
         //Firebase
@@ -129,29 +131,31 @@ public class SearchEventActivity extends AppCompatActivity {
                 getLocationPermissions();
             }
         });
+        mProgressBar = findViewById(R.id.search_event_progress_bar);
     }
 
-    private void getLocationPermissions(){
+    private void getLocationPermissions() {
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION};
 
-        if(ContextCompat.checkSelfPermission(this.getApplicationContext(), FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this.getApplicationContext(), COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this.getApplicationContext(), COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             setLocation();
-        }else{
+        } else {
             ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSIONS_REQUEST_CODE);
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
+        switch (requestCode) {
             case LOCATION_PERMISSIONS_REQUEST_CODE:
-                if(grantResults.length > 0){
-                    for(int i : grantResults){
-                        if(!(i == PackageManager.PERMISSION_GRANTED)){
+                if (grantResults.length > 0) {
+                    for (int i : grantResults) {
+                        if (!(i == PackageManager.PERMISSION_GRANTED)) {
                             Toast.makeText(this, R.string.location_permissions_denied, Toast.LENGTH_LONG).show();
                             mLocalizationButton.setVisibility(View.VISIBLE);
+                            mProgressBar.setVisibility(View.GONE);
                             return;
                         }
                     }
@@ -162,7 +166,7 @@ public class SearchEventActivity extends AppCompatActivity {
         }
     }
 
-    public void setLocation(){
+    public void setLocation() {
         LocationResolver.LocationResult locationResult = new LocationResolver.LocationResult() {
             @Override
             public void gotLocation(Location location) {
@@ -174,7 +178,8 @@ public class SearchEventActivity extends AppCompatActivity {
         locationResolver.getLocation(this, locationResult, 20000);
     }
 
-    public void getData(){
+    public void getData() {
+        mProgressBar.setVisibility(View.VISIBLE);
         //Query
         sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         mEventsModelArrayList.clear();
@@ -188,94 +193,101 @@ public class SearchEventActivity extends AppCompatActivity {
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful() && task.getResult().size() > 0){
-                    for(DocumentSnapshot document : task.getResult()){
-                        if(!mUserID.equals(document.get("userID"))){
+                mProgressBar.setVisibility(View.GONE);
+                TextView emptyText = findViewById(R.id.search_event_empty_text);
+                if (task.isSuccessful()) {
+                    for (DocumentSnapshot document : task.getResult()) {
+                        if (!mUserID.equals(document.get("userID"))) {
                             Timestamp currentTime = Timestamp.now();
                             Timestamp documentTime = document.getTimestamp("timeStamp");
                             long diff = documentTime.getSeconds() - currentTime.getSeconds();
-                            if(diff <= 0){
+                            if (diff <= 0) {
                                 mFirestore.collection("events").document(document.getId()).delete();
-                            }else if(((ArrayList<String>)document.get("requests")).contains(mUserID) || ((ArrayList<String>)document.get("members")).contains(mUserID)){
+                            } else if (((ArrayList<String>) document.get("requests")).contains(mUserID) || ((ArrayList<String>) document.get("members")).contains(mUserID)) {
                                 continue;
-                            }
-                            else{
+                            } else {
                                 EventsModel ci = document.toObject(EventsModel.class);
                                 ci.setItemID(document.getId());
                                 mEventsModelArrayList.add(ci);
                             }
                         }
                     }
-                    mAdapter = new EventsAdapter(mEventsModelArrayList, getApplicationContext());
-                    mAdapter.setOnEventItemClick(new EventsAdapter.OnEventItemClick() {
-                        @Override
-                        public void OnItemClick(int position) {
-                            Intent preview = new Intent(SearchEventActivity.this, EventPreviewActivity.class);
-                            preview.putExtra("model", mEventsModelArrayList.get(position));
-                            startActivity(preview);
-                        }
-                    });
-                    mEventsList.setAdapter(mAdapter);
-
-                    mLastVisible = task.getResult().getDocuments()
-                            .get(task.getResult().size() -1);
-
-                    RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
-                        @Override
-                        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                            super.onScrollStateChanged(recyclerView, newState);
-                            if(newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
-                                mIsScrolling = true;
+                    if(mEventsModelArrayList.isEmpty()){
+                        emptyText.setVisibility(View.VISIBLE);
+                    } else{
+                        emptyText.setVisibility(View.GONE);
+                        mAdapter = new EventsAdapter(mEventsModelArrayList, getApplicationContext());
+                        mAdapter.setOnEventItemClick(new EventsAdapter.OnEventItemClick() {
+                            @Override
+                            public void OnItemClick(int position) {
+                                Intent preview = new Intent(SearchEventActivity.this, EventPreviewActivity.class);
+                                preview.putExtra("model", mEventsModelArrayList.get(position));
+                                startActivity(preview);
                             }
-                        }
+                        });
+                        mEventsList.setAdapter(mAdapter);
 
-                        @Override
-                        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                            super.onScrolled(recyclerView, dx, dy);
+                        mLastVisible = task.getResult().getDocuments()
+                                .get(task.getResult().size() - 1);
 
-                            int firstVisibleItem = mLinearLayoutManager.findFirstVisibleItemPosition();
-                            int visibleItemCount = mLinearLayoutManager.getChildCount();
-                            int totalItemCount = mLinearLayoutManager.getItemCount();
+                        RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
+                            @Override
+                            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                                super.onScrollStateChanged(recyclerView, newState);
+                                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                                    mIsScrolling = true;
+                                }
+                            }
 
-                            if(mIsScrolling && (firstVisibleItem + visibleItemCount == totalItemCount) && !mIsLastItemReached){
-                                mIsScrolling = false;
+                            @Override
+                            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                                super.onScrolled(recyclerView, dx, dy);
 
-                                Query nextQuery = geoQuery.startAfter(mLastVisible).limit(PAGINATION_LIMIT).getQuery();
-                                nextQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                        if(task.isSuccessful() && task.getResult().size() > 0){
-                                            for(DocumentSnapshot document : task.getResult()){
-                                                if(!mUserID.equals(document.get("userID"))){
-                                                    Timestamp currentTime = Timestamp.now();
-                                                    Timestamp documentTime = document.getTimestamp("timeStamp");
-                                                    long diff = documentTime.getSeconds() - currentTime.getSeconds();
-                                                    if(diff <= 0){
-                                                        mFirestore.collection("events").document(document.getId()).delete();
-                                                    }
-                                                    else{
-                                                        EventsModel ci = document.toObject(EventsModel.class);
-                                                        ci.setItemID(document.getId());
-                                                        ci.setRequests((List<String>) document.get("requests"));
-                                                        ci.setMembers((List<String>) document.get("members"));
-                                                        mEventsModelArrayList.add(ci);
+                                int firstVisibleItem = mLinearLayoutManager.findFirstVisibleItemPosition();
+                                int visibleItemCount = mLinearLayoutManager.getChildCount();
+                                int totalItemCount = mLinearLayoutManager.getItemCount();
+
+                                if (mIsScrolling && (firstVisibleItem + visibleItemCount == totalItemCount) && !mIsLastItemReached) {
+                                    mIsScrolling = false;
+
+                                    Query nextQuery = geoQuery.startAfter(mLastVisible).limit(PAGINATION_LIMIT).getQuery();
+                                    nextQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            if (task.isSuccessful() && task.getResult().size() > 0) {
+                                                for (DocumentSnapshot document : task.getResult()) {
+                                                    if (!mUserID.equals(document.get("userID"))) {
+                                                        Timestamp currentTime = Timestamp.now();
+                                                        Timestamp documentTime = document.getTimestamp("timeStamp");
+                                                        long diff = documentTime.getSeconds() - currentTime.getSeconds();
+                                                        if (diff <= 0) {
+                                                            mFirestore.collection("events").document(document.getId()).delete();
+                                                        } else {
+                                                            EventsModel ci = document.toObject(EventsModel.class);
+                                                            ci.setItemID(document.getId());
+                                                            ci.setRequests((List<String>) document.get("requests"));
+                                                            ci.setMembers((List<String>) document.get("members"));
+                                                            mEventsModelArrayList.add(ci);
+                                                        }
                                                     }
                                                 }
-                                            }
-                                            mAdapter.notifyDataSetChanged();
-                                            mAdapter.setEventsListFull(mEventsModelArrayList);
-                                            mLastVisible = task.getResult().getDocuments()
-                                                    .get(task.getResult().size() -1);
-                                            if(task.getResult().size() < PAGINATION_LIMIT){
-                                                mIsLastItemReached = true;
+                                                mAdapter.notifyDataSetChanged();
+                                                mAdapter.setEventsListFull(mEventsModelArrayList);
+                                                mLastVisible = task.getResult().getDocuments()
+                                                        .get(task.getResult().size() - 1);
+                                                if (task.getResult().size() < PAGINATION_LIMIT) {
+                                                    mIsLastItemReached = true;
+                                                }
                                             }
                                         }
-                                    }
-                                });
+                                    });
+                                }
                             }
-                        }
-                    };
-                    mEventsList.addOnScrollListener(onScrollListener);
+                        };
+                        mEventsList.addOnScrollListener(onScrollListener);
+                    }
+                } else {
+                    Toast.makeText(SearchEventActivity.this, R.string.error_while_searching_area, Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -292,7 +304,7 @@ public class SearchEventActivity extends AppCompatActivity {
         int id = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
         TextView textView = (TextView) searchView.findViewById(id);
         textView.setTextColor(Color.WHITE);
-        textView.setHintTextColor(Color.rgb(180,180,180));
+        textView.setHintTextColor(Color.rgb(220, 220, 220));
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -329,14 +341,14 @@ public class SearchEventActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             mEventsModelArrayList.clear();
-                            getData();
+                            setLocation();
                         }
                     })
                     .create();
             dialog.show();
             mRadioGroup = view.findViewById(R.id.dialog_search_settings_radio_group);
             sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-            switch (sharedPreferences.getInt(DISTANCE, 10)){
+            switch (sharedPreferences.getInt(DISTANCE, 10)) {
                 case 10:
                     ((RadioButton) view.findViewById(R.id.dialog_search_settings_radio_button_10km)).setChecked(true);
                     break;
@@ -358,7 +370,7 @@ public class SearchEventActivity extends AppCompatActivity {
         int radioId = mRadioGroup.getCheckedRadioButtonId();
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        switch (radioId){
+        switch (radioId) {
             case R.id.dialog_search_settings_radio_button_10km:
                 editor.putInt(DISTANCE, 10);
                 break;
@@ -377,10 +389,9 @@ public class SearchEventActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
-        }
-        else{
+        } else {
             CommonMethods.showDialog(this, getString(R.string.sure_to_leave_app));
         }
     }

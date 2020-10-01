@@ -25,8 +25,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.MainActivity;
@@ -67,58 +70,85 @@ public class LoginActivity extends AppCompatActivity {
                 final String email = mEmail.getEditText().getText().toString().trim();
                 String password = mPassword.getEditText().getText().toString().trim();
 
-                if(TextUtils.isEmpty(email)){
+                if (TextUtils.isEmpty(email)) {
                     mEmail.setError(getString(R.string.email_is_required));
                     return;
-                }else{mEmail.setError(null);}
-                if(TextUtils.isEmpty(password)){
+                } else {
+                    mEmail.setError(null);
+                }
+                if (TextUtils.isEmpty(password)) {
                     mPassword.setError(getString(R.string.password_required));
                     return;
-                }else{mPassword.setError(null);}
-                if(password.length() < 6){
+                } else {
+                    mPassword.setError(null);
+                }
+                if (password.length() < 6) {
                     mPassword.setError(getString(R.string.password_required_more_than_6_chars));
                     return;
-                }else{mPassword.setError(null);}
+                } else {
+                    mPassword.setError(null);
+                }
 
+                mLoginBtn.setClickable(false);
                 mProgressBar.setVisibility(View.VISIBLE);
 
                 mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            if(mAuth.getCurrentUser().isEmailVerified()){
-                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                                finish();
-                            }else{
+                        if (task.isSuccessful()) {
+                            if (mAuth.getCurrentUser().isEmailVerified()) {
+                                FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                        if (task.isSuccessful()) {
+                                            String deviceToken = task.getResult().getToken();
+                                            FirebaseFirestore.getInstance().collection("users").document(mAuth.getCurrentUser().getUid()).update("tokenId", deviceToken).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if(task.isSuccessful()){
+                                                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                                        finish();
+                                                    }else {
+                                                        mAuth.signOut();
+                                                        Toast.makeText(LoginActivity.this, "Coś poszło nie tak podczas logowania", Toast.LENGTH_LONG).show();
+                                                    }
+                                                }
+                                            });
+                                        }else {
+                                            mAuth.signOut();
+                                            Toast.makeText(LoginActivity.this, "Coś poszło nie tak podczas logowania", Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+                                });
+                            } else {
                                 mAuth.signOut();
                                 mEmail.setError(getString(R.string.email_not_verified));
                             }
-                        }else{
+                        } else {
                             try {
                                 throw task.getException();
-                            }catch (FirebaseAuthInvalidUserException e){
-                                if(e.getErrorCode().equals("ERROR_USER_DISABLED")){
+                            } catch (FirebaseAuthInvalidUserException e) {
+                                if (e.getErrorCode().equals("ERROR_USER_DISABLED")) {
                                     Toast.makeText(LoginActivity.this, R.string.acc_banned, Toast.LENGTH_LONG).show();
                                     FirebaseFirestore.getInstance().collection("bannedUsers").whereEqualTo("email", email).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                         @Override
                                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                            TextView reason = findViewById(R.id.login_ban_reason);
-                                            reason.setText(getString(R.string.reason) + ": " + queryDocumentSnapshots.getDocuments().get(0).get("reason").toString());
-                                            reason.setVisibility(View.VISIBLE);
+                                            CommonMethods.showErrorDialog(LoginActivity.this,
+                                                    getString(R.string.acc_banned),
+                                                    getString(R.string.reason) + ": " + queryDocumentSnapshots.getDocuments().get(0).get("reason").toString());
                                         }
                                     });
-                                }
-                                else{
+                                } else {
                                     Toast.makeText(LoginActivity.this, R.string.wrong_login, Toast.LENGTH_SHORT).show();
                                 }
-                            }catch (FirebaseAuthInvalidCredentialsException e){
+                            } catch (FirebaseAuthInvalidCredentialsException e) {
                                 Toast.makeText(LoginActivity.this, R.string.wrong_login, Toast.LENGTH_SHORT).show();
-                            }
-                            catch(Exception e) {
+                            } catch (Exception e) {
                                 Log.e("TAG", e.getMessage());
                             }
                         }
-                        mProgressBar.setVisibility(View.INVISIBLE);
+                        mProgressBar.setVisibility(View.GONE);
+                        mLoginBtn.setClickable(true);
                     }
                 });
             }
@@ -134,7 +164,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        if(mAuth.getCurrentUser() != null){
+        if (mAuth.getCurrentUser() != null) {
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
             finish();
         }

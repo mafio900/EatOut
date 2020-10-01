@@ -60,6 +60,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 }else{mEmail.setError(null);}
 
                 mProgressBar.setVisibility(View.VISIBLE);
+                mResetBtn.setClickable(false);
 
                 mAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -70,8 +71,9 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                             finish();
                         }else{
                             Toast.makeText(ForgotPasswordActivity.this, R.string.error_email, Toast.LENGTH_LONG).show();
-                            mProgressBar.setVisibility(View.INVISIBLE);
                         }
+                        mProgressBar.setVisibility(View.GONE);
+                        mResetBtn.setClickable(true);
                     }
                 });
             }

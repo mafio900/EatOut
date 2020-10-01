@@ -45,7 +45,7 @@ public class JoinedEventsActivity extends AppCompatActivity {
                 R.string.nav_close_drawer);
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-        mNavigationView.setNavigationItemSelectedListener(new NavbarInterface(this));
+        mNavigationView.setNavigationItemSelectedListener(new NavbarInterface(this, mNavigationView.getMenu()));
         mNavigationView.setCheckedItem(R.id.nav_joined_events);
 
         mJoinedEventsTabLayout = findViewById(R.id.joined_events_tablayout);

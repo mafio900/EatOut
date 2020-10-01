@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,6 +38,8 @@ public class RequestedEventsFragment extends Fragment {
     private String mUserID;
 
     private RecyclerView mRequestedEventsRecyclerView;
+    private TextView mEmptyText;
+    private ProgressBar mProgressBar;
     private EventsAdapter mAdapter;
     private ArrayList<EventsModel> mEventsModelArrayList = new ArrayList<>();
 
@@ -60,6 +64,8 @@ public class RequestedEventsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mRequestedEventsRecyclerView = view.findViewById(R.id.requested_events_recyclerview);
+        mEmptyText = view.findViewById(R.id.requested_events_empty_text);
+        mProgressBar = view.findViewById(R.id.requested_events_progressbar);
         mRequestedEventsRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         mAdapter = new EventsAdapter(mEventsModelArrayList, getContext());
         mRequestedEventsRecyclerView.setAdapter(mAdapter);
@@ -77,6 +83,9 @@ public class RequestedEventsFragment extends Fragment {
         collectionReference.whereArrayContains("requests", mUserID).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                
+                mProgressBar.setVisibility(View.GONE);
+                mEmptyText.setVisibility(View.GONE);
                 for (DocumentChange document : queryDocumentSnapshots.getDocumentChanges()){
                     Timestamp currentTime = Timestamp.now();
                     Timestamp documentTime = document.getDocument().getTimestamp("timeStamp");
@@ -108,6 +117,9 @@ public class RequestedEventsFragment extends Fragment {
                                 break;
                         }
                     }
+                }
+                if(mEventsModelArrayList.isEmpty()){
+                    mEmptyText.setVisibility(View.VISIBLE);
                 }
             }
         });

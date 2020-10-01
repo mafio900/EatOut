@@ -204,10 +204,17 @@
     <string name="execute">Execute</string>
     <string name="sure_to_give_admin">Are you sure you want to give this user the admin permissions?</string>
     <string name="give">Give</string>
+    <string name="error">Error</string>
     <string-array name="manage_user_options">
         <item>Ban user</item>
         <item>Unban user</item>
         <item>Give admin permissions</item>
         <item>Revoke admin permissions</item>
     </string-array>
+    <string name="error_while_giving_admin">Something went wrong while giving admin permissions</string>
+    <string name="user_got_admin">Admin has been given</string>
+    <string name="cannot_find_events_in_this_area">Cannot find events in this area</string>
+    <string name="error_while_searching_area">Error while searching the area</string>
+    <string name="did_not_joined_to_events_yet">You have not joined any event</string>
+    <string name="didnt_requested_events">You have not sent any requests to join event</string>
 </resources>
