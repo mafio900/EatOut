@@ -9,9 +9,11 @@ import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import pl.highelo.eatoutwithstrangers.EventPages.CalendarActivity;
 import pl.highelo.eatoutwithstrangers.MainActivity;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.R;
+import pl.highelo.eatoutwithstrangers.SearchEvent.SearchEventActivity;
 
 public class StartActivity extends AppCompatActivity {
 
@@ -23,7 +25,7 @@ public class StartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_start);
 
         if(FirebaseAuth.getInstance().getCurrentUser() != null){
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            startActivity(new Intent(getApplicationContext(), CalendarActivity.class));
             finish();
         }
 

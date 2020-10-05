@@ -1,6 +1,7 @@
 package pl.highelo.eatoutwithstrangers.ModelsAndUtilities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,14 +12,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+import pl.highelo.eatoutwithstrangers.ProfileActivities.ProfileActivity;
+import pl.highelo.eatoutwithstrangers.ProfilePreviewActivity;
 import pl.highelo.eatoutwithstrangers.R;
 
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventsViewHolder> implements Filterable {
@@ -47,11 +51,33 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventsView
     }
 
     @Override
-    public void onBindViewHolder(@NonNull EventsViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final EventsViewHolder holder, int position) {
         EventsModel currentItem = mEventsList.get(position);
 
+        FirebaseFirestore.getInstance().collection("users").document(currentItem.getUserID()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(final DocumentSnapshot documentSnapshot) {
+                holder.profileName.setText(documentSnapshot.get("fName").toString());
+                Glide.with(holder.itemView)
+                        .load(documentSnapshot.get("image_thumbnail"))
+                        .placeholder(R.drawable.ic_person)
+                        .into(holder.profileImage);
+                holder.profileImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(holder.itemView.getContext(), ProfilePreviewActivity.class);
+                        UsersModel user = documentSnapshot.toObject(UsersModel.class);
+                        user.setUserID(documentSnapshot.getId());
+                        intent.putExtra("user", user);
+                        holder.itemView.getContext().startActivity(intent);
+                    }
+                });
+            }
+        });
+
         holder.eventTheme.setText(mContext.getString(R.string.theme) + ": " + currentItem.getTheme());
-        holder.eventName.setText(currentItem.getPlaceName());
+        holder.eventCapacity.setText("Joined " + currentItem.getMembers().size() + "/" + currentItem.getMaxPeople());
+        holder.eventDescription.setText(currentItem.getDescription());
         holder.eventAddress.setText(currentItem.getPlaceAddress());
         String newDate = CommonMethods.parseDate(currentItem.getTimeStamp());
         holder.eventDate.setText(newDate);
@@ -97,12 +123,16 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventsView
 
     public static class EventsViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView eventTheme, eventName, eventAddress, eventDate;
+        private TextView profileName, eventTheme, eventCapacity, eventDescription, eventAddress, eventDate;
+        private CircleImageView profileImage;
 
         public EventsViewHolder(@NonNull View itemView, final OnEventItemClick listener) {
             super(itemView);
+            profileImage = itemView.findViewById(R.id.list_event_profile_image);
+            profileName = itemView.findViewById(R.id.list_event_profile_name);
             eventTheme = itemView.findViewById(R.id.list_event_theme);
-            eventName = itemView.findViewById(R.id.list_event_name);
+            eventDescription = itemView.findViewById(R.id.list_event_description);
+            eventCapacity = itemView.findViewById(R.id.list_event_capacity);
             eventAddress = itemView.findViewById(R.id.list_event_address);
             eventDate = itemView.findViewById(R.id.list_event_date);
             itemView.setOnClickListener(new View.OnClickListener() {

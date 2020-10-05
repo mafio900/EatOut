@@ -3,7 +3,6 @@
 
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="android:statusBarColor">@color/primary_dark</item>
         <item name="android:homeAsUpIndicator">@drawable/ic_back_arrow_white</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="actionOverflowButtonStyle">@style/ActionOverflowButtonStyle</item>

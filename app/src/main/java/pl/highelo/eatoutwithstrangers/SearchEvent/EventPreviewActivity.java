@@ -93,7 +93,7 @@ public class EventPreviewActivity extends AppCompatActivity {
         mCreatorID = mEventsModel.getUserID();
 
         mEventTheme.setText(getString(R.string.theme) + ": " + mEventsModel.getTheme());
-        mEventName.setText(getString(R.string.place)+ ": " + mEventsModel.getPlaceName());
+        mEventName.setText(getString(R.string.place)+ ": " + mEventsModel.getDescription());
         mEventAddress.setText(mEventsModel.getPlaceAddress());
         GregorianCalendar d = new GregorianCalendar(TimeZone.getTimeZone("Europe/Warsaw"));
         d.setTime(mEventsModel.getTimeStamp().toDate());

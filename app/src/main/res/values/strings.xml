@@ -43,7 +43,7 @@
     <string name="search_icon">Search icon</string>
     <string name="enter_address">Set address</string>
     <string name="select_point">Select point</string>
-    <string name="your_events">Your event</string>
+    <string name="your_events">Your events</string>
     <string name="your_joined_events">Your joined events</string>
     <string name="set_localization">Set localization</string>
     <string name="name_of_localization">Localization name</string>
@@ -217,4 +217,7 @@
     <string name="error_while_searching_area">Error while searching the area</string>
     <string name="did_not_joined_to_events_yet">You have not joined any event</string>
     <string name="didnt_requested_events">You have not sent any requests to join event</string>
+    <string name="requested_events">Requested events</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

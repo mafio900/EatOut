@@ -43,16 +43,14 @@ import java.io.File;
 import java.io.IOException;
 
 import id.zelory.compressor.Compressor;
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.BottomNavigationInterface;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
-import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.NavbarInterface;
 import pl.highelo.eatoutwithstrangers.R;
 
 public class ProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "ProfileActivity";
 
-    private DrawerLayout mDrawerLayout;
-    private NavigationView mNavigationView;
     private Toolbar mToolbar;
 
     private TextView mProfileName, mProfileAge, mProfileCity, mProfileDescription;
@@ -70,20 +68,10 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         CommonMethods.validateUser(this);
         setContentView(R.layout.activity_profile);
-        mDrawerLayout = findViewById(R.id.drawer_layout);
-        mNavigationView = findViewById(R.id.nav_view);
+        new BottomNavigationInterface(this, findViewById(R.id.parent_layout));
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setTitle(R.string.your_profile);
         setSupportActionBar(mToolbar);
-        mNavigationView.bringToFront();
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                mToolbar,
-                R.string.nav_open_drawer,
-                R.string.nav_close_drawer);
-        mDrawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-        mNavigationView.setNavigationItemSelectedListener(new NavbarInterface(this, mNavigationView.getMenu()));
-        mNavigationView.setCheckedItem(R.id.nav_profile);
 
         mProfileImageView = (ImageView) findViewById(R.id.profile_image);
         mProfileName = (TextView) findViewById(R.id.profile_name);
@@ -219,11 +207,6 @@ public class ProfileActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-        }
-        else{
-            CommonMethods.showDialog(this, getString(R.string.sure_to_leave_app));
-        }
+        CommonMethods.showDialog(this, getString(R.string.sure_to_leave_app));
     }
 }

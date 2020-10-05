@@ -2,6 +2,7 @@ package pl.highelo.eatoutwithstrangers.ModelsAndUtilities;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.widget.ScrollView;
 
 import com.google.firebase.Timestamp;
 
@@ -10,9 +11,9 @@ import java.util.List;
 
 public class EventsModel implements Parcelable {
     private String itemID;
-    private String placeName;
     private String placeAddress;
     private String theme;
+    private String description;
     private int maxPeople;
     private String userID;
     private Timestamp timeStamp;
@@ -21,9 +22,9 @@ public class EventsModel implements Parcelable {
 
     public EventsModel(){}
 
-    public EventsModel(String itemID, String placeName, String placeAddress, String theme, int maxPeople, String userID, Timestamp timeStamp, List<String> members, List<String> requests) {
+    public EventsModel(String itemID, String placeAddress, String theme, String description, int maxPeople, String userID, Timestamp timeStamp, List<String> members, List<String> requests) {
         this.itemID = itemID;
-        this.placeName = placeName;
+        this.description = description;
         this.placeAddress = placeAddress;
         this.theme = theme;
         this.maxPeople = maxPeople;
@@ -35,7 +36,7 @@ public class EventsModel implements Parcelable {
 
     protected EventsModel(Parcel in) {
         itemID = in.readString();
-        placeName = in.readString();
+        description = in.readString();
         placeAddress = in.readString();
         theme = in.readString();
         maxPeople = in.readInt();
@@ -53,7 +54,7 @@ public class EventsModel implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(itemID);
-        dest.writeString(placeName);
+        dest.writeString(description);
         dest.writeString(placeAddress);
         dest.writeString(theme);
         dest.writeInt(maxPeople);
@@ -83,12 +84,12 @@ public class EventsModel implements Parcelable {
         this.itemID = itemID;
     }
 
-    public String getPlaceName() {
-        return placeName;
+    public String getDescription() {
+        return description;
     }
 
-    public void setPlaceName(String placeName) {
-        this.placeName = placeName;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getPlaceAddress() {

@@ -18,14 +18,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GetTokenResult;
 
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
-import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.NavbarInterface;
 import pl.highelo.eatoutwithstrangers.R;
 
 public class AdminActivity extends AppCompatActivity {
-
-    private DrawerLayout mDrawerLayout;
-    private NavigationView mNavigationView;
-    private Toolbar mToolbar;
 
     private TabLayout mTabLayout;
     private ViewPager2 mViewPager;
@@ -46,22 +41,6 @@ public class AdminActivity extends AppCompatActivity {
         CommonMethods.validateUser(this);
 
         setContentView(R.layout.activity_admin);
-
-        mDrawerLayout = findViewById(R.id.drawer_layout);
-        mNavigationView = findViewById(R.id.nav_view);
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle(R.string.admin_panel);
-        mNavigationView.bringToFront();
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                mToolbar,
-                R.string.nav_open_drawer,
-                R.string.nav_close_drawer);
-        mDrawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-
-        mNavigationView.setNavigationItemSelectedListener(new NavbarInterface(this, mNavigationView.getMenu()));
-        mNavigationView.setCheckedItem(R.id.nav_admin_page);
 
         mTabLayout = (TabLayout) findViewById(R.id.admin_tablayout);
         //mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);

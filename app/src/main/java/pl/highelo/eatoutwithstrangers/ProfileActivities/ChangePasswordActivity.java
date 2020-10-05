@@ -29,14 +29,9 @@ import com.google.firebase.auth.FirebaseUser;
 
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.MainActivity;
-import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.NavbarInterface;
 import pl.highelo.eatoutwithstrangers.R;
 
 public class ChangePasswordActivity extends AppCompatActivity {
-
-    private DrawerLayout mDrawerLayout;
-    private NavigationView mNavigationView;
-    private Toolbar mToolbar;
 
     private TextInputLayout mOldPassword, mNewPassword, mConfirmNewPassword;
     private Button mSaveButton;
@@ -54,19 +49,6 @@ public class ChangePasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_change_password);
 
         setupUI(findViewById(R.id.parent));
-
-        mDrawerLayout = findViewById(R.id.drawer_layout);
-        mNavigationView = findViewById(R.id.nav_view);
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mToolbar.setTitle(R.string.changing_password);
-        setSupportActionBar(mToolbar);
-        mNavigationView.bringToFront();
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                mToolbar,
-                R.string.nav_open_drawer,
-                R.string.nav_close_drawer);
-        mDrawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
 
         mAuth = FirebaseAuth.getInstance();
         mAuth.useAppLanguage();
@@ -134,18 +116,12 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 }
             }
         });
-
-        mNavigationView.setNavigationItemSelectedListener(new NavbarInterface(this, mNavigationView.getMenu()));
     }
 
     @Override
     public void onBackPressed() {
-        if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-        }
-        else{
             CommonMethods.showDialog(this, getString(R.string.sure_to_leave_app));
-        }
+
     }
 
     private void setupUI(View view) {

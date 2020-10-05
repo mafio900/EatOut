@@ -1,14 +1,11 @@
 package pl.highelo.eatoutwithstrangers.SearchEvent;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -37,7 +34,6 @@ import com.ckdroid.geofirequery.model.Distance;
 import com.ckdroid.geofirequery.utils.BoundingBoxUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -48,16 +44,16 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.BottomNavigationInterface;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.LocationResolver;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsAdapter;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
-import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.NavbarInterface;
 import pl.highelo.eatoutwithstrangers.R;
 
-import static pl.highelo.eatoutwithstrangers.ManageEvent.MapActivity.COARSE_LOCATION;
-import static pl.highelo.eatoutwithstrangers.ManageEvent.MapActivity.FINE_LOCATION;
-import static pl.highelo.eatoutwithstrangers.ManageEvent.MapActivity.LOCATION_PERMISSIONS_REQUEST_CODE;
+import static pl.highelo.eatoutwithstrangers.EventPages.MapActivity.COARSE_LOCATION;
+import static pl.highelo.eatoutwithstrangers.EventPages.MapActivity.FINE_LOCATION;
+import static pl.highelo.eatoutwithstrangers.EventPages.MapActivity.LOCATION_PERMISSIONS_REQUEST_CODE;
 
 public class SearchEventActivity extends AppCompatActivity {
     private static final String TAG = "SearchEventActivity";
@@ -65,8 +61,6 @@ public class SearchEventActivity extends AppCompatActivity {
     private static final String SHARED_PREFS = "sharedPrefs";
     private static final String DISTANCE = "distance";
 
-    private DrawerLayout mDrawerLayout;
-    private NavigationView mNavigationView;
     private Toolbar mToolbar;
 
     private FirebaseAuth mAuth;
@@ -79,7 +73,7 @@ public class SearchEventActivity extends AppCompatActivity {
     private DocumentSnapshot mLastVisible;
     private boolean mIsScrolling;
     private boolean mIsLastItemReached = false;
-    private static final int PAGINATION_LIMIT = 4;
+    private static final int PAGINATION_LIMIT = 6;
     private ArrayList<EventsModel> mEventsModelArrayList = new ArrayList<>();
     private ProgressBar mProgressBar;
 
@@ -96,22 +90,10 @@ public class SearchEventActivity extends AppCompatActivity {
         CommonMethods.validateUser(this);
 
         setContentView(R.layout.activity_search_event);
-
-        mDrawerLayout = findViewById(R.id.drawer_layout);
-        mNavigationView = findViewById(R.id.nav_view);
+        new BottomNavigationInterface(this, findViewById(R.id.parent_layout));
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setTitle(R.string.search_events);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle(R.string.search_events);
-        mNavigationView.bringToFront();
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                mToolbar,
-                R.string.nav_open_drawer,
-                R.string.nav_close_drawer);
-        mDrawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-
-        mNavigationView.setNavigationItemSelectedListener(new NavbarInterface(this, mNavigationView.getMenu()));
-        mNavigationView.setCheckedItem(R.id.nav_search_events);
 
         //Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -389,10 +371,7 @@ public class SearchEventActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-        } else {
             CommonMethods.showDialog(this, getString(R.string.sure_to_leave_app));
-        }
+
     }
 }
