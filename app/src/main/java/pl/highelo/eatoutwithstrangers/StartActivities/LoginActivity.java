@@ -34,7 +34,6 @@ import com.google.firebase.iid.InstanceIdResult;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.MainActivity;
 import pl.highelo.eatoutwithstrangers.R;
-import pl.highelo.eatoutwithstrangers.SearchEvent.SearchEventActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -107,7 +106,7 @@ public class LoginActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     if(task.isSuccessful()){
-                                                        startActivity(new Intent(getApplicationContext(), SearchEventActivity.class));
+                                                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                                         finish();
                                                     }else {
                                                         mAuth.signOut();
@@ -166,7 +165,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         if (mAuth.getCurrentUser() != null) {
-            startActivity(new Intent(getApplicationContext(), SearchEventActivity.class));
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
             finish();
         }
         super.onResume();

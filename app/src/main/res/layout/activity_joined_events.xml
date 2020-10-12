@@ -11,43 +11,43 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".AdminActivities.AdminActivity">
+        tools:context=".JoinedEvents.JoinedEventsActivity">
 
         <include
-            android:id="@+id/toolbar"
-            layout="@layout/toolbar_main" />
+            layout="@layout/toolbar_main"
+            android:id="@+id/toolbar"/>
 
         <com.google.android.material.tabs.TabLayout
-            android:id="@+id/admin_tablayout"
-            android:layout_width="0dp"
+            android:id="@+id/joined_events_tablayout"
+            android:layout_width="409dp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
             <com.google.android.material.tabs.TabItem
+                android:id="@+id/joined_events_item"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/reports" />
+                android:text="@string/joined" />
 
             <com.google.android.material.tabs.TabItem
+                android:id="@+id/joined_events_request_item"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/manage_user" />
+                android:text="@string/pendings" />
 
         </com.google.android.material.tabs.TabLayout>
 
         <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/admin_viewpager"
+            android:id="@+id/joined_events_viewpager"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:focusable="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/admin_tablayout"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/joined_events_tablayout" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.drawerlayout.widget.DrawerLayout>

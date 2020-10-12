@@ -1,57 +1,43 @@
-package pl.highelo.eatoutwithstrangers.AdminActivities;
+package pl.highelo.eatoutwithstrangers.JoinedEvents;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.GetTokenResult;
 
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.NavbarInterface;
 import pl.highelo.eatoutwithstrangers.R;
 
-public class AdminActivity extends AppCompatActivity {
+public class JoinedEventsActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private Toolbar mToolbar;
 
-    private TabLayout mTabLayout;
-    private ViewPager2 mViewPager;
+    private TabLayout mJoinedEventsTabLayout;
+    private ViewPager2 mJoinedEventsViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        FirebaseAuth.getInstance().getCurrentUser().getIdToken(false).addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
-            @Override
-            public void onComplete(@NonNull Task<GetTokenResult> task) {
-                if(!task.isSuccessful() || task.getResult().getClaims().get("admin") == null || !((Boolean)task.getResult().getClaims().get("admin"))){
-                    finishAndRemoveTask();
-                }
-            }
-        });
-
         CommonMethods.validateUser(this);
-
-        setContentView(R.layout.activity_admin);
+        setContentView(R.layout.activity_joined_events);
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mNavigationView = findViewById(R.id.nav_view);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setTitle(R.string.joined_events);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle(R.string.admin_panel);
         mNavigationView.bringToFront();
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 mToolbar,
@@ -59,30 +45,37 @@ public class AdminActivity extends AppCompatActivity {
                 R.string.nav_close_drawer);
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-
         mNavigationView.setNavigationItemSelectedListener(new NavbarInterface(this, mNavigationView.getMenu()));
-        mNavigationView.setCheckedItem(R.id.nav_admin_page);
+        mNavigationView.setCheckedItem(R.id.nav_joined_events);
 
-        mTabLayout = (TabLayout) findViewById(R.id.admin_tablayout);
-        //mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
-        mViewPager = (ViewPager2) findViewById(R.id.admin_viewpager);
-        mViewPager.setAdapter(new AdminPagerAdapter(this, mTabLayout.getTabCount()));
-
+        mJoinedEventsTabLayout = findViewById(R.id.joined_events_tablayout);
+        mJoinedEventsViewPager = findViewById(R.id.joined_events_viewpager);
+        mJoinedEventsViewPager.setAdapter(new JoinedEventsPagerAdapter(this, mJoinedEventsTabLayout.getTabCount()));
         TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(
-                mTabLayout, mViewPager, new TabLayoutMediator.TabConfigurationStrategy() {
+                mJoinedEventsTabLayout, mJoinedEventsViewPager, new TabLayoutMediator.TabConfigurationStrategy() {
             @Override
             public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
                 switch (position){
                     case 0:
-                        tab.setText(R.string.reports);
+                        tab.setText(R.string.joined);
                         break;
                     case 1:
-                        tab.setText(R.string.manage_user);
+                        tab.setText(R.string.pendings);
                         break;
                 }
             }
         }
         );
         tabLayoutMediator.attach();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        }
+        else{
+            CommonMethods.showDialog(this, getString(R.string.sure_to_leave_app));
+        }
     }
 }

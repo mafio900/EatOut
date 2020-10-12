@@ -14,15 +14,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".EventPages.CalendarActivity"
-            android:configChanges="orientation|screenSize|keyboard"
-            android:launchMode="singleTop"/>
         <activity android:name=".AdminActivities.AdminActivity" />
-        <activity
-            android:name=".AdminActivities.ReportActivity"
-            android:configChanges="orientation|screenSize|keyboard"
-            android:launchMode="singleTop"
-            android:parentActivityName=".AdminActivities.AdminActivity" />
+        <activity android:name=".AdminActivities.ReportActivity"
+            android:parentActivityName=".AdminActivities.AdminActivity"
+            android:launchMode="singleTop"/>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -48,30 +43,34 @@
             android:name=".StartActivities.RegisterActivity"
             android:parentActivityName=".StartActivities.StartActivity" />
         <activity android:name=".MainActivity" />
+        <activity android:name=".JoinedEvents.JoinedEventsActivity" />
         <activity
-            android:name=".EventPages.ManageEventActivity"
+            android:name=".JoinedEvents.JoinedEventPreviewActivity"
             android:configChanges="orientation|screenSize|keyboard"
             android:launchMode="singleTop"
-            android:parentActivityName=".EventPages.CalendarActivity" />
+            android:parentActivityName=".JoinedEvents.JoinedEventsActivity" />
+        <activity
+            android:name=".ManageEvent.ManageEventActivity"
+            android:configChanges="orientation|screenSize|keyboard"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ManageEvent.YourEventsActivity" />
+        <activity android:name=".ManageEvent.YourEventsActivity" />
         <activity
             android:name=".ProfilePreviewActivity"
-            android:parentActivityName=".EventPages.ManageEventActivity" />
+            android:parentActivityName=".ManageEvent.ManageEventActivity" />
         <activity
-            android:name=".EventPages.MapActivity"
-            android:parentActivityName=".EventPages.CreateEventActivity" />
-        <activity
-            android:name=".SearchEvent.SearchEventActivity"
-            android:configChanges="orientation|screenSize|keyboard"
-            android:launchMode="singleTop" />
+            android:name=".ManageEvent.MapActivity"
+            android:parentActivityName=".ManageEvent.CreateEventActivity" />
+        <activity android:name=".SearchEvent.SearchEventActivity" />
         <activity
             android:name=".SearchEvent.EventPreviewActivity"
             android:configChanges="orientation|screenSize|keyboard"
             android:launchMode="singleTop"
             android:parentActivityName=".SearchEvent.SearchEventActivity" />
         <activity
-            android:name=".EventPages.CreateEventActivity"
+            android:name=".ManageEvent.CreateEventActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".EventPages.CalendarActivity" />
+            android:parentActivityName=".ManageEvent.YourEventsActivity" />
         <activity android:name=".ProfileActivities.ChangePasswordActivity" />
         <activity
             android:name=".ProfileActivities.ProfileActivity"

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_admin_users_events"
+        android:title="Show user's events" />
+    <item
+        android:id="@+id/menu_admin_ban_user"
+        android:title="@string/ban_user" />
+    <item
+        android:id="@+id/menu_admin_unban_user"
+        android:title="@string/unban_user" />
+    <item
+        android:id="@+id/menu_admin_give_admin"
+        android:title="@string/give_admin" />
+    <item
+        android:id="@+id/menu_admin_revoke_admin"
+        android:title="@string/revoke_admin" />
+
+</menu>
