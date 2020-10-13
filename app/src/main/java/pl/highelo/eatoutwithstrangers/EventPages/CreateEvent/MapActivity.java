@@ -1,4 +1,4 @@
-package pl.highelo.eatoutwithstrangers.EventPages;
+package pl.highelo.eatoutwithstrangers.EventPages.CreateEvent;
 
 import android.Manifest;
 import android.content.Intent;

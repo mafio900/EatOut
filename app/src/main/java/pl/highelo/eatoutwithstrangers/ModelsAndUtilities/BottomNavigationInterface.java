@@ -12,7 +12,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 
 import pl.highelo.eatoutwithstrangers.EventPages.CalendarActivity;
-import pl.highelo.eatoutwithstrangers.EventPages.CreateEventActivity;
+import pl.highelo.eatoutwithstrangers.EventPages.CreateEvent.CreateEventActivity;
 import pl.highelo.eatoutwithstrangers.ProfileActivities.ProfileActivity;
 import pl.highelo.eatoutwithstrangers.R;
 import pl.highelo.eatoutwithstrangers.SearchEvent.SearchEventActivity;

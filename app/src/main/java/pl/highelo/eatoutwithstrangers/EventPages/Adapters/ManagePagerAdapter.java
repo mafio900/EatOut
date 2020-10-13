@@ -1,10 +1,14 @@
-package pl.highelo.eatoutwithstrangers.EventPages;
+package pl.highelo.eatoutwithstrangers.EventPages.Adapters;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import pl.highelo.eatoutwithstrangers.EventPages.ChatFragment;
+import pl.highelo.eatoutwithstrangers.EventPages.EventInfoFragment;
+import pl.highelo.eatoutwithstrangers.EventPages.ParticipantsFragment;
+import pl.highelo.eatoutwithstrangers.EventPages.RequestsFragment;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
 
 public class ManagePagerAdapter extends FragmentStateAdapter {

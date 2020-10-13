@@ -1,5 +1,6 @@
 package pl.highelo.eatoutwithstrangers.EventPages;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,22 +11,27 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.firebase.ui.firestore.SnapshotParser;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import pl.highelo.eatoutwithstrangers.EventPages.ManageEvent.ManageEventActivity;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsPaginationAdapter;
 import pl.highelo.eatoutwithstrangers.R;
 
 public class YourEventsFragment extends Fragment {
+    private static final String TAG = "YourEventsFragment";
 
     private FirebaseFirestore mFirestore;
     private EventsPaginationAdapter mAdapter;
@@ -56,9 +62,8 @@ public class YourEventsFragment extends Fragment {
         mSwipeRefreshLayout = view.findViewById(R.id.your_events_swipe_layout);
 
         PagedList.Config config = new PagedList.Config.Builder()
-                .setEnablePlaceholders(false)
-                .setPrefetchDistance(2)
-                .setPageSize(4)
+                .setInitialLoadSizeHint(5)
+                .setPageSize(5)
                 .build();
         mFirestore = FirebaseFirestore.getInstance();
         Query query = mFirestore.collection("events").whereEqualTo("userID", FirebaseAuth.getInstance().getCurrentUser().getUid()).orderBy("timeStamp", Query.Direction.ASCENDING);
@@ -71,18 +76,44 @@ public class YourEventsFragment extends Fragment {
                     public EventsModel parseSnapshot(@NonNull DocumentSnapshot snapshot) {
                         EventsModel model = snapshot.toObject(EventsModel.class);
                         model.setItemID(snapshot.getId());
+                        Log.d(TAG, "parseSnapshot: " + model.getTheme() + " l: " + model.getL());
+                        if(model.getL() == 0.0){
+                            mFirestore.collection("events").document(model.getItemID()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    mAdapter.refresh();
+                                }
+                            });
+                        }
                         return model;
                     }
                 })
                 .build();
-        mAdapter = new EventsPaginationAdapter(options, mSwipeRefreshLayout);
+        EventsPaginationAdapter.OnItemClickListener listener = new EventsPaginationAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(DocumentSnapshot item) {
+                EventsModel model = item.toObject(EventsModel.class);
+                model.setItemID(item.getId());
+                Intent intent = new Intent(getContext(), ManageEventActivity.class);
+                intent.putExtra("model", model);
+                startActivity(intent);
+            }
+        };
+        mAdapter = new EventsPaginationAdapter(options, mSwipeRefreshLayout, listener);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         mRecyclerView.setAdapter(mAdapter);
+        final TextView emptyText = view.findViewById(R.id.your_events_empty_text);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mAdapter.refresh();
+                if(mAdapter.getCurrentList().size() == 0){
+                    emptyText.setVisibility(View.VISIBLE);
+                }
+                else {
+                    emptyText.setVisibility(View.GONE);
+                }
             }
         });
 

@@ -145,7 +145,7 @@ public class ProfileActivity extends AppCompatActivity {
     public void handleUpdate() {
         if (mSelectedImage != null) {
             final File thumbFile = new File(mSelectedImage.getPath());
-            WriteBatch batch = mFirestore.batch();
+            final WriteBatch batch = mFirestore.batch();
 
             mStorageReference.child("profile_images/" + mUserID + "/profile_image").putFile(mSelectedImage).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -163,7 +163,8 @@ public class ProfileActivity extends AppCompatActivity {
                             mStorageReference.child("profile_images/" + mUserID + "/profile_image").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
-                                    mFirestore.collection("users").document(mUserID).update("image", uri.toString());
+                                    final DocumentReference ref = mFirestore.collection("users").document(mUserID);
+                                    batch.update(ref, "image", uri.toString());
                                     mStorageReference.child("profile_images/" + mUserID + "/profile_image_thumbnail").putBytes(thumb_byte).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                                         @Override
                                         public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
@@ -171,9 +172,18 @@ public class ProfileActivity extends AppCompatActivity {
                                                 mStorageReference.child("profile_images/" + mUserID + "/profile_image_thumbnail").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                                     @Override
                                                     public void onSuccess(Uri uri) {
-                                                        mFirestore.collection("users").document(mUserID).update("image_thumbnail", uri.toString());
-                                                        mProfileImageView.setImageURI(mSelectedImage);
-                                                        Toast.makeText(ProfileActivity.this, R.string.image_saved, Toast.LENGTH_SHORT).show();
+                                                        batch.update(ref, "image_thumbnail", uri.toString());
+                                                        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                if(task.isSuccessful()){
+                                                                    mProfileImageView.setImageURI(mSelectedImage);
+                                                                    Toast.makeText(ProfileActivity.this, R.string.image_saved, Toast.LENGTH_SHORT).show();
+                                                                }else{
+                                                                    Toast.makeText(ProfileActivity.this, R.string.send_image_error, Toast.LENGTH_LONG).show();
+                                                                }
+                                                            }
+                                                        });
                                                     }
                                                 }).addOnFailureListener(new OnFailureListener() {
                                                     @Override

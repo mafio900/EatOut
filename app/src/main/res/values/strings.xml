@@ -218,6 +218,8 @@
     <string name="did_not_joined_to_events_yet">You have not joined any event</string>
     <string name="didnt_requested_events">You have not sent any requests to join event</string>
     <string name="requested_events">Requested events</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="sure_to_join_event">Are you sure you want to join this event?</string>
+    <string name="description_must_have_atleast_5_chars">Description must have at least 5 chars</string>
+    <string name="event_details">Event Details</string>
+    <string name="event_image">Event\'s image</string>
 </resources>

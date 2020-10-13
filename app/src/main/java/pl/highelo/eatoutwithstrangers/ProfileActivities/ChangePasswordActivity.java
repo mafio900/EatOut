@@ -1,11 +1,7 @@
 package pl.highelo.eatoutwithstrangers.ProfileActivities;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,7 +15,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthCredential;
@@ -28,7 +23,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
-import pl.highelo.eatoutwithstrangers.MainActivity;
 import pl.highelo.eatoutwithstrangers.R;
 
 public class ChangePasswordActivity extends AppCompatActivity {
@@ -99,7 +93,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                                                     mProgressBar.setVisibility(ProgressBar.GONE);
                                                     if (task.isSuccessful()) {
                                                         Toast.makeText(ChangePasswordActivity.this, R.string.password_changed, Toast.LENGTH_LONG).show();
-                                                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                                        startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
                                                         finish();
                                                     } else {
                                                         Toast.makeText(ChangePasswordActivity.this, R.string.something_went_wrong_while_chaning_passwd, Toast.LENGTH_LONG).show();

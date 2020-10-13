@@ -37,7 +37,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
-import pl.highelo.eatoutwithstrangers.MainActivity;
 import pl.highelo.eatoutwithstrangers.R;
 
 public class RegisterActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {

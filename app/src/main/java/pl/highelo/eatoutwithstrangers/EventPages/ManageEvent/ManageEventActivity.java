@@ -1,4 +1,4 @@
-package pl.highelo.eatoutwithstrangers.EventPages;
+package pl.highelo.eatoutwithstrangers.EventPages.ManageEvent;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +11,7 @@ import android.os.Bundle;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import pl.highelo.eatoutwithstrangers.EventPages.Adapters.ManagePagerAdapter;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
 import pl.highelo.eatoutwithstrangers.R;
@@ -22,6 +23,7 @@ public class ManageEventActivity extends AppCompatActivity {
     private ViewPager2 mManageViewPager;
 
     private EventsModel mEventsModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

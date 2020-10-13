@@ -17,12 +17,13 @@ public class EventsModel implements Parcelable {
     private int maxPeople;
     private String userID;
     private Timestamp timeStamp;
+    private double l;
     private List<String> members = new ArrayList<>();
     private List<String> requests = new ArrayList<>();
 
     public EventsModel(){}
 
-    public EventsModel(String itemID, String placeAddress, String theme, String description, int maxPeople, String userID, Timestamp timeStamp, List<String> members, List<String> requests) {
+    public EventsModel(String itemID, String placeAddress, String theme, String description, int maxPeople, String userID, Timestamp timeStamp, double l, List<String> members, List<String> requests) {
         this.itemID = itemID;
         this.description = description;
         this.placeAddress = placeAddress;
@@ -30,6 +31,7 @@ public class EventsModel implements Parcelable {
         this.maxPeople = maxPeople;
         this.userID = userID;
         this.timeStamp = timeStamp;
+        this.l = l;
         this.members = members;
         this.requests = requests;
     }
@@ -41,6 +43,7 @@ public class EventsModel implements Parcelable {
         theme = in.readString();
         maxPeople = in.readInt();
         userID = in.readString();
+        l = in.readDouble();
         timeStamp = new Timestamp(in.readLong(), 0);
         in.readStringList(members);
         in.readStringList(requests);
@@ -59,6 +62,7 @@ public class EventsModel implements Parcelable {
         dest.writeString(theme);
         dest.writeInt(maxPeople);
         dest.writeString(userID);
+        dest.writeDouble(l);
         dest.writeLong(timeStamp.getSeconds());
         dest.writeStringList(members);
         dest.writeStringList(requests);
@@ -130,6 +134,14 @@ public class EventsModel implements Parcelable {
 
     public void setTimeStamp(Timestamp timeStamp) {
         this.timeStamp = timeStamp;
+    }
+
+    public double getL() {
+        return l;
+    }
+
+    public void setL(double l) {
+        this.l = l;
     }
 
     public List<String> getMembers() {

@@ -2,20 +2,25 @@ package pl.highelo.eatoutwithstrangers.ModelsAndUtilities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,8 +80,20 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventsView
             }
         });
 
+        FirebaseStorage.getInstance().getReference().child("events_images" + currentItem.getItemID()).getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if(task.isSuccessful()){
+                    Glide.with(holder.itemView)
+                            .load(task.getResult())
+                            .placeholder(R.drawable.placeholder_img)
+                            .into(holder.eventImage);
+                }
+            }
+        });
+
         holder.eventTheme.setText(mContext.getString(R.string.theme) + ": " + currentItem.getTheme());
-        holder.eventCapacity.setText("Joined " + currentItem.getMembers().size() + "/" + currentItem.getMaxPeople());
+        holder.eventCapacity.setText(mContext.getString(R.string.joined) + " " + currentItem.getMembers().size() + "/" + currentItem.getMaxPeople());
         holder.eventDescription.setText(currentItem.getDescription());
         holder.eventAddress.setText(currentItem.getPlaceAddress());
         String newDate = CommonMethods.parseDate(currentItem.getTimeStamp());
@@ -124,10 +141,12 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventsView
     public static class EventsViewHolder extends RecyclerView.ViewHolder {
 
         private TextView profileName, eventTheme, eventCapacity, eventDescription, eventAddress, eventDate;
+        private ImageView eventImage;
         private CircleImageView profileImage;
 
         public EventsViewHolder(@NonNull View itemView, final OnEventItemClick listener) {
             super(itemView);
+            eventImage = itemView.findViewById(R.id.list_event_image);
             profileImage = itemView.findViewById(R.id.list_event_profile_image);
             profileName = itemView.findViewById(R.id.list_event_profile_name);
             eventTheme = itemView.findViewById(R.id.list_event_theme);

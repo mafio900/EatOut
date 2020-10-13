@@ -14,9 +14,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".EventPages.CalendarActivity"
-            android:configChanges="orientation|screenSize|keyboard"
-            android:launchMode="singleTop"/>
         <activity android:name=".AdminActivities.AdminActivity" />
         <activity
             android:name=".AdminActivities.ReportActivity"
@@ -47,18 +44,17 @@
         <activity
             android:name=".StartActivities.RegisterActivity"
             android:parentActivityName=".StartActivities.StartActivity" />
-        <activity android:name=".MainActivity" />
         <activity
-            android:name=".EventPages.ManageEventActivity"
+            android:name=".EventPages.ManageEvent.ManageEventActivity"
             android:configChanges="orientation|screenSize|keyboard"
             android:launchMode="singleTop"
             android:parentActivityName=".EventPages.CalendarActivity" />
         <activity
             android:name=".ProfilePreviewActivity"
-            android:parentActivityName=".EventPages.ManageEventActivity" />
+            android:parentActivityName=".EventPages.ManageEvent.ManageEventActivity" />
         <activity
-            android:name=".EventPages.MapActivity"
-            android:parentActivityName=".EventPages.CreateEventActivity" />
+            android:name=".EventPages.CreateEvent.MapActivity"
+            android:parentActivityName=".EventPages.CreateEvent.CreateEventActivity" />
         <activity
             android:name=".SearchEvent.SearchEventActivity"
             android:configChanges="orientation|screenSize|keyboard"
@@ -69,7 +65,15 @@
             android:launchMode="singleTop"
             android:parentActivityName=".SearchEvent.SearchEventActivity" />
         <activity
-            android:name=".EventPages.CreateEventActivity"
+            android:name=".EventPages.CalendarActivity"
+            android:configChanges="orientation|screenSize|keyboard"
+            android:launchMode="singleTop" />
+        <activity android:name=".EventPages.JoinedEventPreview.JoinedEventPreviewActivity"
+            android:configChanges="orientation|screenSize|keyboard"
+            android:launchMode="singleTop"
+            android:parentActivityName=".EventPages.CalendarActivity"/>
+        <activity
+            android:name=".EventPages.CreateEvent.CreateEventActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".EventPages.CalendarActivity" />
         <activity android:name=".ProfileActivities.ChangePasswordActivity" />

@@ -1,9 +1,13 @@
-package pl.highelo.eatoutwithstrangers.EventPages;
+package pl.highelo.eatoutwithstrangers.EventPages.Adapters;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
+
+import pl.highelo.eatoutwithstrangers.EventPages.JoinedEventsFragment;
+import pl.highelo.eatoutwithstrangers.EventPages.RequestedEventsFragment;
+import pl.highelo.eatoutwithstrangers.EventPages.YourEventsFragment;
 
 public class CalendarPageAdapter extends FragmentStateAdapter {
 

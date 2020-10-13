@@ -34,33 +34,37 @@
 
     <TextView
         android:id="@+id/event_info_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        tools:text="Nazwa wydarzenia"
+        android:layout_marginEnd="16dp"
         android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/event_info_theme"
-        app:layout_constraintTop_toBottomOf="@+id/event_info_theme" />
+        app:layout_constraintTop_toBottomOf="@+id/event_info_theme"
+        tools:text="Nazwa wydarzenia" />
 
     <TextView
         android:id="@+id/event_info_address"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        tools:text="Adres wydarzenia"
         android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/event_info_name"
         app:layout_constraintStart_toStartOf="@+id/event_info_name"
-        app:layout_constraintTop_toBottomOf="@+id/event_info_name" />
+        app:layout_constraintTop_toBottomOf="@+id/event_info_name"
+        tools:text="Adres wydarzenia" />
 
     <TextView
         android:id="@+id/event_info_date"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        tools:text="Data wydarzenia"
         android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/event_info_address"
         app:layout_constraintStart_toStartOf="@+id/event_info_address"
-        app:layout_constraintTop_toBottomOf="@+id/event_info_address" />
+        app:layout_constraintTop_toBottomOf="@+id/event_info_address"
+        tools:text="Data wydarzenia" />
 
     <TextView
         android:id="@+id/event_info_max_people"

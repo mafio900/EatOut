@@ -14,7 +14,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.Menu;
@@ -25,7 +24,6 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,10 +34,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,9 +52,9 @@ import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsAdapter;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
 import pl.highelo.eatoutwithstrangers.R;
 
-import static pl.highelo.eatoutwithstrangers.EventPages.MapActivity.COARSE_LOCATION;
-import static pl.highelo.eatoutwithstrangers.EventPages.MapActivity.FINE_LOCATION;
-import static pl.highelo.eatoutwithstrangers.EventPages.MapActivity.LOCATION_PERMISSIONS_REQUEST_CODE;
+import static pl.highelo.eatoutwithstrangers.EventPages.CreateEvent.MapActivity.COARSE_LOCATION;
+import static pl.highelo.eatoutwithstrangers.EventPages.CreateEvent.MapActivity.FINE_LOCATION;
+import static pl.highelo.eatoutwithstrangers.EventPages.CreateEvent.MapActivity.LOCATION_PERMISSIONS_REQUEST_CODE;
 
 public class SearchEventActivity extends AppCompatActivity {
     private static final String TAG = "SearchEventActivity";
@@ -171,6 +172,52 @@ public class SearchEventActivity extends AppCompatActivity {
                 .collection("events")
                 .whereNearToLocation(mCurrentLocation, distance, "l");
 
+        mAdapter = new EventsAdapter(mEventsModelArrayList, getApplicationContext());
+        mAdapter.setOnEventItemClick(new EventsAdapter.OnEventItemClick() {
+            @Override
+            public void OnItemClick(final int position) {
+                final AlertDialog dialog = new AlertDialog.Builder(SearchEventActivity.this)
+                        .setTitle(getString(R.string.join_event))
+                        .setMessage(R.string.sure_to_join_event)
+                        .setPositiveButton(android.R.string.yes, null)
+                        .setNegativeButton(android.R.string.no, null)
+                        .create();
+                dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialogInterface) {
+                        Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                        positive.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                EventsModel item = mEventsModelArrayList.get(position);
+                                String currentUserID = mAuth.getCurrentUser().getUid();
+                                DocumentReference eventsRef = mFirestore.collection("events").document(item.getItemID());
+                                DocumentReference usersRef = mFirestore.collection("users").document(currentUserID);
+                                WriteBatch batch = mFirestore.batch();
+                                batch.update(eventsRef, "requests", FieldValue.arrayUnion(currentUserID));
+                                batch.update(usersRef, "requests", FieldValue.arrayUnion(item.getItemID()));
+                                batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+                                            dialog.dismiss();
+                                            mEventsModelArrayList.remove(position);
+                                            mAdapter.notifyDataSetChanged();
+                                            Toast.makeText(SearchEventActivity.this, "Pomyślnie wysłano prośbę o dołączenie", Toast.LENGTH_SHORT).show();
+                                        }else{
+                                            Toast.makeText(SearchEventActivity.this, "Wystąpił błąd, spróbuj ponownie później", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+                dialog.show();
+            }
+        });
+        mEventsList.setAdapter(mAdapter);
+
         Query query = geoQuery.limit(PAGINATION_LIMIT).getQuery();
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -179,18 +226,18 @@ public class SearchEventActivity extends AppCompatActivity {
                 TextView emptyText = findViewById(R.id.search_event_empty_text);
                 if (task.isSuccessful()) {
                     for (DocumentSnapshot document : task.getResult()) {
-                        if (!mUserID.equals(document.get("userID"))) {
+                        EventsModel model = document.toObject(EventsModel.class);
+                        model.setItemID(document.getId());
+                        if (!mUserID.equals(model.getUserID())) {
                             Timestamp currentTime = Timestamp.now();
-                            Timestamp documentTime = document.getTimestamp("timeStamp");
+                            Timestamp documentTime = model.getTimeStamp();
                             long diff = documentTime.getSeconds() - currentTime.getSeconds();
                             if (diff <= 0) {
                                 mFirestore.collection("events").document(document.getId()).delete();
-                            } else if (((ArrayList<String>) document.get("requests")).contains(mUserID) || ((ArrayList<String>) document.get("members")).contains(mUserID)) {
+                            } else if (model.getRequests().contains(mUserID) || model.getMembers().contains(mUserID)) {
                                 continue;
                             } else {
-                                EventsModel ci = document.toObject(EventsModel.class);
-                                ci.setItemID(document.getId());
-                                mEventsModelArrayList.add(ci);
+                                mEventsModelArrayList.add(model);
                             }
                         }
                     }
@@ -198,16 +245,7 @@ public class SearchEventActivity extends AppCompatActivity {
                         emptyText.setVisibility(View.VISIBLE);
                     } else{
                         emptyText.setVisibility(View.GONE);
-                        mAdapter = new EventsAdapter(mEventsModelArrayList, getApplicationContext());
-                        mAdapter.setOnEventItemClick(new EventsAdapter.OnEventItemClick() {
-                            @Override
-                            public void OnItemClick(int position) {
-                                Intent preview = new Intent(SearchEventActivity.this, EventPreviewActivity.class);
-                                preview.putExtra("model", mEventsModelArrayList.get(position));
-                                startActivity(preview);
-                            }
-                        });
-                        mEventsList.setAdapter(mAdapter);
+                        mAdapter.notifyDataSetChanged();
 
                         mLastVisible = task.getResult().getDocuments()
                                 .get(task.getResult().size() - 1);
@@ -276,40 +314,8 @@ public class SearchEventActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(final Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search_events, menu);
-
-        final SearchView searchView = (SearchView) menu.findItem(R.id.app_bar_search).getActionView();
-        searchView.setQueryHint(getString(R.string.search_themes));
-        searchView.setIconified(false);
-
-        int id = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
-        TextView textView = (TextView) searchView.findViewById(id);
-        textView.setTextColor(Color.WHITE);
-        textView.setHintTextColor(Color.rgb(220, 220, 220));
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                CommonMethods.hideKeyboard(SearchEventActivity.this);
-                mAdapter.getFilter().filter(query);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                CommonMethods.hideKeyboard(SearchEventActivity.this);
-                menu.findItem(R.id.app_bar_search).collapseActionView();
-                mAdapter.getFilter().filter("");
-                return true;
-            }
-        });
         return true;
     }
 

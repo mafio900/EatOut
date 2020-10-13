@@ -1,60 +1,48 @@
 package pl.highelo.eatoutwithstrangers.EventPages;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.paging.PagedList;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.firebase.ui.firestore.SnapshotParser;
+import com.firebase.ui.firestore.paging.FirestorePagingOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+
+import pl.highelo.eatoutwithstrangers.EventPages.JoinedEventPreview.JoinedEventPreviewActivity;
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsPaginationAdapter;
 import pl.highelo.eatoutwithstrangers.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link JoinedEventsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class JoinedEventsFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private FirebaseFirestore mFirestore;
+    private EventsPaginationAdapter mAdapter;
+    private RecyclerView mRecyclerView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     public JoinedEventsFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment JoinedEventsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static JoinedEventsFragment newInstance(String param1, String param2) {
-        JoinedEventsFragment fragment = new JoinedEventsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -62,5 +50,60 @@ public class JoinedEventsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_joined_events, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mRecyclerView = view.findViewById(R.id.joined_events_recycler_view);
+        mSwipeRefreshLayout = view.findViewById(R.id.joined_events_swipe_layout);
+
+        PagedList.Config config = new PagedList.Config.Builder()
+                .setInitialLoadSizeHint(5)
+                .setPageSize(5)
+                .build();
+        mFirestore = FirebaseFirestore.getInstance();
+        Query query = mFirestore.collection("events").whereArrayContains("members", FirebaseAuth.getInstance().getCurrentUser().getUid()).orderBy("timeStamp", Query.Direction.ASCENDING);
+
+        FirestorePagingOptions options = new FirestorePagingOptions.Builder<EventsModel>()
+                .setLifecycleOwner(this)
+                .setQuery(query, config, new SnapshotParser<EventsModel>() {
+                    @NonNull
+                    @Override
+                    public EventsModel parseSnapshot(@NonNull DocumentSnapshot snapshot) {
+                        EventsModel model = snapshot.toObject(EventsModel.class);
+                        model.setItemID(snapshot.getId());
+                        return model;
+                    }
+                })
+                .build();
+        EventsPaginationAdapter.OnItemClickListener listener = new EventsPaginationAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(DocumentSnapshot item) {
+                EventsModel model = item.toObject(EventsModel.class);
+                model.setItemID(item.getId());
+                Intent intent = new Intent(getContext(), JoinedEventPreviewActivity.class);
+                intent.putExtra("model", model);
+                startActivity(intent);
+            }
+        };
+        mAdapter = new EventsPaginationAdapter(options, mSwipeRefreshLayout, listener);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        mRecyclerView.setAdapter(mAdapter);
+        final TextView emptyText = view.findViewById(R.id.joined_events_empty_text);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mAdapter.refresh();
+                if(mAdapter.getCurrentList().size() == 0){
+                    emptyText.setVisibility(View.VISIBLE);
+                }
+                else {
+                    emptyText.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 }

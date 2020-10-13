@@ -1,4 +1,4 @@
-package pl.highelo.eatoutwithstrangers.EventPages;
+package pl.highelo.eatoutwithstrangers.EventPages.CreateEvent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -9,6 +9,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.TextUtils;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TimePicker;
@@ -33,6 +35,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,8 +63,13 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
     private Toolbar mToolbar;
 
     private TextInputLayout mAddress, mEventDate, mTheme, mDescription, mMaxPeople;
+    private ImageView mImage;
+    private Uri mImageUri;
     private Button mCreateEventButton;
     private ProgressBar mProgressBar;
+
+    private FirebaseStorage mStorage;
+    private StorageReference mStorageReference;
 
     //vars
     private LatLng mLatLng;
@@ -85,6 +97,7 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
         mCreateEventButton = findViewById(R.id.create_event_button);
         mProgressBar = findViewById(R.id.create_event_progressbar);
         mMaxPeople = findViewById(R.id.create_event_max_people);
+        mImage = findViewById(R.id.create_event_image);
 
         mMaxPeople.getEditText().setFilters(new InputFilter[]{new CommonMethods.InputFilterMinMax("1", "10")});
 
@@ -105,11 +118,33 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
                 saveEvent();
             }
         });
+
+        mImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                imageClick();
+            }
+        });
+    }
+
+    public void imageClick() {
+        CropImage.activity()
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .setAspectRatio(16, 9)
+                .setMinCropResultSize(640, 360)
+                .start(this);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                mImageUri = result.getUri();
+                mImage.setImageURI(mImageUri);
+            }
+        }
         if (requestCode == LOCATION_REQUEST_CODE) {
             if (resultCode == RESULT_OK && data != null) {
                 mPlaceAddress = data.getStringExtra("placeAddress");
@@ -180,12 +215,10 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
     }
 
     public boolean isServicesOK() {
-        Log.d(TAG, "isServicesOK: checking google services");
         int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
 
         if (available == ConnectionResult.SUCCESS) {
             //everything ok
-            Log.d(TAG, "isServicesOK: google services are working");
             return true;
 
         } else if (GoogleApiAvailability.getInstance().isUserResolvableError(available)) {
@@ -215,7 +248,7 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
         }
         if (TextUtils.isEmpty(mDescription.getEditText().getText().toString()) || mDescription.getEditText().getText().toString().trim().length() < 5) {
             flag = false;
-            mDescription.setError("Description must have at least 5 chars");
+            mDescription.setError(getString(R.string.description_must_have_atleast_5_chars));
         } else {
             mDescription.setError(null);
         }
@@ -231,12 +264,18 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
         } else {
             mMaxPeople.setError(null);
         }
+        if(mImageUri == null){
+            flag = false;
+        }
         if (flag) {
             mProgressBar.setVisibility(View.VISIBLE);
             final ScrollView scrollView = findViewById(R.id.create_event_scroll_view);
             scrollView.setVisibility(View.INVISIBLE);
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
             FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
+            mStorage = FirebaseStorage.getInstance();
+            mStorageReference = mStorage.getReference();
+
             final CollectionReference collectionReference = mFirestore.collection("events");
 
             Map<String, Object> event = new HashMap<>();
@@ -253,16 +292,27 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
 
             collectionReference.add(event).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                 @Override
-                public void onComplete(@NonNull Task<DocumentReference> task) {
+                public void onComplete(@NonNull final Task<DocumentReference> task) {
                     if (task.isSuccessful()) {
-                        ExtensionKt.setLocation(task.getResult(), mLatLng.latitude, mLatLng.longitude, "l", true).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        mStorageReference.child("events_images" + task.getResult().getId()).putFile(mImageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                             @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(CreateEventActivity.this, R.string.create_event_successful, Toast.LENGTH_LONG).show();
-                                    finish();
-                                }
-                                else {
+                            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task1) {
+                                if(task1.isSuccessful()){
+                                    ExtensionKt.setLocation(task.getResult(), mLatLng.latitude, mLatLng.longitude, "l", true).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Toast.makeText(CreateEventActivity.this, R.string.create_event_successful, Toast.LENGTH_LONG).show();
+                                                finish();
+                                            }
+                                            else {
+                                                Toast.makeText(CreateEventActivity.this, R.string.error_while_creating_event, Toast.LENGTH_LONG).show();
+                                                mProgressBar.setVisibility(View.GONE);
+                                                scrollView.setVisibility(View.VISIBLE);
+                                            }
+                                        }
+                                    });
+                                }else{
                                     Toast.makeText(CreateEventActivity.this, R.string.error_while_creating_event, Toast.LENGTH_LONG).show();
                                     mProgressBar.setVisibility(View.GONE);
                                     scrollView.setVisibility(View.VISIBLE);

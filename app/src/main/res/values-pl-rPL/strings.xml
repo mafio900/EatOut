@@ -94,7 +94,7 @@
     <string name="incorrect_old_password">Niepoprawne stare hasło!</string>
     <string name="live_in">Mieszka w</string>
     <string name="accept_request">Akceptuj prośbę</string>
-    <string name="joined">Dołączone</string>
+    <string name="joined">Dołączyło</string>
     <string name="pendings">Oczekujące</string>
     <string name="write_message">Napisz wiadomość…</string>
     <string name="send_button_descr">przycisk do wysłania wiadomości</string>
@@ -217,4 +217,9 @@
     <string name="error_while_searching_area">Wystąpił błąd podczas szukania wydarzeń</string>
     <string name="did_not_joined_to_events_yet">Nie dołączyłeś do żadnego wydarzenia</string>
     <string name="didnt_requested_events">Nie wysłałeś żadnej prośby o dołączenie do wydarzenia</string>
+    <string name="requested_events">Wysłane prośby</string>
+    <string name="sure_to_join_event">Czy na pewno chcesz dołączyć do tego wydarzenia?</string>
+    <string name="description_must_have_atleast_5_chars">Opis musi posiadać co najmniej 5 znaków</string>
+    <string name="event_details">Szczegóły wydarzenia</string>
+    <string name="event_image">Zdjęcie wydarzenia</string>
 </resources>

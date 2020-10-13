@@ -1,5 +1,6 @@
 package pl.highelo.eatoutwithstrangers.ModelsAndUtilities;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,20 +14,25 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.firebase.ui.firestore.paging.LoadingState;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import pl.highelo.eatoutwithstrangers.R;
 
 public class EventsPaginationAdapter extends FirestorePagingAdapter<EventsModel, EventsPaginationAdapter.EventsPaginationViewHolder> {
 
+    private static final String TAG = "EventsPaginationAdapter";
+
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private OnItemClickListener mListener;
 
     public EventsPaginationAdapter(@NonNull FirestorePagingOptions<EventsModel> options) {
         super(options);
     }
 
-    public EventsPaginationAdapter(@NonNull FirestorePagingOptions<EventsModel> options, SwipeRefreshLayout swipeRefreshLayout) {
+    public EventsPaginationAdapter(@NonNull FirestorePagingOptions<EventsModel> options, SwipeRefreshLayout swipeRefreshLayout, OnItemClickListener listener) {
         super(options);
         mSwipeRefreshLayout = swipeRefreshLayout;
+        mListener = listener;
     }
 
     @Override
@@ -40,7 +46,7 @@ public class EventsPaginationAdapter extends FirestorePagingAdapter<EventsModel,
     @Override
     public EventsPaginationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_event_manage_item, parent, false);
-        return new EventsPaginationViewHolder(view);
+        return new EventsPaginationViewHolder(view, mListener);
     }
 
     @Override
@@ -74,16 +80,25 @@ public class EventsPaginationAdapter extends FirestorePagingAdapter<EventsModel,
     }
 
 
-    public static class EventsPaginationViewHolder extends RecyclerView.ViewHolder {
+    public class EventsPaginationViewHolder extends RecyclerView.ViewHolder {
 
         public TextView eventTheme, eventAddress, eventDate;
 
-        public EventsPaginationViewHolder(@NonNull View itemView) {
+        public EventsPaginationViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
             eventTheme = itemView.findViewById(R.id.list_event_theme);
             eventAddress = itemView.findViewById(R.id.list_event_address);
             eventDate = itemView.findViewById(R.id.list_event_date);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.onItemClick(getItem(getAdapterPosition()));
+                }
+            });
         }
     }
 
+    public interface OnItemClickListener{
+        void onItemClick(DocumentSnapshot item);
+    }
 }

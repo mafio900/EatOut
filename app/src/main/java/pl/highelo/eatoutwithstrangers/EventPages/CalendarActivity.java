@@ -9,6 +9,7 @@ import android.os.Bundle;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import pl.highelo.eatoutwithstrangers.EventPages.Adapters.CalendarPageAdapter;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.BottomNavigationInterface;
 import pl.highelo.eatoutwithstrangers.R;
 
