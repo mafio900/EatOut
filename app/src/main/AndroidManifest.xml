@@ -14,7 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".AdminActivities.AdminActivity" />
+        <activity android:name=".AdminActivities.AdminActivity"
+            android:parentActivityName=".ProfileActivities.ProfileActivity"/>
         <activity
             android:name=".AdminActivities.ReportActivity"
             android:configChanges="orientation|screenSize|keyboard"

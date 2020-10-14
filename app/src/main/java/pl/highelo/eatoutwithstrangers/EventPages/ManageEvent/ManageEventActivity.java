@@ -1,6 +1,7 @@
 package pl.highelo.eatoutwithstrangers.EventPages.ManageEvent;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager2.widget.ViewPager2;
@@ -10,6 +11,10 @@ import android.os.Bundle;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import pl.highelo.eatoutwithstrangers.EventPages.Adapters.ManagePagerAdapter;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
@@ -21,6 +26,7 @@ public class ManageEventActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private TabLayout mManageTabLayout;
     private ViewPager2 mManageViewPager;
+    private FirebaseFirestore mFirestore;
 
     private EventsModel mEventsModel;
 
@@ -35,8 +41,23 @@ public class ManageEventActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        mFirestore = FirebaseFirestore.getInstance();
+
         Intent intent = getIntent();
         mEventsModel = intent.getParcelableExtra("model");
+
+        mFirestore.collection("events").document(mEventsModel.getItemID()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (value != null) {
+                    mEventsModel = value.toObject(EventsModel.class);
+                    mEventsModel.setItemID(value.getId());
+                    Intent intent = new Intent("event_broadcast");
+                    intent.putExtra("model",mEventsModel);
+                    sendBroadcast(intent);
+                }
+            }
+        });
 
         mManageTabLayout = (TabLayout) findViewById(R.id.manage_tab_layout);
         mManageTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);

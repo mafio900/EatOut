@@ -1,8 +1,11 @@
 package pl.highelo.eatoutwithstrangers.EventPages;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -21,13 +24,17 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.firebase.ui.firestore.SnapshotParser;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.WriteBatch;
+
+import java.util.List;
 
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.UsersAdapter;
@@ -47,6 +54,8 @@ public class ParticipantsFragment extends Fragment {
 
     private FirebaseFirestore mFirestore;
     private FirebaseAuth mAuth;
+
+    private BroadcastReceiver receiverUpdateDownload;
 
     public ParticipantsFragment() {
         // Required empty public constructor
@@ -80,7 +89,13 @@ public class ParticipantsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Query query = mFirestore.collection("users").whereArrayContains("joinedEvents", mEventsModel.getItemID());
+        FirebaseUser user = mAuth.getCurrentUser();
+        Query query;
+        if(user.getUid().equals(mEventsModel.getUserID())){
+            query = mFirestore.collection("users").whereArrayContains("joinedEvents", mEventsModel.getItemID());
+        }else{
+            query = mFirestore.collection("users").whereArrayContains("joinedEvents", mEventsModel.getItemID()).whereNotEqualTo("email", mAuth.getCurrentUser().getEmail());
+        }
         FirestoreRecyclerOptions<UsersModel> options = new FirestoreRecyclerOptions.Builder<UsersModel>()
                 .setQuery(query, new SnapshotParser<UsersModel>() {
                     @NonNull
@@ -101,7 +116,16 @@ public class ParticipantsFragment extends Fragment {
                 startActivity(intent);
             }
         });
-        if (mAuth.getCurrentUser().getUid().equals(mEventsModel.getUserID())) {
+        receiverUpdateDownload = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                mEventsModel = intent.getParcelableExtra("model");
+            }
+        };
+        IntentFilter filter = new IntentFilter("event_broadcast");
+        getActivity().registerReceiver(receiverUpdateDownload, filter);
+
+        if (user.getUid().equals(mEventsModel.getUserID())) {
             mAdapter.setOnUsersCancelClick(new UsersAdapter.OnUsersCancelClick() {
                 @Override
                 public void OnCancelClick(final int position) {
@@ -153,5 +177,12 @@ public class ParticipantsFragment extends Fragment {
     public void onStop() {
         super.onStop();
         mAdapter.stopListening();
+        if (receiverUpdateDownload != null) {
+            try {
+                getActivity().unregisterReceiver(receiverUpdateDownload);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

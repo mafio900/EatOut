@@ -1,17 +1,14 @@
 package pl.highelo.eatoutwithstrangers.AdminActivities;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,6 +19,7 @@ import pl.highelo.eatoutwithstrangers.R;
 
 public class AdminActivity extends AppCompatActivity {
 
+    private Toolbar mToolbar;
     private TabLayout mTabLayout;
     private ViewPager2 mViewPager;
 
@@ -41,6 +39,10 @@ public class AdminActivity extends AppCompatActivity {
         CommonMethods.validateUser(this);
 
         setContentView(R.layout.activity_admin);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setTitle(R.string.admin_panel);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mTabLayout = (TabLayout) findViewById(R.id.admin_tablayout);
         //mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);

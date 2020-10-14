@@ -2,47 +2,78 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/list_event_parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/list_event_theme"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/list_event_background"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Temat"
-        android:textSize="24sp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/list_event_address"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Adres"
-        android:textColor="#666"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@+id/list_event_theme"
-        app:layout_constraintTop_toBottomOf="@+id/list_event_theme" />
+        <TextView
+            android:id="@+id/list_event_theme"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="Temat"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toStartOf="@+id/list_event_requests"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/list_event_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="Data"
-        android:textColor="#666"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/list_event_manage_divider"
-        app:layout_constraintStart_toStartOf="@+id/list_event_address"
-        app:layout_constraintTop_toBottomOf="@+id/list_event_address" />
+        <TextView
+            android:id="@+id/list_event_requests"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:text="0"
+            android:textColor="@color/accent"
+            android:textSize="24sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/list_event_theme" />
+
+        <TextView
+            android:id="@+id/list_event_address"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Adres"
+            android:textColor="#666"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/list_event_theme"
+            app:layout_constraintTop_toBottomOf="@+id/list_event_theme" />
+
+        <TextView
+            android:id="@+id/list_event_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="Data"
+            android:textColor="#666"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="@+id/list_event_address"
+            app:layout_constraintTop_toBottomOf="@+id/list_event_address" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
         android:id="@+id/list_event_manage_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="8dp"
         android:background="@android:color/darker_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/list_event_background" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

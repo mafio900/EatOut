@@ -26,6 +26,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -43,6 +44,7 @@ import java.io.File;
 import java.io.IOException;
 
 import id.zelory.compressor.Compressor;
+import pl.highelo.eatoutwithstrangers.AdminActivities.AdminActivity;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.BottomNavigationInterface;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.R;
@@ -108,8 +110,16 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.menu_profile, menu);
+        mAuth.getCurrentUser().getIdToken(false).addOnSuccessListener(new OnSuccessListener<GetTokenResult>() {
+            @Override
+            public void onSuccess(GetTokenResult getTokenResult) {
+                if(getTokenResult.getClaims().get("admin") != null && ((Boolean) getTokenResult.getClaims().get("admin"))){
+                    menu.getItem(2).setVisible(true);
+                }
+            }
+        });
         return true;
     }
 
@@ -117,6 +127,12 @@ public class ProfileActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.app_bar_edit) {
             startActivity(new Intent(ProfileActivity.this, EditProfileActivity.class));
+        }
+        if (item.getItemId() == R.id.app_bar_change_password) {
+            startActivity(new Intent(ProfileActivity.this, ChangePasswordActivity.class));
+        }
+        if (item.getItemId() == R.id.app_bar_admin) {
+            startActivity(new Intent(ProfileActivity.this, AdminActivity.class));
         }
         return true;
     }

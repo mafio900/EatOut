@@ -1,6 +1,5 @@
 package pl.highelo.eatoutwithstrangers.ModelsAndUtilities;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +13,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.firebase.ui.firestore.paging.LoadingState;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import pl.highelo.eatoutwithstrangers.R;
@@ -33,6 +33,8 @@ public class EventsPaginationAdapter extends FirestorePagingAdapter<EventsModel,
         super(options);
         mSwipeRefreshLayout = swipeRefreshLayout;
         mListener = listener;
+
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.primary);
     }
 
     @Override
@@ -40,6 +42,12 @@ public class EventsPaginationAdapter extends FirestorePagingAdapter<EventsModel,
         holder.eventTheme.setText(model.getTheme());
         holder.eventAddress.setText(model.getPlaceAddress());
         holder.eventDate.setText(CommonMethods.parseDate(model.getTimeStamp()));
+
+        if(FirebaseAuth.getInstance().getUid().equals(model.getUserID()) && model.getRequests().size() > 0){
+            holder.eventRequests.setVisibility(View.VISIBLE);
+            holder.eventRequests.setText(String.valueOf(model.getRequests().size()));
+            holder.itemView.findViewById(R.id.list_event_background).setBackground(holder.itemView.getContext().getDrawable(R.drawable.circle_background));
+        }
     }
 
     @NonNull
@@ -82,11 +90,12 @@ public class EventsPaginationAdapter extends FirestorePagingAdapter<EventsModel,
 
     public class EventsPaginationViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView eventTheme, eventAddress, eventDate;
+        public TextView eventTheme, eventRequests, eventAddress, eventDate;
 
         public EventsPaginationViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
             eventTheme = itemView.findViewById(R.id.list_event_theme);
+            eventRequests = itemView.findViewById(R.id.list_event_requests);
             eventAddress = itemView.findViewById(R.id.list_event_address);
             eventDate = itemView.findViewById(R.id.list_event_date);
             itemView.setOnClickListener(new View.OnClickListener() {

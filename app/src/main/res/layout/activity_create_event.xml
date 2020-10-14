@@ -78,6 +78,40 @@
                     android:hint="@string/meeting_date" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="@string/event_details"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="@+id/create_event_date"
+                app:layout_constraintTop_toBottomOf="@+id/create_event_date" />
+
+            <View
+                android:id="@+id/list_event_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@android:color/darker_gray"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+            <TextView
+                android:id="@+id/create_event_image_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/event_image"
+                android:textColor="#777"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="@+id/textView2"
+                app:layout_constraintTop_toBottomOf="@+id/list_event_divider" />
+
             <ImageView
                 android:id="@+id/create_event_image"
                 android:layout_width="0dp"
@@ -87,8 +121,8 @@
                 android:scaleType="fitStart"
                 app:layout_constraintEnd_toEndOf="@+id/create_event_date"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/textView3"
-                app:layout_constraintTop_toBottomOf="@+id/textView3"
+                app:layout_constraintStart_toStartOf="@+id/create_event_image_text"
+                app:layout_constraintTop_toBottomOf="@+id/create_event_image_text"
                 app:srcCompat="@drawable/placeholder_img" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -157,40 +191,6 @@
                 android:text="@string/create_event"
                 app:layout_constraintEnd_toEndOf="@+id/create_event_max_people"
                 app:layout_constraintTop_toBottomOf="@+id/create_event_max_people" />
-
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:text="@string/event_details"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="18sp"
-                app:layout_constraintStart_toStartOf="@+id/create_event_date"
-                app:layout_constraintTop_toBottomOf="@+id/create_event_date" />
-
-            <View
-                android:id="@+id/list_event_divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:background="@android:color/darker_gray"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView2" />
-
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/event_image"
-                android:textColor="#777"
-                android:textSize="18sp"
-                app:layout_constraintStart_toStartOf="@+id/textView2"
-                app:layout_constraintTop_toBottomOf="@+id/list_event_divider" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,13 +1,18 @@
 package pl.highelo.eatoutwithstrangers.EventPages;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +36,7 @@ import pl.highelo.eatoutwithstrangers.R;
 
 public class EventInfoFragment extends Fragment {
     private static final String ARG_EVENTS_MODEL = "model";
-    private static final String ARG_EVENTS_CREATOR = "creator";
+    private static final String TAG = "EventInfoFragment";
 
     private EventsModel mEventsModel;
 
@@ -40,6 +45,8 @@ public class EventInfoFragment extends Fragment {
 
     private FirebaseFirestore mFirestore;
     private FirebaseAuth mAuth;
+
+    private BroadcastReceiver receiverUpdateDownload;
 
     public EventInfoFragment() {
         // Required empty public constructor
@@ -83,13 +90,16 @@ public class EventInfoFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
 
-        mEventTheme.setText(getString(R.string.theme) + ": " + mEventsModel.getTheme());
-        mEventName.setText(getString(R.string.place)+ ": " + mEventsModel.getDescription());
-        mEventAddress.setText(mEventsModel.getPlaceAddress());
-        String newDate = CommonMethods.parseDate(mEventsModel.getTimeStamp());
-        mEventDate.setText(getString(R.string.date_of_beginning)+ ": " + newDate);
-        mEventMaxPeople.setText(getString(R.string.max_participants)+ ": " + mEventsModel.getMaxPeople());
-        mEventJoinedPeople.setText(getString(R.string.already_joined)+ ": " + mEventsModel.getMembers().size());
+        receiverUpdateDownload = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                mEventsModel = intent.getParcelableExtra("model");
+                setData();
+            }
+        };
+        IntentFilter filter = new IntentFilter("event_broadcast");
+        getActivity().registerReceiver(receiverUpdateDownload, filter);
+        setData();
 
         if(mAuth.getCurrentUser().getUid().equals(mEventsModel.getUserID())) {
             mActionButton.setOnClickListener(new View.OnClickListener() {
@@ -194,6 +204,28 @@ public class EventInfoFragment extends Fragment {
                     dialog.show();
                 }
             });
+        }
+    }
+
+    private void setData(){
+        mEventTheme.setText(getString(R.string.theme) + ": " + mEventsModel.getTheme());
+        mEventName.setText(getString(R.string.place)+ ": " + mEventsModel.getDescription());
+        mEventAddress.setText(mEventsModel.getPlaceAddress());
+        String newDate = CommonMethods.parseDate(mEventsModel.getTimeStamp());
+        mEventDate.setText(getString(R.string.date_of_beginning)+ ": " + newDate);
+        mEventMaxPeople.setText(getString(R.string.max_participants)+ ": " + mEventsModel.getMaxPeople());
+        mEventJoinedPeople.setText(getString(R.string.already_joined)+ ": " + mEventsModel.getMembers().size());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (receiverUpdateDownload != null) {
+            try {
+                getActivity().unregisterReceiver(receiverUpdateDownload);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

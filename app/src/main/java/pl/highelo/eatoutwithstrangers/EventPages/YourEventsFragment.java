@@ -76,7 +76,6 @@ public class YourEventsFragment extends Fragment {
                     public EventsModel parseSnapshot(@NonNull DocumentSnapshot snapshot) {
                         EventsModel model = snapshot.toObject(EventsModel.class);
                         model.setItemID(snapshot.getId());
-                        Log.d(TAG, "parseSnapshot: " + model.getTheme() + " l: " + model.getL());
                         if(model.getL() == 0.0){
                             mFirestore.collection("events").document(model.getItemID()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override

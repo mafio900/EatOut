@@ -1,15 +1,22 @@
 package pl.highelo.eatoutwithstrangers.EventPages.JoinedEventPreview;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import pl.highelo.eatoutwithstrangers.EventPages.Adapters.JoinedEventPreviewPageAdapter;
 import pl.highelo.eatoutwithstrangers.EventPages.Adapters.ManagePagerAdapter;
@@ -35,6 +42,27 @@ public class JoinedEventPreviewActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         mEventsModel = intent.getParcelableExtra("model");
+
+        FirebaseFirestore.getInstance().collection("events").document(mEventsModel.getItemID()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (value != null) {
+                    mEventsModel = value.toObject(EventsModel.class);
+                    mEventsModel.setItemID(value.getId());
+                    if(!mEventsModel.getMembers().contains(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                        Toast.makeText(JoinedEventPreviewActivity.this, R.string.kicked, Toast.LENGTH_SHORT).show();
+                        finish();
+                    }else{
+                        Intent intent = new Intent("event_broadcast");
+                        intent.putExtra("model", mEventsModel);
+                        sendBroadcast(intent);
+                    }
+                }else{
+                    Toast.makeText(JoinedEventPreviewActivity.this, R.string.event_doesnt_exist, Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            }
+        });
 
         mTabLayout = (TabLayout) findViewById(R.id.joined_event_preview_tab_layout);
         //mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);

@@ -20,6 +20,7 @@ import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -63,6 +64,7 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
     private Toolbar mToolbar;
 
     private TextInputLayout mAddress, mEventDate, mTheme, mDescription, mMaxPeople;
+    private TextView mImageText;
     private ImageView mImage;
     private Uri mImageUri;
     private Button mCreateEventButton;
@@ -98,6 +100,7 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
         mProgressBar = findViewById(R.id.create_event_progressbar);
         mMaxPeople = findViewById(R.id.create_event_max_people);
         mImage = findViewById(R.id.create_event_image);
+        mImageText = findViewById(R.id.create_event_image_text);
 
         mMaxPeople.getEditText().setFilters(new InputFilter[]{new CommonMethods.InputFilterMinMax("1", "10")});
 
@@ -266,6 +269,9 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
         }
         if(mImageUri == null){
             flag = false;
+            mImageText.setError("Musisz wgrać jakiś obrazek");
+        }else{
+            mImageText.setError(null);
         }
         if (flag) {
             mProgressBar.setVisibility(View.VISIBLE);

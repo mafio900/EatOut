@@ -116,6 +116,7 @@ public class ChatFragment extends Fragment {
         });
 
         mSwipeRefreshLayout = view.findViewById(R.id.chat_swipelayout);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.primary);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

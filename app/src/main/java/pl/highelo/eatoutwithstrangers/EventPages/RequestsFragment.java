@@ -1,13 +1,17 @@
 package pl.highelo.eatoutwithstrangers.EventPages;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,14 +20,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.firebase.ui.firestore.SnapshotParser;
+import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.WriteBatch;
 
@@ -48,7 +56,10 @@ public class RequestsFragment extends Fragment {
 
     private FirebaseFirestore mFirestore;
 
-    public RequestsFragment(){}
+    private BroadcastReceiver receiverUpdateDownload;
+
+    public RequestsFragment() {
+    }
 
     public static RequestsFragment newInstance(EventsModel eventsModel) {
         RequestsFragment fragment = new RequestsFragment();
@@ -70,8 +81,7 @@ public class RequestsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View v = inflater.inflate(R.layout.fragment_requests, container, false);
-        return v;
+        return inflater.inflate(R.layout.fragment_requests, container, false);
     }
 
     @Override
@@ -99,6 +109,14 @@ public class RequestsFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        receiverUpdateDownload = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                mEventsModel = intent.getParcelableExtra("model");
+            }
+        };
+        IntentFilter filter = new IntentFilter("event_broadcast");
+        getActivity().registerReceiver(receiverUpdateDownload, filter);
         mAdapter.setOnUsersAcceptClick(new UsersAdapter.OnUsersAcceptClick() {
             @Override
             public void OnAcceptClick(final int position) {
@@ -110,35 +128,35 @@ public class RequestsFragment extends Fragment {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                WriteBatch batch = mFirestore.batch();
+                                if (mEventsModel.getMembers().size() == mEventsModel.getMaxPeople()) {
+                                    Toast.makeText(getContext(), R.string.event_is_full, Toast.LENGTH_SHORT).show();
+                                } else {
+                                    WriteBatch batch = mFirestore.batch();
 
-                                Map<String, Object> eventMap = new HashMap<>();
-                                eventMap.put("requests", FieldValue.arrayRemove(mAdapter.getItem(position).getUserID()));
-                                eventMap.put("members", FieldValue.arrayUnion(mAdapter.getItem(position).getUserID()));
-                                DocumentReference evRef = mFirestore.collection("events").document(mEventsModel.getItemID());
-                                batch.update(evRef, eventMap);
+                                    Map<String, Object> eventMap = new HashMap<>();
+                                    eventMap.put("requests", FieldValue.arrayRemove(mAdapter.getItem(position).getUserID()));
+                                    eventMap.put("members", FieldValue.arrayUnion(mAdapter.getItem(position).getUserID()));
+                                    DocumentReference evRef = mFirestore.collection("events").document(mEventsModel.getItemID());
+                                    batch.update(evRef, eventMap);
 
-                                Map<String, Object> userMap = new HashMap<>();
-                                userMap.put("requests", FieldValue.arrayRemove(mEventsModel.getItemID()));
-                                userMap.put("joinedEvents", FieldValue.arrayUnion(mEventsModel.getItemID()));
-                                DocumentReference userRef = mFirestore.collection("users").document(mAdapter.getItem(position).getUserID());
-                                batch.update(userRef, userMap);
+                                    Map<String, Object> userMap = new HashMap<>();
+                                    userMap.put("requests", FieldValue.arrayRemove(mEventsModel.getItemID()));
+                                    userMap.put("joinedEvents", FieldValue.arrayUnion(mEventsModel.getItemID()));
+                                    DocumentReference userRef = mFirestore.collection("users").document(mAdapter.getItem(position).getUserID());
+                                    batch.update(userRef, userMap);
 
-                                batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if(task.isSuccessful()){
-                                            Toast.makeText(getContext(), R.string.user_has_been_added, Toast.LENGTH_LONG).show();
+                                    batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Toast.makeText(getContext(), R.string.user_has_been_added, Toast.LENGTH_LONG).show();
+                                            }
                                         }
-                                    }
-                                });
+                                    });
+                                }
                             }
                         });
-                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
+                builder.setNegativeButton(android.R.string.cancel, null);
                 dialog = builder.create();
                 dialog.show();
             }
@@ -156,9 +174,9 @@ public class RequestsFragment extends Fragment {
                             public void onClick(DialogInterface dialog, int which) {
                                 WriteBatch batch = mFirestore.batch();
                                 DocumentReference evRef = mFirestore.collection("events").document(mEventsModel.getItemID());
-                                batch.update(evRef,"requests", FieldValue.arrayRemove(mAdapter.getItem(position).getUserID()));
+                                batch.update(evRef, "requests", FieldValue.arrayRemove(mAdapter.getItem(position).getUserID()));
                                 DocumentReference userRef = mFirestore.collection("users").document(mAdapter.getItem(position).getUserID());
-                                batch.update(userRef,"requests", FieldValue.arrayRemove(mEventsModel.getItemID()));
+                                batch.update(userRef, "requests", FieldValue.arrayRemove(mEventsModel.getItemID()));
 
                                 batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
@@ -192,5 +210,12 @@ public class RequestsFragment extends Fragment {
     public void onStop() {
         super.onStop();
         mAdapter.stopListening();
+        if (receiverUpdateDownload != null) {
+            try {
+                getActivity().unregisterReceiver(receiverUpdateDownload);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

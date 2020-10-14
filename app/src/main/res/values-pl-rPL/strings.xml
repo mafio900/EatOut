@@ -115,7 +115,7 @@
     <string name="user_has_been_reported">Użytkownik został zgłoszony</string>
     <string name="error_while_reporting">Wystąpił błąd przy wysyłaniu zgłoszenia!</string>
     <string name="review_events">Przeglądaj wydarzenie</string>
-    <string name="kicked_or_event_doesnt_exist">Zostałeś wyrzucony albo wydarzenie już nie istnieje!</string>
+    <string name="kicked">Zostałeś wyrzucony z wydarzenia!</string>
     <string name="joined_events">Dołączone wydarzenia</string>
     <string name="cannot_open_googles_map">Nie można otworzyć map google!</string>
     <string name="choose_localization">Wybierz lokalizację!</string>
@@ -222,4 +222,5 @@
     <string name="description_must_have_atleast_5_chars">Opis musi posiadać co najmniej 5 znaków</string>
     <string name="event_details">Szczegóły wydarzenia</string>
     <string name="event_image">Zdjęcie wydarzenia</string>
+    <string name="event_is_full">Wydarzenie jest pełne</string>
 </resources>
