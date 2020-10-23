@@ -4,6 +4,7 @@
     <string name="nav_open_drawer">Open drawer</string>
     <string name="nav_close_drawer">Close drawer</string>
 
+    <string name="you">You: </string>
     <string name="password">Password</string>
     <string name="email">E-mail</string>
     <string name="login">Log in</string>
@@ -224,4 +225,7 @@
     <string name="event_image">Event\'s image</string>
     <string name="event_is_full">Event is full</string>
     <string name="event_doesnt_exist">This event does not exist anymore</string>
+    <string name="private_messages">Private messages</string>
+    <string name="private_chat_with">Private chat with </string>
+    <string name="private_chat">Private chat</string>
 </resources>

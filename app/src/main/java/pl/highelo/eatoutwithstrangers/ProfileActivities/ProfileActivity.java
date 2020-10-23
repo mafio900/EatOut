@@ -47,6 +47,7 @@ import id.zelory.compressor.Compressor;
 import pl.highelo.eatoutwithstrangers.AdminActivities.AdminActivity;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.BottomNavigationInterface;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
+import pl.highelo.eatoutwithstrangers.ProfileActivities.PrivateMessages.PrivateMessagesActivity;
 import pl.highelo.eatoutwithstrangers.R;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -125,6 +126,9 @@ public class ProfileActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.app_bar_private_messages) {
+            startActivity(new Intent(ProfileActivity.this, PrivateMessagesActivity.class));
+        }
         if (item.getItemId() == R.id.app_bar_edit) {
             startActivity(new Intent(ProfileActivity.this, EditProfileActivity.class));
         }

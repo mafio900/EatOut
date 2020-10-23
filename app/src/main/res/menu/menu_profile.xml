@@ -5,6 +5,12 @@
     app:theme="@style/AppTheme">
 
     <item
+        android:id="@+id/app_bar_private_messages"
+        android:icon="@drawable/ic_message"
+        app:showAsAction="never"
+        android:title="@string/private_messages" />
+
+    <item
         android:id="@+id/app_bar_edit"
         android:icon="@drawable/ic_edit"
         app:showAsAction="never"

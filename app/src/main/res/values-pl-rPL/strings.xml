@@ -223,4 +223,9 @@
     <string name="event_details">Szczegóły wydarzenia</string>
     <string name="event_image">Zdjęcie wydarzenia</string>
     <string name="event_is_full">Wydarzenie jest pełne</string>
+    <string name="you">Ty: </string>
+    <string name="event_doesnt_exist">To wydarzenie już nie istnieje</string>
+    <string name="private_messages">Prywatne wiadomości</string>
+    <string name="private_chat_with">"Prywatny czat z "</string>
+    <string name="private_chat">Prywatny czat</string>
 </resources>
