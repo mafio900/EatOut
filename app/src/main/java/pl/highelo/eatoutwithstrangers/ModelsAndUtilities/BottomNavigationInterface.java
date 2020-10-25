@@ -72,8 +72,8 @@ public class BottomNavigationInterface {
             @Override
             public void onClick(View view) {
                 new AlertDialog.Builder(context)
-                    .setTitle("Wyloguj")
-                    .setMessage("Czy na pewno chcesz się wylogować?")
+                    .setTitle(R.string.logout)
+                    .setMessage(R.string.sure_to_logout)
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
