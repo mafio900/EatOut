@@ -228,4 +228,5 @@
     <string name="private_messages">Private messages</string>
     <string name="private_chat_with">Private chat with </string>
     <string name="private_chat">Private chat</string>
+    <string name="send">Send</string>
 </resources>

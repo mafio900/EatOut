@@ -97,6 +97,17 @@
         app:srcCompat="@drawable/ic_error"
         android:contentDescription="@string/report_button" />
 
+    <ImageButton
+        android:id="@+id/profile_preview_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/transparent"
+        android:tint="@color/primary"
+        app:layout_constraintBottom_toBottomOf="@+id/profile_preview_report_button"
+        app:layout_constraintEnd_toStartOf="@+id/profile_preview_report_button"
+        app:layout_constraintTop_toTopOf="@+id/profile_preview_report_button"
+        app:srcCompat="@drawable/ic_message" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>
