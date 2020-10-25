@@ -150,6 +150,7 @@ public class SearchEventActivity extends AppCompatActivity {
     }
 
     public void setLocation() {
+        mLocalizationButton.setVisibility(View.GONE);
         LocationResolver.LocationResult locationResult = new LocationResolver.LocationResult() {
             @Override
             public void gotLocation(Location location) {
@@ -176,44 +177,52 @@ public class SearchEventActivity extends AppCompatActivity {
         mAdapter.setOnEventItemClick(new EventsAdapter.OnEventItemClick() {
             @Override
             public void OnItemClick(final int position) {
-                final AlertDialog dialog = new AlertDialog.Builder(SearchEventActivity.this)
-                        .setTitle(getString(R.string.join_event))
-                        .setMessage(R.string.sure_to_join_event)
-                        .setPositiveButton(android.R.string.yes, null)
-                        .setNegativeButton(android.R.string.no, null)
-                        .create();
-                dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                    @Override
-                    public void onShow(DialogInterface dialogInterface) {
-                        Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                        positive.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                EventsModel item = mEventsModelArrayList.get(position);
-                                String currentUserID = mAuth.getCurrentUser().getUid();
-                                DocumentReference eventsRef = mFirestore.collection("events").document(item.getItemID());
-                                DocumentReference usersRef = mFirestore.collection("users").document(currentUserID);
-                                WriteBatch batch = mFirestore.batch();
-                                batch.update(eventsRef, "requests", FieldValue.arrayUnion(currentUserID));
-                                batch.update(usersRef, "requests", FieldValue.arrayUnion(item.getItemID()));
-                                batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if(task.isSuccessful()){
-                                            dialog.dismiss();
-                                            mEventsModelArrayList.remove(position);
-                                            mAdapter.notifyDataSetChanged();
-                                            Toast.makeText(SearchEventActivity.this, "Pomyślnie wysłano prośbę o dołączenie", Toast.LENGTH_SHORT).show();
-                                        }else{
-                                            Toast.makeText(SearchEventActivity.this, "Wystąpił błąd, spróbuj ponownie później", Toast.LENGTH_SHORT).show();
+                final EventsModel item = mEventsModelArrayList.get(position);
+                if(item.getMembers().size() == item.getMaxPeople()){
+                    new AlertDialog.Builder(SearchEventActivity.this)
+                            .setTitle(R.string.event_is_full)
+                            .setMessage(R.string.event_full_message)
+                            .setPositiveButton(android.R.string.ok, null)
+                            .show();
+                }else{
+                    final AlertDialog dialog = new AlertDialog.Builder(SearchEventActivity.this)
+                            .setTitle(getString(R.string.join_event))
+                            .setMessage(R.string.sure_to_join_event)
+                            .setPositiveButton(android.R.string.yes, null)
+                            .setNegativeButton(android.R.string.no, null)
+                            .create();
+                    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                        @Override
+                        public void onShow(DialogInterface dialogInterface) {
+                            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                            positive.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    String currentUserID = mAuth.getCurrentUser().getUid();
+                                    DocumentReference eventsRef = mFirestore.collection("events").document(item.getItemID());
+                                    DocumentReference usersRef = mFirestore.collection("users").document(currentUserID);
+                                    WriteBatch batch = mFirestore.batch();
+                                    batch.update(eventsRef, "requests", FieldValue.arrayUnion(currentUserID));
+                                    batch.update(usersRef, "requests", FieldValue.arrayUnion(item.getItemID()));
+                                    batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if(task.isSuccessful()){
+                                                dialog.dismiss();
+                                                mEventsModelArrayList.remove(position);
+                                                mAdapter.notifyDataSetChanged();
+                                                Toast.makeText(SearchEventActivity.this, "Pomyślnie wysłano prośbę o dołączenie", Toast.LENGTH_SHORT).show();
+                                            }else{
+                                                Toast.makeText(SearchEventActivity.this, "Wystąpił błąd, spróbuj ponownie później", Toast.LENGTH_SHORT).show();
+                                            }
                                         }
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });
-                dialog.show();
+                                    });
+                                }
+                            });
+                        }
+                    });
+                    dialog.show();
+                }
             }
         });
         mEventsList.setAdapter(mAdapter);

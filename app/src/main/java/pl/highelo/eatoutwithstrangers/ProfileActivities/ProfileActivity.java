@@ -98,14 +98,16 @@ public class ProfileActivity extends AppCompatActivity {
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                mProfileName.setText(documentSnapshot.get("fName").toString() + ",");
-                mProfileAge.setText(String.valueOf(CommonMethods.getAge(documentSnapshot.get("birthDate").toString())));
-                mProfileCity.setText(getString(R.string.live_in) + ": " + documentSnapshot.get("city").toString());
-                mProfileDescription.setText(documentSnapshot.get("description").toString());
-                Glide.with(ProfileActivity.this)
-                        .load(documentSnapshot.get("image"))
-                        .placeholder(R.drawable.ic_person)
-                        .into(mProfileImageView);
+                if(documentSnapshot != null && documentSnapshot.exists()){
+                    mProfileName.setText(documentSnapshot.get("fName").toString() + ",");
+                    mProfileAge.setText(String.valueOf(CommonMethods.getAge(documentSnapshot.get("birthDate").toString())));
+                    mProfileCity.setText(getString(R.string.live_in) + ": " + documentSnapshot.get("city").toString());
+                    mProfileDescription.setText(documentSnapshot.get("description").toString());
+                    Glide.with(ProfileActivity.this)
+                            .load(documentSnapshot.get("image"))
+                            .placeholder(R.drawable.ic_person)
+                            .into(mProfileImageView);
+                }
             }
         });
     }
@@ -117,7 +119,7 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onSuccess(GetTokenResult getTokenResult) {
                 if(getTokenResult.getClaims().get("admin") != null && ((Boolean) getTokenResult.getClaims().get("admin"))){
-                    menu.getItem(2).setVisible(true);
+                    menu.getItem(3).setVisible(true);
                 }
             }
         });
