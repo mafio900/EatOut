@@ -14,11 +14,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ProfileActivities.PrivateMessages.PrivateChatActivity"
-            android:parentActivityName=".ProfileActivities.PrivateMessages.PrivateMessagesActivity"/>
+        <activity android:name=".PrivateMessages.PrivateChatActivity"
+            android:parentActivityName=".PrivateMessages.PrivateMessagesActivity"/>
         <activity
-            android:name=".ProfileActivities.PrivateMessages.PrivateMessagesActivity"
-            android:parentActivityName=".ProfileActivities.ProfileActivity" />
+            android:name=".PrivateMessages.PrivateMessagesActivity"
+            android:configChanges="orientation|screenSize|keyboard"
+            android:launchMode="singleTop"/>
         <activity
             android:name=".AdminActivities.AdminActivity"
             android:parentActivityName=".ProfileActivities.ProfileActivity" />
@@ -66,11 +67,6 @@
             android:name=".SearchEvent.SearchEventActivity"
             android:configChanges="orientation|screenSize|keyboard"
             android:launchMode="singleTop" />
-        <activity
-            android:name=".SearchEvent.EventPreviewActivity"
-            android:configChanges="orientation|screenSize|keyboard"
-            android:launchMode="singleTop"
-            android:parentActivityName=".SearchEvent.SearchEventActivity" />
         <activity
             android:name=".EventPages.CalendarActivity"
             android:configChanges="orientation|screenSize|keyboard"

@@ -1,4 +1,4 @@
-package pl.highelo.eatoutwithstrangers.ProfileActivities.PrivateMessages;
+package pl.highelo.eatoutwithstrangers.PrivateMessages;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +16,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.BottomNavigationInterface;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.PrivateMessagesAdapter;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.PrivateMessagesModel;
@@ -36,11 +37,10 @@ public class PrivateMessagesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         CommonMethods.validateUser(this);
         setContentView(R.layout.activity_private_messages);
-
+        new BottomNavigationInterface(this, findViewById(R.id.parent_layout));
         mToolbar = findViewById(R.id.toolbar);
         mToolbar.setTitle(R.string.private_messages);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mFirestore = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();

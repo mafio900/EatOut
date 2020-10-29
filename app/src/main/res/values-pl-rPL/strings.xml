@@ -135,7 +135,7 @@
     <string name="successfully_update_data">Pomyślnie zaktualizowano dane!</string>
     <string name="something_went_wrong_while_updating_data">Coś poszło nie tak przy aktualizacji danych!</string>
     <string name="event_preview">Podgląd wydarzenia</string>
-    <string name="this_event_doesnt_exist_anymore">To wydarzenie już nie istnieje</string>
+    <!-- <string name="this_event_doesnt_exist_anymore">To wydarzenie już nie istnieje</string> -->
     <string name="search_events">Szukaj wydarzeń</string>
     <string name="search_themes">Szukaj tematów</string>
     <string name="email_is_required">E-mail jest wymagany</string>

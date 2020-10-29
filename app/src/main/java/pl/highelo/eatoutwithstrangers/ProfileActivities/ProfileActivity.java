@@ -2,12 +2,11 @@ package pl.highelo.eatoutwithstrangers.ProfileActivities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -24,7 +23,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.firestore.DocumentReference;
@@ -47,8 +45,8 @@ import id.zelory.compressor.Compressor;
 import pl.highelo.eatoutwithstrangers.AdminActivities.AdminActivity;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.BottomNavigationInterface;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
-import pl.highelo.eatoutwithstrangers.ProfileActivities.PrivateMessages.PrivateMessagesActivity;
 import pl.highelo.eatoutwithstrangers.R;
+import pl.highelo.eatoutwithstrangers.StartActivities.StartActivity;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -94,17 +92,17 @@ public class ProfileActivity extends AppCompatActivity {
                 imageClick();
             }
         });
-        DocumentReference documentReference = mFirestore.collection("users").document(mUserID);
-        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+        final DocumentReference documentReference = mFirestore.collection("users").document(mUserID);
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                if(documentSnapshot != null && documentSnapshot.exists()){
-                    mProfileName.setText(documentSnapshot.get("fName").toString() + ",");
-                    mProfileAge.setText(String.valueOf(CommonMethods.getAge(documentSnapshot.get("birthDate").toString())));
-                    mProfileCity.setText(getString(R.string.live_in) + ": " + documentSnapshot.get("city").toString());
-                    mProfileDescription.setText(documentSnapshot.get("description").toString());
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    mProfileName.setText(task.getResult().get("fName").toString() + ",");
+                    mProfileAge.setText(String.valueOf(CommonMethods.getAge(task.getResult().get("birthDate").toString())));
+                    mProfileCity.setText(getString(R.string.live_in) + ": " + task.getResult().get("city").toString());
+                    mProfileDescription.setText(task.getResult().get("description").toString());
                     Glide.with(ProfileActivity.this)
-                            .load(documentSnapshot.get("image"))
+                            .load(task.getResult().get("image"))
                             .placeholder(R.drawable.ic_person)
                             .into(mProfileImageView);
                 }
@@ -119,7 +117,7 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onSuccess(GetTokenResult getTokenResult) {
                 if(getTokenResult.getClaims().get("admin") != null && ((Boolean) getTokenResult.getClaims().get("admin"))){
-                    menu.getItem(3).setVisible(true);
+                    menu.getItem(2).setVisible(true);
                 }
             }
         });
@@ -128,9 +126,6 @@ public class ProfileActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.app_bar_private_messages) {
-            startActivity(new Intent(ProfileActivity.this, PrivateMessagesActivity.class));
-        }
         if (item.getItemId() == R.id.app_bar_edit) {
             startActivity(new Intent(ProfileActivity.this, EditProfileActivity.class));
         }
@@ -139,6 +134,21 @@ public class ProfileActivity extends AppCompatActivity {
         }
         if (item.getItemId() == R.id.app_bar_admin) {
             startActivity(new Intent(ProfileActivity.this, AdminActivity.class));
+        }
+        if (item.getItemId() == R.id.app_bar_logout) {
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.logout)
+                    .setMessage(R.string.sure_to_logout)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startActivity(new Intent(ProfileActivity.this, StartActivity.class));
+                            finish();
+                            FirebaseAuth.getInstance().signOut();
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show();
         }
         return true;
     }

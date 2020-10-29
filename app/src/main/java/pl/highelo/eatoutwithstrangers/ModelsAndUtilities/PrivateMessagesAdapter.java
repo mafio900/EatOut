@@ -19,6 +19,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -30,6 +31,8 @@ public class PrivateMessagesAdapter extends FirestoreRecyclerAdapter<PrivateMess
     private FirebaseFirestore mFirestore;
 
     private OnItemClickListener mOnItemClickListener;
+
+    private ListenerRegistration ref;
 
     public PrivateMessagesAdapter(@NonNull FirestoreRecyclerOptions<PrivateMessagesModel> options) {
         super(options);
@@ -55,7 +58,7 @@ public class PrivateMessagesAdapter extends FirestoreRecyclerAdapter<PrivateMess
             }
         });
 
-        mFirestore.collection("privateMessages").document(model.getPrivateMessageID()).collection("messages").orderBy("time", Query.Direction.DESCENDING).limit(1).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        ref = mFirestore.collection("privateMessages").document(model.getPrivateMessageID()).collection("messages").orderBy("time", Query.Direction.DESCENDING).limit(1).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (value != null){
@@ -63,6 +66,8 @@ public class PrivateMessagesAdapter extends FirestoreRecyclerAdapter<PrivateMess
                     String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
                     String annot = userID.equals(messModel.getUserID()) ? holder.itemView.getContext().getString(R.string.you) : "";
                     holder.lastMessage.setText(annot + messModel.getMessage());
+                }else{
+                    ref.remove();
                 }
 
             }

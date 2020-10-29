@@ -13,10 +13,12 @@ import android.widget.Toast;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import pl.highelo.eatoutwithstrangers.EventPages.Adapters.JoinedEventPreviewPageAdapter;
 import pl.highelo.eatoutwithstrangers.EventPages.Adapters.ManagePagerAdapter;
@@ -31,6 +33,8 @@ public class JoinedEventPreviewActivity extends AppCompatActivity {
 
     private EventsModel mEventsModel;
 
+    private ListenerRegistration ref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,14 +47,16 @@ public class JoinedEventPreviewActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mEventsModel = intent.getParcelableExtra("model");
 
-        FirebaseFirestore.getInstance().collection("events").document(mEventsModel.getItemID()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+
+        ref = FirebaseFirestore.getInstance().collection("events").document(mEventsModel.getItemID()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (value != null) {
+                if (value != null && value.toObject(EventsModel.class) instanceof EventsModel) {
                     mEventsModel = value.toObject(EventsModel.class);
                     mEventsModel.setItemID(value.getId());
                     if(!mEventsModel.getMembers().contains(FirebaseAuth.getInstance().getCurrentUser().getUid())){
                         Toast.makeText(JoinedEventPreviewActivity.this, R.string.kicked, Toast.LENGTH_SHORT).show();
+                        ref.remove();
                         finish();
                     }else{
                         Intent intent = new Intent("event_broadcast");
@@ -88,5 +94,11 @@ public class JoinedEventPreviewActivity extends AppCompatActivity {
         }
         );
         tabLayoutMediator.attach();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ref.remove();
     }
 }

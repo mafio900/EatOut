@@ -73,13 +73,19 @@ public class EditProfileActivity extends AppCompatActivity implements DatePicker
         mEditButton = (Button) findViewById(R.id.edit_button);
 
         DocumentReference documentReference = mFirestore.collection("users").document(mUserID);
-        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                mEditFirstName.getEditText().setText(documentSnapshot.get("fName").toString());
-                mEditCity.getEditText().setText(documentSnapshot.get("city").toString());
-                mEditDescription.getEditText().setText(documentSnapshot.get("description").toString());
-                mEditBirthDate.getEditText().setText(documentSnapshot.get("birthDate").toString());
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    mEditFirstName.getEditText().setText(task.getResult().get("fName").toString());
+                    mEditCity.getEditText().setText(task.getResult().get("city").toString());
+                    mEditDescription.getEditText().setText(task.getResult().get("description").toString());
+                    mEditBirthDate.getEditText().setText(task.getResult().get("birthDate").toString());
+                }else{
+                    Toast.makeText(EditProfileActivity.this, R.string.sorry_try_again, Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+
             }
         });
 

@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.firebase.ui.firestore.SnapshotParser;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -76,7 +77,10 @@ public class YourEventsFragment extends Fragment {
                     public EventsModel parseSnapshot(@NonNull DocumentSnapshot snapshot) {
                         EventsModel model = snapshot.toObject(EventsModel.class);
                         model.setItemID(snapshot.getId());
-                        if(model.getL() == 0.0){
+                        Timestamp currentTime = Timestamp.now();
+                        Timestamp documentTime = model.getTimeStamp();
+                        long diff = documentTime.getSeconds() - currentTime.getSeconds();
+                        if(model.getL() == 0.0 || diff <= 0){
                             mFirestore.collection("events").document(model.getItemID()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {

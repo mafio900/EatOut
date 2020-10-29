@@ -136,7 +136,7 @@
     <string name="successfully_update_data">Successfully updated data!</string>
     <string name="something_went_wrong_while_updating_data">Something went wrong while updating data</string>
     <string name="event_preview">Event preview</string>
-    <string name="this_event_doesnt_exist_anymore">This event doesn\'t exist anymore</string>
+    <!-- <string name="this_event_doesnt_exist_anymore">This event doesn\'t exist anymore</string> -->
     <string name="search_events">Search event</string>
     <string name="search_themes">Search themes</string>
     <string name="email_is_required">E-mail is required</string>

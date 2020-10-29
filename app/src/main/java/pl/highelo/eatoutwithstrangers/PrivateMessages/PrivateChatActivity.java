@@ -1,4 +1,4 @@
-package pl.highelo.eatoutwithstrangers.ProfileActivities.PrivateMessages;
+package pl.highelo.eatoutwithstrangers.PrivateMessages;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;

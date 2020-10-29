@@ -8,6 +8,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -15,8 +16,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import pl.highelo.eatoutwithstrangers.EventPages.Adapters.ManagePagerAdapter;
+import pl.highelo.eatoutwithstrangers.EventPages.JoinedEventPreview.JoinedEventPreviewActivity;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
 import pl.highelo.eatoutwithstrangers.R;
@@ -29,6 +32,8 @@ public class ManageEventActivity extends AppCompatActivity {
     private FirebaseFirestore mFirestore;
 
     private EventsModel mEventsModel;
+
+    private ListenerRegistration ref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,15 +51,19 @@ public class ManageEventActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mEventsModel = intent.getParcelableExtra("model");
 
-        mFirestore.collection("events").document(mEventsModel.getItemID()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+        ref = mFirestore.collection("events").document(mEventsModel.getItemID()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (value != null) {
+                if (value != null && value.toObject(EventsModel.class) instanceof EventsModel) {
                     mEventsModel = value.toObject(EventsModel.class);
                     mEventsModel.setItemID(value.getId());
                     Intent intent = new Intent("event_broadcast");
                     intent.putExtra("model",mEventsModel);
                     sendBroadcast(intent);
+                }else{
+                    ref.remove();
+                    Toast.makeText(ManageEventActivity.this, R.string.event_doesnt_exist, Toast.LENGTH_SHORT).show();
+                    finish();
                 }
             }
         });
@@ -86,5 +95,11 @@ public class ManageEventActivity extends AppCompatActivity {
         }
         );
         tabLayoutMediator.attach();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ref.remove();
     }
 }

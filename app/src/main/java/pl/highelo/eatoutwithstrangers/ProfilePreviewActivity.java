@@ -35,8 +35,7 @@ import java.util.List;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.PrivateMessagesModel;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.UsersModel;
-import pl.highelo.eatoutwithstrangers.ProfileActivities.PrivateMessages.PrivateChatActivity;
-import pl.highelo.eatoutwithstrangers.ProfileActivities.ProfileActivity;
+import pl.highelo.eatoutwithstrangers.PrivateMessages.PrivateChatActivity;
 
 public class ProfilePreviewActivity extends AppCompatActivity {
 
