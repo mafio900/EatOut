@@ -1,17 +1,17 @@
 package pl.highelo.eatoutwithstrangers.StartActivities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.auth.FirebaseAuth;
 
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
-import pl.highelo.eatoutwithstrangers.PrivateMessages.PrivateMessagesActivity;
 import pl.highelo.eatoutwithstrangers.R;
+import pl.highelo.eatoutwithstrangers.SearchEvent.SearchEventActivity;
 
 public class StartActivity extends AppCompatActivity {
 
@@ -23,7 +23,7 @@ public class StartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_start);
 
         if(FirebaseAuth.getInstance().getCurrentUser() != null){
-            startActivity(new Intent(getApplicationContext(), PrivateMessagesActivity.class));
+            startActivity(new Intent(getApplicationContext(), SearchEventActivity.class));
             finish();
         }
 

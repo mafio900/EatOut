@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import pl.highelo.eatoutwithstrangers.ProfileActivities.ProfileActivity;
 import pl.highelo.eatoutwithstrangers.ProfilePreviewActivity;
 import pl.highelo.eatoutwithstrangers.R;
 

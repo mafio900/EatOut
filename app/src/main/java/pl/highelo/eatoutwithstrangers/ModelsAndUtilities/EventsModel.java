@@ -2,7 +2,6 @@ package pl.highelo.eatoutwithstrangers.ModelsAndUtilities;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.widget.ScrollView;
 
 import com.google.firebase.Timestamp;
 

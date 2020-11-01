@@ -1,17 +1,7 @@
 package pl.highelo.eatoutwithstrangers.SearchEvent;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.Manifest;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -26,6 +16,15 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.ckdroid.geofirequery.GeoQuery;
 import com.ckdroid.geofirequery.model.Distance;
@@ -46,10 +45,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.BottomNavigationInterface;
-import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.LocationResolver;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.CommonMethods;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsAdapter;
 import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.EventsModel;
+import pl.highelo.eatoutwithstrangers.ModelsAndUtilities.LocationResolver;
 import pl.highelo.eatoutwithstrangers.R;
 
 import static pl.highelo.eatoutwithstrangers.EventPages.CreateEvent.MapActivity.COARSE_LOCATION;

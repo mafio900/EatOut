@@ -7,18 +7,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -80,7 +78,7 @@ public class EventInfoFragment extends Fragment {
         super.onViewCreated(v, savedInstanceState);
 
         mEventTheme = (TextView) v.findViewById(R.id.event_info_theme);
-        mEventName = (TextView) v.findViewById(R.id.event_info_name);
+        mEventName = (TextView) v.findViewById(R.id.event_info_description);
         mEventAddress = (TextView) v.findViewById(R.id.event_info_address);
         mEventDate = (TextView) v.findViewById(R.id.event_info_date);
         mEventMaxPeople = (TextView) v.findViewById(R.id.event_info_max_people);
@@ -209,7 +207,7 @@ public class EventInfoFragment extends Fragment {
 
     private void setData(){
         mEventTheme.setText(getString(R.string.theme) + ": " + mEventsModel.getTheme());
-        mEventName.setText(getString(R.string.place)+ ": " + mEventsModel.getDescription());
+        mEventName.setText(getString(R.string.description)+ ": " + mEventsModel.getDescription());
         mEventAddress.setText(mEventsModel.getPlaceAddress());
         String newDate = CommonMethods.parseDate(mEventsModel.getTimeStamp());
         mEventDate.setText(getString(R.string.date_of_beginning)+ ": " + newDate);

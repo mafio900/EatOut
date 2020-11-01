@@ -11,12 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-import java.util.TimeZone;
-
 import pl.highelo.eatoutwithstrangers.R;
 
 public class ReportsAdapter extends FirestoreRecyclerAdapter<ReportsModel, ReportsAdapter.ReportsViewHolder> {
