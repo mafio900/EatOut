@@ -87,8 +87,8 @@ public class RequestedEventsFragment extends Fragment {
             @Override
             public void onItemClick(final DocumentSnapshot i) {
                 final AlertDialog dialog = new AlertDialog.Builder(getContext())
-                        .setTitle(getString(R.string.join_event))
-                        .setMessage(R.string.sure_to_join_event)
+                        .setTitle(R.string.rectract_event_request)
+                        .setMessage(R.string.sure_to_rectract_event_request)
                         .setPositiveButton(android.R.string.yes, null)
                         .setNegativeButton(android.R.string.no, null)
                         .create();

@@ -80,7 +80,8 @@
             android:name=".EventPages.CreateEvent.CreateEventActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".EventPages.CalendarActivity" />
-        <activity android:name=".ProfileActivities.ChangePasswordActivity" />
+        <activity android:name=".ProfileActivities.ChangePasswordActivity"
+            android:parentActivityName=".ProfileActivities.ProfileActivity"/>
         <activity
             android:name=".ProfileActivities.ProfileActivity"
             android:screenOrientation="portrait" />

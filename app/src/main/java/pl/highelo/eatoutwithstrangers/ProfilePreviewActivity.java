@@ -123,7 +123,7 @@ public class ProfilePreviewActivity extends AppCompatActivity {
         final View view = getLayoutInflater().inflate(R.layout.dialog_send_message, null);
         new AlertDialog.Builder(ProfilePreviewActivity.this)
                 .setView(view)
-                .setTitle("Send message to " + mUsersModel.getfName())
+                .setTitle(getString(R.string.send_message_to)+ " " + mUsersModel.getfName())
                 .setPositiveButton(R.string.send, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -145,7 +145,7 @@ public class ProfilePreviewActivity extends AppCompatActivity {
                                         @Override
                                         public void onComplete(@NonNull Task<DocumentReference> task) {
                                             if(task.isSuccessful()){
-                                                Toast.makeText(ProfilePreviewActivity.this, "Message has been sent", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(ProfilePreviewActivity.this, R.string.message_has_been_sent, Toast.LENGTH_SHORT).show();
                                             }else {
                                                 Toast.makeText(ProfilePreviewActivity.this, R.string.sorry_try_again, Toast.LENGTH_SHORT).show();
                                             }

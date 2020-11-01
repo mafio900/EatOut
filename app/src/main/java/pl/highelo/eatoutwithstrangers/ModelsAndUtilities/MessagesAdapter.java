@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -26,7 +27,7 @@ import pl.highelo.eatoutwithstrangers.R;
 public class MessagesAdapter extends FirestoreRecyclerAdapter<MessagesModel, MessagesAdapter.MessagesViewHolder> {
 
     private FirebaseFirestore mFirestore;
-    private HashMap<String, UsersModel> mUsersMap = new HashMap<>();
+    public HashMap<String, UsersModel> mUsersMap = new HashMap<>();
 
     private Context mContext;
 
@@ -45,24 +46,27 @@ public class MessagesAdapter extends FirestoreRecyclerAdapter<MessagesModel, Mes
 
     @Override
     protected void onBindViewHolder(@NonNull final MessagesViewHolder holder, int position, @NonNull final MessagesModel model) {
-        if(mUsersMap.containsKey(model.getUserID())){
+        if (mUsersMap.containsKey(model.getUserID())) {
             final UsersModel user = mUsersMap.get(model.getUserID());
             holder.mName.setText(user.getfName());
-            if(user.getImage_thumbnail() != null){
-                Glide.with(holder.itemView.getContext())
-                        .asBitmap()
-                        .load(user.getImage_thumbnail())
-                        .into(holder.mImage);
+            Glide.with(holder.itemView.getContext())
+                    .asBitmap()
+                    .load(user.getImage_thumbnail())
+                    .placeholder(R.drawable.ic_person)
+                    .into(holder.mImage);
+            if(!user.getUserID().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                holder.mImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(mContext, ProfilePreviewActivity.class);
+                        intent.putExtra("user", user);
+                        mContext.startActivity(intent);
+                    }
+                });
+            }else{
+                holder.mImage.setOnClickListener(null);
             }
-            holder.mImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(mContext, ProfilePreviewActivity.class);
-                    intent.putExtra("user", user);
-                    mContext.startActivity(intent);
-                }
-            });
-        }else{
+        } else {
             mFirestore.collection("users").document(model.getUserID()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -71,27 +75,31 @@ public class MessagesAdapter extends FirestoreRecyclerAdapter<MessagesModel, Mes
                     mUsersMap.put(user.getUserID(), user);
                     holder.mName.setText(documentSnapshot.get("fName").toString());
 
-                    if(user.getImage_thumbnail() != null){
-                        Glide.with(holder.itemView.getContext())
-                                .asBitmap()
-                                .load(user.getImage_thumbnail())
-                                .into(holder.mImage);
+                    Glide.with(holder.itemView.getContext())
+                            .asBitmap()
+                            .load(user.getImage_thumbnail())
+                            .placeholder(R.drawable.ic_person)
+                            .into(holder.mImage);
+
+                    if(!user.getUserID().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                        holder.mImage.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Intent intent = new Intent(mContext, ProfilePreviewActivity.class);
+                                intent.putExtra("user", user);
+                                mContext.startActivity(intent);
+                            }
+                        });
+                    }else{
+                        holder.mImage.setOnClickListener(null);
                     }
-                    holder.mImage.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent intent = new Intent(mContext, ProfilePreviewActivity.class);
-                            intent.putExtra("user", user);
-                            mContext.startActivity(intent);
-                        }
-                    });
                 }
             });
         }
         holder.mMessage.setText(model.getMessage());
     }
 
-    public class MessagesViewHolder extends RecyclerView.ViewHolder{
+    public class MessagesViewHolder extends RecyclerView.ViewHolder {
 
         private TextView mName;
         private TextView mMessage;

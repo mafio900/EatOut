@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -27,6 +28,8 @@ import pl.highelo.eatoutwithstrangers.R;
 
 public class ChangePasswordActivity extends AppCompatActivity {
 
+    private Toolbar mToolbar;
+
     private TextInputLayout mOldPassword, mNewPassword, mConfirmNewPassword;
     private Button mSaveButton;
     private ProgressBar mProgressBar;
@@ -41,6 +44,10 @@ public class ChangePasswordActivity extends AppCompatActivity {
         CommonMethods.validateUser(this);
 
         setContentView(R.layout.activity_change_password);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setTitle(R.string.change_password);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         setupUI(findViewById(R.id.parent));
 

@@ -231,4 +231,8 @@
     <string name="send">Send</string>
     <string name="event_full_message">This event is full at the moment but you can always send a message to the owner</string>
     <string name="sure_to_logout">Are you sure you want logout?</string>
+    <string name="rectract_event_request">Retract event request</string>
+    <string name="sure_to_rectract_event_request">Are you sure you want to retract event request?</string>
+    <string name="send_message_to">Send message to</string>
+    <string name="message_has_been_sent">Message has been sent</string>
 </resources>

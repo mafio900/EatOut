@@ -59,6 +59,7 @@ public class MapActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setTitle("Lokalizacja wydarzenia");
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
