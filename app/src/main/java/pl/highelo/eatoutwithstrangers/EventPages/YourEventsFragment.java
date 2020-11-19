@@ -36,6 +36,7 @@ public class YourEventsFragment extends Fragment {
     private EventsPaginationAdapter mAdapter;
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private TextView mEmptyText;
 
     public YourEventsFragment() {
         // Required empty public constructor
@@ -104,19 +105,31 @@ public class YourEventsFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         mRecyclerView.setAdapter(mAdapter);
-        final TextView emptyText = view.findViewById(R.id.your_events_empty_text);
+        mEmptyText = view.findViewById(R.id.your_events_empty_text);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mAdapter.refresh();
                 if(mAdapter.getCurrentList().size() == 0){
-                    emptyText.setVisibility(View.VISIBLE);
+                    mEmptyText.setVisibility(View.VISIBLE);
                 }
                 else {
-                    emptyText.setVisibility(View.GONE);
+                    mEmptyText.setVisibility(View.GONE);
                 }
             }
         });
 
+    }
+
+    @Override
+    public void onResume() {
+        mAdapter.refresh();
+        if(mAdapter.getCurrentList() != null && mAdapter.getCurrentList().size() == 0){
+            mEmptyText.setVisibility(View.VISIBLE);
+        }
+        else {
+            mEmptyText.setVisibility(View.GONE);
+        }
+        super.onResume();
     }
 }

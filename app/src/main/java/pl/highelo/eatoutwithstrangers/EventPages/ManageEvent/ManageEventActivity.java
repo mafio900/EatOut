@@ -12,6 +12,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -61,7 +62,9 @@ public class ManageEventActivity extends AppCompatActivity {
                     sendBroadcast(intent);
                 }else{
                     ref.remove();
-                    Toast.makeText(ManageEventActivity.this, R.string.event_doesnt_exist, Toast.LENGTH_SHORT).show();
+                    if(error != null && error.getCode() == FirebaseFirestoreException.Code.NOT_FOUND && !FirebaseAuth.getInstance().getCurrentUser().getUid().equals(mEventsModel.getUserID())){
+                        Toast.makeText(ManageEventActivity.this, R.string.event_doesnt_exist, Toast.LENGTH_SHORT).show();
+                    }
                     finish();
                 }
             }

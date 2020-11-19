@@ -73,7 +73,7 @@ public class EventsPaginationAdapter extends FirestorePagingAdapter<EventsModel,
             }
         });
 
-        FirebaseStorage.getInstance().getReference().child("events_images" + currentItem.getItemID()).getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+        FirebaseStorage.getInstance().getReference().child("events_images/" + currentItem.getItemID()).getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
             @Override
             public void onComplete(@NonNull Task<Uri> task) {
                 if(task.isSuccessful()){

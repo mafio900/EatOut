@@ -62,6 +62,7 @@ public class JoinedEventPreviewActivity extends AppCompatActivity {
                         sendBroadcast(intent);
                     }
                 }else{
+                    ref.remove();
                     Toast.makeText(JoinedEventPreviewActivity.this, R.string.event_doesnt_exist, Toast.LENGTH_SHORT).show();
                     finish();
                 }

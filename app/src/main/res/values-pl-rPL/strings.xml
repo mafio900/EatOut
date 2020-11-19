@@ -230,7 +230,7 @@
     <string name="private_chat">Prywatny czat</string>
     <string name="sure_to_logout">Czy na pewno chcesz się wylogować?</string>
     <string name="send">Wyślij</string>
-    <string name="event_full_message">To wydarzenie jest aktualnie pełne ale zawsze możesz napisać wiadomość prywatną do organizatora</string>
+    <string name="event_full_message">To wydarzenie jest aktualnie pełne ale zawsze możesz napisać wiadomość prywatną do organizatora klikając na jego zdjęcie profilowe.</string>
     <string name="rectract_event_request">Cofnięcie prośbę o dołączenie</string>
     <string name="sure_to_rectract_event_request">Czy jesteś pewnien, że chcesz cofnąć prośbę o dołączenie do wydarzenia?</string>
     <string name="send_message_to">Wyślij wiadomość do</string>

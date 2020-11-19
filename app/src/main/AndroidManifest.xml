@@ -14,12 +14,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PrivateMessages.PrivateChatActivity"
-            android:parentActivityName=".PrivateMessages.PrivateMessagesActivity"/>
+        <activity
+            android:name=".PrivateMessages.PrivateChatActivity"
+            android:parentActivityName=".PrivateMessages.PrivateMessagesActivity" />
         <activity
             android:name=".PrivateMessages.PrivateMessagesActivity"
             android:configChanges="orientation|screenSize|keyboard"
-            android:launchMode="singleTop"/>
+            android:launchMode="singleTop" />
         <activity
             android:name=".AdminActivities.AdminActivity"
             android:parentActivityName=".ProfileActivities.ProfileActivity" />
@@ -68,9 +69,7 @@
             android:configChanges="orientation|screenSize|keyboard"
             android:launchMode="singleTop" />
         <activity
-            android:name=".EventPages.CalendarActivity"
-            android:configChanges="orientation|screenSize|keyboard"
-            android:launchMode="singleTop" />
+            android:name=".EventPages.CalendarActivity" />
         <activity
             android:name=".EventPages.JoinedEventPreview.JoinedEventPreviewActivity"
             android:configChanges="orientation|screenSize|keyboard"
@@ -80,8 +79,9 @@
             android:name=".EventPages.CreateEvent.CreateEventActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".EventPages.CalendarActivity" />
-        <activity android:name=".ProfileActivities.ChangePasswordActivity"
-            android:parentActivityName=".ProfileActivities.ProfileActivity"/>
+        <activity
+            android:name=".ProfileActivities.ChangePasswordActivity"
+            android:parentActivityName=".ProfileActivities.ProfileActivity" />
         <activity
             android:name=".ProfileActivities.ProfileActivity"
             android:screenOrientation="portrait" />
@@ -92,7 +92,6 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
-
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/icon" />
@@ -101,6 +100,5 @@
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
     </application>
-
 
 </manifest>

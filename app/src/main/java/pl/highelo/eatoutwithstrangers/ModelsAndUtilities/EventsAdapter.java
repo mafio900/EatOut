@@ -79,7 +79,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventsView
             }
         });
 
-        FirebaseStorage.getInstance().getReference().child("events_images" + currentItem.getItemID()).getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+        FirebaseStorage.getInstance().getReference().child("events_images/" + currentItem.getItemID()).getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
             @Override
             public void onComplete(@NonNull Task<Uri> task) {
                 if(task.isSuccessful()){

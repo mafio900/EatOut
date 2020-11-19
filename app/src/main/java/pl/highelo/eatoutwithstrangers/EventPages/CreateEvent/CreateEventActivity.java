@@ -299,7 +299,7 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
                 @Override
                 public void onComplete(@NonNull final Task<DocumentReference> task) {
                     if (task.isSuccessful()) {
-                        mStorageReference.child("events_images" + task.getResult().getId()).putFile(mImageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                        mStorageReference.child("events_images/" + task.getResult().getId()).putFile(mImageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task1) {
                                 if(task1.isSuccessful()){
